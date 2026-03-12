@@ -199,7 +199,7 @@
                                     class="relative h-full max-h-[90%] w-[18%] flex justify-center items-end drop-shadow-[0_8px_10px_rgba(0,0,0,0.6)] transition-transform hover:scale-105">
                                     <img :src="option.imgUrl" :alt="option.label" crossorigin="anonymous"
                                         class="max-w-full max-h-full object-contain object-bottom select-none"
-                                        @error="handleImgError" />
+                                        @error="handleImgError($event, option.id)" />
                                     <div
                                         class="hidden absolute inset-0 items-end justify-center pb-4 text-[clamp(20px,4vw,40px)] drop-shadow-lg">
                                         {{ option.emoji }}
@@ -298,15 +298,89 @@
                 const isDownloading = ref(false);
                 const postcardRef = ref(null);
 
-                const PIKMIN_OPTIONS = [
-                    { id: 'red', label: '紅色', color: 'bg-red-500', emoji: '🔴', imgUrl: 'https://static.wikia.nocookie.net/pikmin/images/8/87/Pikmin_4_Red_Pikmin.png' },
-                    { id: 'blue', label: '藍色', color: 'bg-blue-500', emoji: '🔵', imgUrl: 'https://static.wikia.nocookie.net/pikmin/images/4/4c/Pikmin_4_Blue_Pikmin.png' },
-                    { id: 'yellow', label: '黃色', color: 'bg-yellow-400', emoji: '🟡', imgUrl: 'https://static.wikia.nocookie.net/pikmin/images/0/03/Pikmin_4_Yellow_Pikmin.png' },
-                    { id: 'purple', label: '紫色', color: 'bg-purple-600', emoji: '🟣', imgUrl: 'https://static.wikia.nocookie.net/pikmin/images/b/bd/Pikmin_4_Purple_Pikmin.png' },
-                    { id: 'rock', label: '岩石', color: 'bg-neutral-700', emoji: '🪨', imgUrl: 'https://static.wikia.nocookie.net/pikmin/images/1/1a/Pikmin_4_Rock_Pikmin.png' },
-                    { id: 'white', label: '白色', color: 'bg-gray-100', emoji: '⚪', imgUrl: 'https://static.wikia.nocookie.net/pikmin/images/6/69/Pikmin_4_White_Pikmin.png' },
-                    { id: 'winged', label: '羽翅', color: 'bg-pink-400', emoji: '🧚', imgUrl: 'https://static.wikia.nocookie.net/pikmin/images/8/82/Pikmin_4_Winged_Pikmin.png' },
+                const PIKMIN_BASE_OPTIONS = [
+                    { id: 'red', label: '紅色', color: 'bg-red-500', emoji: '🔴' },
+                    { id: 'blue', label: '藍色', color: 'bg-blue-500', emoji: '🔵' },
+                    { id: 'yellow', label: '黃色', color: 'bg-yellow-400', emoji: '🟡' },
+                    { id: 'purple', label: '紫色', color: 'bg-purple-600', emoji: '🟣' },
+                    { id: 'rock', label: '岩石', color: 'bg-neutral-700', emoji: '🪨' },
+                    { id: 'white', label: '白色', color: 'bg-gray-100', emoji: '⚪' },
+                    { id: 'winged', label: '羽翅', color: 'bg-pink-400', emoji: '🧚' },
                 ];
+
+                const createPikminDataUrlGroup = (pikmins) => {
+                    const bgColors = {
+                        red: '#ef4444',
+                        blue: '#3b82f6',
+                        yellow: '#facc15',
+                        purple: '#9333ea',
+                        rock: '#525252',
+                        white: '#f5f5f5',
+                        winged: '#f472b6'
+                    };
+
+                    return pikmins.reduce((group, option) => {
+                        const textColor = option.id === 'white' ? '#1f2937' : '#ffffff';
+                        const borderColor = option.id === 'white' ? '#d1d5db' : '#ffffff55';
+                        const svg = `
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180">
+                                <rect width="180" height="180" rx="28" fill="${bgColors[option.id] || '#a1a1aa'}" stroke="${borderColor}" stroke-width="6" />
+                                <text x="50%" y="54%" text-anchor="middle" dominant-baseline="middle" font-size="96" fill="${textColor}">
+                                    ${option.emoji}
+                                </text>
+                            </svg>
+                        `.trim();
+                        group[option.id] = `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+                        return group;
+                    }, {});
+                };
+
+                const PIKMIN_SOURCE_GROUPS = [
+                    {
+                        red: 'https://static.wikia.nocookie.net/pikmin/images/5/56/P4_Red_Pikmin.png/revision/latest?cb=20230818155739',
+                        blue: 'https://static.wikia.nocookie.net/pikmin/images/5/54/P4_Blue_Pikmin.png/revision/latest?cb=20230818163738',
+                        yellow: 'https://static.wikia.nocookie.net/pikmin/images/8/8d/P4_Yellow_Pikmin.png/revision/latest?cb=20230818163721',
+                        purple: 'https://static.wikia.nocookie.net/pikmin/images/e/e4/P4_Purple_Pikmin.png/revision/latest?cb=20230818164146',
+                        rock: 'https://static.wikia.nocookie.net/pikmin/images/a/a8/P4_Rock_Pikmin.png/revision/latest?cb=20230818164203',
+                        white: 'https://static.wikia.nocookie.net/pikmin/images/4/44/P4_White_Pikmin.png/revision/latest?cb=20230818164119',
+                        winged: 'https://static.wikia.nocookie.net/pikmin/images/9/9e/P4_Winged_Pikmin.png/revision/latest?cb=20230818164217'
+                    },
+                    {
+                        red: 'https://www.pikminwiki.com/images/7/7a/Red_Pikmin_P4_icon.png',
+                        blue: 'https://www.pikminwiki.com/images/1/18/Blue_Pikmin_P4_icon.png',
+                        yellow: 'https://www.pikminwiki.com/images/2/2f/Yellow_Pikmin_P4_icon.png',
+                        purple: 'https://www.pikminwiki.com/images/6/69/Purple_Pikmin_P4_icon.png',
+                        rock: 'https://www.pikminwiki.com/images/9/91/Rock_Pikmin_P4_icon.png',
+                        white: 'https://www.pikminwiki.com/images/2/22/White_Pikmin_P4_icon.png',
+                        winged: 'https://www.pikminwiki.com/images/4/45/Winged_Pikmin_P4_icon.png'
+                    },
+                    createPikminDataUrlGroup(PIKMIN_BASE_OPTIONS)
+                ];
+
+                const PIKMIN_SOURCE_STORAGE_KEY = 'pikmin-source-group-index';
+                const getNextSourceGroupIndex = (groupCount) => {
+                    if (groupCount <= 1) return 0;
+
+                    try {
+                        const lastIndexRaw = localStorage.getItem(PIKMIN_SOURCE_STORAGE_KEY);
+                        const lastIndex = Number.parseInt(lastIndexRaw ?? '', 10);
+                        const normalizedLast = Number.isNaN(lastIndex)
+                            ? -1
+                            : ((lastIndex % groupCount) + groupCount) % groupCount;
+                        const nextIndex = (normalizedLast + 1) % groupCount;
+                        localStorage.setItem(PIKMIN_SOURCE_STORAGE_KEY, String(nextIndex));
+                        return nextIndex;
+                    } catch (error) {
+                        console.warn('無法存取 localStorage，改用預設圖片來源群組。', error);
+                        return 0;
+                    }
+                };
+
+                const primarySourceGroupIndex = getNextSourceGroupIndex(PIKMIN_SOURCE_GROUPS.length);
+                const PIKMIN_OPTIONS = PIKMIN_BASE_OPTIONS.map((option) => ({
+                    ...option,
+                    imgUrl: PIKMIN_SOURCE_GROUPS[primarySourceGroupIndex][option.id]
+                }));
 
                 const selectedPikmins = ref(['purple', 'yellow', 'rock']);
 
@@ -425,11 +499,34 @@
                     }
                 };
 
-                const handleImgError = (e) => {
-                    // 如果圖片因為跨網域或連結失效而無法載入，則隱藏圖片並顯示 Emoji
-                    e.target.style.display = 'none';
-                    if (e.target.nextElementSibling) {
-                        e.target.nextElementSibling.style.display = 'flex';
+                const handleImgError = (e, optionId) => {
+                    const imgEl = e.target;
+                    const attemptedRaw = imgEl.dataset.attemptedSourceGroups || '';
+                    const attemptedGroups = attemptedRaw
+                        .split(',')
+                        .map(v => Number.parseInt(v, 10))
+                        .filter(v => !Number.isNaN(v));
+
+                    if (!attemptedGroups.includes(primarySourceGroupIndex)) {
+                        attemptedGroups.push(primarySourceGroupIndex);
+                    }
+
+                    for (let offset = 1; offset < PIKMIN_SOURCE_GROUPS.length; offset += 1) {
+                        const nextGroupIndex = (primarySourceGroupIndex + offset) % PIKMIN_SOURCE_GROUPS.length;
+                        if (attemptedGroups.includes(nextGroupIndex)) continue;
+
+                        const nextUrl = PIKMIN_SOURCE_GROUPS[nextGroupIndex]?.[optionId];
+                        if (nextUrl) {
+                            attemptedGroups.push(nextGroupIndex);
+                            imgEl.dataset.attemptedSourceGroups = attemptedGroups.join(',');
+                            imgEl.src = nextUrl;
+                            return;
+                        }
+                    }
+
+                    imgEl.style.display = 'none';
+                    if (imgEl.nextElementSibling) {
+                        imgEl.nextElementSibling.style.display = 'flex';
                     }
                 };
 
