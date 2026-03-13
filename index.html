@@ -172,8 +172,12 @@
                     <div
                         class="relative w-[65%] h-full bg-black flex flex-col justify-center items-center overflow-hidden">
 
-                        <img v-if="photo" :src="photo" alt="User photo"
-                            class="absolute inset-0 w-full h-full object-cover" />
+                        <!-- Background-image cover div: html2canvas renders background-size:cover
+                             correctly, whereas object-fit:cover on an img element can produce
+                             squashed output in the exported canvas. -->
+                        <div v-if="photo" class="absolute inset-0 w-full h-full"
+                            :style="{ backgroundImage: 'url(' + photo + ')', backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }">
+                        </div>
 
                         <div v-else class="text-neutral-600 flex flex-col items-center gap-2 opacity-50">
                             <!-- ImageIcon -->
@@ -1452,10 +1456,14 @@
 
                     try {
                         await waitForPostcardRenderStability();
-                        const canvas = await window.html2canvas(postcardRef.value, {
+                        const el = postcardRef.value;
+                        const rect = el.getBoundingClientRect();
+                        const canvas = await window.html2canvas(el, {
                             scale: 2,
                             useCORS: true,
-                            backgroundColor: null
+                            backgroundColor: null,
+                            width: Math.round(rect.width),
+                            height: Math.round(rect.height)
                         });
 
                         const link = document.createElement('a');
