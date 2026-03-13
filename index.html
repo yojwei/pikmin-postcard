@@ -371,47 +371,166 @@
                     return Object.keys(normalizedGroup).length ? normalizedGroup : null;
                 };
 
-                const extractPikminSourceGroups = (payload) => {
-                    if (Array.isArray(payload)) return payload;
-                    if (payload && typeof payload === 'object') {
-                        if (Array.isArray(payload.sourceGroups)) {
-                            return payload.sourceGroups;
+                const normalizePikminSourceList = (rawSources) => {
+                    if (!Array.isArray(rawSources)) return [];
+                    return rawSources
+                        .map((source) => (typeof source === 'string' ? source.trim() : ''))
+                        .filter((source) => Boolean(source));
+                };
+
+                const createEmptyPikminColorSourceLists = () => PIKMIN_BASE_OPTIONS.reduce((groups, option) => {
+                    groups[option.id] = [];
+                    return groups;
+                }, {});
+
+                const createPikminFallbackSourceLists = (fallbackGroup) => {
+                    const fallbackLists = createEmptyPikminColorSourceLists();
+                    PIKMIN_BASE_OPTIONS.forEach((option) => {
+                        const fallbackSource = fallbackGroup[option.id];
+                        if (fallbackSource) {
+                            fallbackLists[option.id] = [fallbackSource];
                         }
-                        if (Array.isArray(payload.groups)) {
-                            return payload.groups;
+                    });
+                    return fallbackLists;
+                };
+
+                const normalizePikminColorSourceLists = (rawColorGroups) => {
+                    if (!rawColorGroups || typeof rawColorGroups !== 'object' || Array.isArray(rawColorGroups)) {
+                        return null;
+                    }
+
+                    const normalizedColorSourceLists = createEmptyPikminColorSourceLists();
+                    let hasAvailableSource = false;
+
+                    PIKMIN_BASE_OPTIONS.forEach((option) => {
+                        const sourceList = normalizePikminSourceList(rawColorGroups[option.id]);
+                        normalizedColorSourceLists[option.id] = sourceList;
+                        if (sourceList.length) {
+                            hasAvailableSource = true;
+                        }
+                    });
+
+                    return hasAvailableSource ? normalizedColorSourceLists : null;
+                };
+
+                const convertLegacySourceGroupsToColorLists = (rawSourceGroups) => {
+                    if (!Array.isArray(rawSourceGroups)) return null;
+
+                    const normalizedColorSourceLists = createEmptyPikminColorSourceLists();
+                    rawSourceGroups.forEach((group) => {
+                        const normalizedGroup = normalizePikminSourceGroup(group);
+                        if (!normalizedGroup) return;
+
+                        PIKMIN_BASE_OPTIONS.forEach((option) => {
+                            const source = normalizedGroup[option.id];
+                            if (source) {
+                                normalizedColorSourceLists[option.id].push(source);
+                            }
+                        });
+                    });
+
+                    const hasAvailableSource = PIKMIN_BASE_OPTIONS.some(
+                        (option) => normalizedColorSourceLists[option.id].length > 0
+                    );
+                    return hasAvailableSource ? normalizedColorSourceLists : null;
+                };
+
+                const extractPikminColorSourceLists = (payload) => {
+                    if (payload && typeof payload === 'object' && !Array.isArray(payload)) {
+                        const colorSourceLists = normalizePikminColorSourceLists(payload.colorGroups);
+                        if (colorSourceLists) {
+                            return { colorSourceLists, fromLegacy: false };
+                        }
+
+                        const legacyGroups = Array.isArray(payload.sourceGroups)
+                            ? payload.sourceGroups
+                            : Array.isArray(payload.groups)
+                                ? payload.groups
+                                : null;
+                        if (legacyGroups) {
+                            const legacyColorSourceLists = convertLegacySourceGroupsToColorLists(legacyGroups);
+                            if (legacyColorSourceLists) {
+                                return { colorSourceLists: legacyColorSourceLists, fromLegacy: true };
+                            }
                         }
                     }
+
+                    if (Array.isArray(payload)) {
+                        const legacyColorSourceLists = convertLegacySourceGroupsToColorLists(payload);
+                        if (legacyColorSourceLists) {
+                            return { colorSourceLists: legacyColorSourceLists, fromLegacy: true };
+                        }
+                    }
+
                     return null;
                 };
 
-                const pikminDataUrlFallbackGroup = createPikminDataUrlGroup(PIKMIN_BASE_OPTIONS);
-                const pikminSourceGroups = ref([pikminDataUrlFallbackGroup]);
-                const primarySourceGroupIndex = ref(0);
-                const buildPikminOptions = (sourceGroups, sourceGroupIndex) => {
-                    const safeGroups = Array.isArray(sourceGroups) && sourceGroups.length
-                        ? sourceGroups
-                        : [pikminDataUrlFallbackGroup];
-                    const normalizedIndex = ((sourceGroupIndex % safeGroups.length) + safeGroups.length) % safeGroups.length;
+                const mergePikminColorSourceListsWithFallback = (colorSourceLists, fallbackGroup) => {
+                    const mergedSourceLists = createEmptyPikminColorSourceLists();
 
-                    return PIKMIN_BASE_OPTIONS.map((option) => ({
-                        ...option,
-                        imgUrl: safeGroups[normalizedIndex]?.[option.id] || pikminDataUrlFallbackGroup[option.id]
-                    }));
+                    PIKMIN_BASE_OPTIONS.forEach((option) => {
+                        const normalizedSources = normalizePikminSourceList(colorSourceLists?.[option.id]);
+                        const mergedSources = [...normalizedSources];
+                        const fallbackSource = fallbackGroup[option.id];
+                        if (fallbackSource && !mergedSources.includes(fallbackSource)) {
+                            mergedSources.push(fallbackSource);
+                        }
+                        if (!mergedSources.length && fallbackSource) {
+                            mergedSources.push(fallbackSource);
+                        }
+                        mergedSourceLists[option.id] = mergedSources;
+                    });
+
+                    return mergedSourceLists;
                 };
-                const PIKMIN_OPTIONS = ref(buildPikminOptions(pikminSourceGroups.value, primarySourceGroupIndex.value));
-                const applyPikminSourceGroups = (normalizedGroups, rotateByStorage = false) => {
-                    const nextGroups = [...normalizedGroups, pikminDataUrlFallbackGroup];
-                    pikminSourceGroups.value = nextGroups;
+
+                const getSourceListCycleLength = (colorSourceLists) => {
+                    const listLengths = PIKMIN_BASE_OPTIONS
+                        .map((option) => Array.isArray(colorSourceLists?.[option.id]) ? colorSourceLists[option.id].length : 0)
+                        .filter((length) => length > 0);
+                    return listLengths.length ? Math.max(...listLengths) : 1;
+                };
+
+                const resolvePikminImageUrl = (colorSourceLists, optionId, sourceGroupIndex, fallbackGroup) => {
+                    const sourceList = Array.isArray(colorSourceLists?.[optionId]) ? colorSourceLists[optionId] : [];
+                    if (!sourceList.length) {
+                        return fallbackGroup[optionId];
+                    }
+                    const normalizedIndex = ((sourceGroupIndex % sourceList.length) + sourceList.length) % sourceList.length;
+                    return sourceList[normalizedIndex] || fallbackGroup[optionId];
+                };
+
+                const pikminDataUrlFallbackGroup = createPikminDataUrlGroup(PIKMIN_BASE_OPTIONS);
+                const pikminFallbackSourceLists = createPikminFallbackSourceLists(pikminDataUrlFallbackGroup);
+                const pikminColorSourceLists = ref(pikminFallbackSourceLists);
+                const primarySourceGroupIndex = ref(0);
+                const buildPikminOptions = (colorSourceLists, sourceGroupIndex) => (
+                    PIKMIN_BASE_OPTIONS.map((option) => ({
+                        ...option,
+                        imgUrl: resolvePikminImageUrl(
+                            colorSourceLists,
+                            option.id,
+                            sourceGroupIndex,
+                            pikminDataUrlFallbackGroup
+                        )
+                    }))
+                );
+                const PIKMIN_OPTIONS = ref(buildPikminOptions(pikminColorSourceLists.value, primarySourceGroupIndex.value));
+                const applyPikminColorSourceLists = (normalizedColorSourceLists, rotateByStorage = false) => {
+                    pikminColorSourceLists.value = mergePikminColorSourceListsWithFallback(
+                        normalizedColorSourceLists,
+                        pikminDataUrlFallbackGroup
+                    );
                     primarySourceGroupIndex.value = rotateByStorage
-                        ? getNextSourceGroupIndex(nextGroups.length)
+                        ? getNextSourceGroupIndex(getSourceListCycleLength(pikminColorSourceLists.value))
                         : 0;
                     PIKMIN_OPTIONS.value = buildPikminOptions(
-                        pikminSourceGroups.value,
+                        pikminColorSourceLists.value,
                         primarySourceGroupIndex.value
                     );
                 };
 
-                const loadPikminSourceGroups = async () => {
+                const loadPikminColorSourceLists = async () => {
                     let response;
                     try {
                         response = await fetch(PIKMIN_SOURCE_JSON_URL, { cache: 'no-store' });
@@ -433,23 +552,19 @@
                         return;
                     }
 
-                    const rawSourceGroups = extractPikminSourceGroups(sourcePayload);
-                    if (!rawSourceGroups) {
-                        console.warn('pikmin_sources.json 格式不正確，改用內建圖示來源。');
+                    const extractedSourceLists = extractPikminColorSourceLists(sourcePayload);
+                    if (!extractedSourceLists) {
+                        console.warn('pikmin_sources.json 格式不正確（缺少有效的 colorGroups），改用內建圖示來源。');
                         return;
                     }
 
-                    const normalizedGroups = rawSourceGroups
-                        .map((group) => normalizePikminSourceGroup(group))
-                        .filter((group) => Boolean(group));
-                    if (!normalizedGroups.length) {
-                        console.warn('pikmin_sources.json 沒有可用來源群組，改用內建圖示來源。');
-                        return;
+                    if (extractedSourceLists.fromLegacy) {
+                        console.warn('pikmin_sources.json 使用舊版 sourceGroups，已自動轉換為 colorGroups。');
                     }
 
-                    applyPikminSourceGroups(normalizedGroups, true);
+                    applyPikminColorSourceLists(extractedSourceLists.colorSourceLists, true);
                 };
-                loadPikminSourceGroups();
+                loadPikminColorSourceLists();
 
                 const selectedPikmins = ref(['purple', 'yellow', 'rock']);
 
@@ -570,24 +685,38 @@
 
                 const handleImgError = (e, optionId) => {
                     const imgEl = e.target;
-                    const attemptedRaw = imgEl.dataset.attemptedSourceGroups || '';
-                    const attemptedGroups = attemptedRaw
-                        .split(',')
-                        .map(v => Number.parseInt(v, 10))
-                        .filter(v => !Number.isNaN(v));
-
-                    if (!attemptedGroups.includes(primarySourceGroupIndex.value)) {
-                        attemptedGroups.push(primarySourceGroupIndex.value);
+                    const sourceList = Array.isArray(pikminColorSourceLists.value?.[optionId])
+                        ? pikminColorSourceLists.value[optionId]
+                        : [];
+                    if (!sourceList.length) {
+                        imgEl.style.display = 'none';
+                        if (imgEl.nextElementSibling) {
+                            imgEl.nextElementSibling.style.display = 'flex';
+                        }
+                        return;
                     }
 
-                    for (let offset = 1; offset < pikminSourceGroups.value.length; offset += 1) {
-                        const nextGroupIndex = (primarySourceGroupIndex.value + offset) % pikminSourceGroups.value.length;
-                        if (attemptedGroups.includes(nextGroupIndex)) continue;
+                    const attemptedRaw = imgEl.dataset.attemptedSourceIndices || '';
+                    const attemptedIndices = attemptedRaw
+                        .split(',')
+                        .map(v => Number.parseInt(v, 10))
+                        .filter(v => Number.isInteger(v) && v >= 0);
+                    const normalizedPrimaryIndex = (
+                        (primarySourceGroupIndex.value % sourceList.length) + sourceList.length
+                    ) % sourceList.length;
 
-                        const nextUrl = pikminSourceGroups.value[nextGroupIndex]?.[optionId];
-                        if (nextUrl) {
-                            attemptedGroups.push(nextGroupIndex);
-                            imgEl.dataset.attemptedSourceGroups = attemptedGroups.join(',');
+                    if (!attemptedIndices.includes(normalizedPrimaryIndex)) {
+                        attemptedIndices.push(normalizedPrimaryIndex);
+                    }
+
+                    for (let offset = 1; offset < sourceList.length; offset += 1) {
+                        const nextIndex = (normalizedPrimaryIndex + offset) % sourceList.length;
+                        if (attemptedIndices.includes(nextIndex)) continue;
+
+                        const nextUrl = sourceList[nextIndex];
+                        if (typeof nextUrl === 'string' && nextUrl.trim()) {
+                            attemptedIndices.push(nextIndex);
+                            imgEl.dataset.attemptedSourceIndices = attemptedIndices.join(',');
                             imgEl.src = nextUrl;
                             return;
                         }
