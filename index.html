@@ -335,29 +335,8 @@
                     }, {});
                 };
 
-                const PIKMIN_SOURCE_GROUPS = [
-                    {
-                        red: 'https://static.wikia.nocookie.net/pikmin/images/5/56/P4_Red_Pikmin.png/revision/latest?cb=20230818155739',
-                        blue: 'https://static.wikia.nocookie.net/pikmin/images/5/54/P4_Blue_Pikmin.png/revision/latest?cb=20230818163738',
-                        yellow: 'https://static.wikia.nocookie.net/pikmin/images/8/8d/P4_Yellow_Pikmin.png/revision/latest?cb=20230818163721',
-                        purple: 'https://static.wikia.nocookie.net/pikmin/images/e/e4/P4_Purple_Pikmin.png/revision/latest?cb=20230818164146',
-                        rock: 'https://static.wikia.nocookie.net/pikmin/images/a/a8/P4_Rock_Pikmin.png/revision/latest?cb=20230818164203',
-                        white: 'https://static.wikia.nocookie.net/pikmin/images/4/44/P4_White_Pikmin.png/revision/latest?cb=20230818164119',
-                        winged: 'https://static.wikia.nocookie.net/pikmin/images/9/9e/P4_Winged_Pikmin.png/revision/latest?cb=20230818164217'
-                    },
-                    {
-                        red: 'https://www.pikminwiki.com/images/7/7a/Red_Pikmin_P4_icon.png',
-                        blue: 'https://www.pikminwiki.com/images/1/18/Blue_Pikmin_P4_icon.png',
-                        yellow: 'https://www.pikminwiki.com/images/2/2f/Yellow_Pikmin_P4_icon.png',
-                        purple: 'https://www.pikminwiki.com/images/6/69/Purple_Pikmin_P4_icon.png',
-                        rock: 'https://www.pikminwiki.com/images/9/91/Rock_Pikmin_P4_icon.png',
-                        white: 'https://www.pikminwiki.com/images/2/22/White_Pikmin_P4_icon.png',
-                        winged: 'https://www.pikminwiki.com/images/4/45/Winged_Pikmin_P4_icon.png'
-                    },
-                    createPikminDataUrlGroup(PIKMIN_BASE_OPTIONS)
-                ];
-
                 const PIKMIN_SOURCE_STORAGE_KEY = 'pikmin-source-group-index';
+                const PIKMIN_SOURCE_JSON_URL = 'pikmin_sources.json';
                 const getNextSourceGroupIndex = (groupCount) => {
                     if (groupCount <= 1) return 0;
 
@@ -376,11 +355,101 @@
                     }
                 };
 
-                const primarySourceGroupIndex = getNextSourceGroupIndex(PIKMIN_SOURCE_GROUPS.length);
-                const PIKMIN_OPTIONS = PIKMIN_BASE_OPTIONS.map((option) => ({
-                    ...option,
-                    imgUrl: PIKMIN_SOURCE_GROUPS[primarySourceGroupIndex][option.id]
-                }));
+                const normalizePikminSourceGroup = (rawGroup) => {
+                    if (!rawGroup || typeof rawGroup !== 'object' || Array.isArray(rawGroup)) {
+                        return null;
+                    }
+
+                    const normalizedGroup = {};
+                    PIKMIN_BASE_OPTIONS.forEach((option) => {
+                        const source = rawGroup[option.id];
+                        if (typeof source === 'string' && source.trim()) {
+                            normalizedGroup[option.id] = source.trim();
+                        }
+                    });
+
+                    return Object.keys(normalizedGroup).length ? normalizedGroup : null;
+                };
+
+                const extractPikminSourceGroups = (payload) => {
+                    if (Array.isArray(payload)) return payload;
+                    if (payload && typeof payload === 'object') {
+                        if (Array.isArray(payload.sourceGroups)) {
+                            return payload.sourceGroups;
+                        }
+                        if (Array.isArray(payload.groups)) {
+                            return payload.groups;
+                        }
+                    }
+                    return null;
+                };
+
+                const pikminDataUrlFallbackGroup = createPikminDataUrlGroup(PIKMIN_BASE_OPTIONS);
+                const pikminSourceGroups = ref([pikminDataUrlFallbackGroup]);
+                const primarySourceGroupIndex = ref(0);
+                const buildPikminOptions = (sourceGroups, sourceGroupIndex) => {
+                    const safeGroups = Array.isArray(sourceGroups) && sourceGroups.length
+                        ? sourceGroups
+                        : [pikminDataUrlFallbackGroup];
+                    const normalizedIndex = ((sourceGroupIndex % safeGroups.length) + safeGroups.length) % safeGroups.length;
+
+                    return PIKMIN_BASE_OPTIONS.map((option) => ({
+                        ...option,
+                        imgUrl: safeGroups[normalizedIndex]?.[option.id] || pikminDataUrlFallbackGroup[option.id]
+                    }));
+                };
+                const PIKMIN_OPTIONS = ref(buildPikminOptions(pikminSourceGroups.value, primarySourceGroupIndex.value));
+                const applyPikminSourceGroups = (normalizedGroups, rotateByStorage = false) => {
+                    const nextGroups = [...normalizedGroups, pikminDataUrlFallbackGroup];
+                    pikminSourceGroups.value = nextGroups;
+                    primarySourceGroupIndex.value = rotateByStorage
+                        ? getNextSourceGroupIndex(nextGroups.length)
+                        : 0;
+                    PIKMIN_OPTIONS.value = buildPikminOptions(
+                        pikminSourceGroups.value,
+                        primarySourceGroupIndex.value
+                    );
+                };
+
+                const loadPikminSourceGroups = async () => {
+                    let response;
+                    try {
+                        response = await fetch(PIKMIN_SOURCE_JSON_URL, { cache: 'no-store' });
+                    } catch (error) {
+                        console.warn('無法載入 pikmin_sources.json，改用內建圖示來源。', error);
+                        return;
+                    }
+
+                    if (!response.ok) {
+                        console.warn(`載入 pikmin_sources.json 失敗（${response.status}），改用內建圖示來源。`);
+                        return;
+                    }
+
+                    let sourcePayload;
+                    try {
+                        sourcePayload = await response.json();
+                    } catch (error) {
+                        console.warn('pikmin_sources.json 解析失敗，改用內建圖示來源。', error);
+                        return;
+                    }
+
+                    const rawSourceGroups = extractPikminSourceGroups(sourcePayload);
+                    if (!rawSourceGroups) {
+                        console.warn('pikmin_sources.json 格式不正確，改用內建圖示來源。');
+                        return;
+                    }
+
+                    const normalizedGroups = rawSourceGroups
+                        .map((group) => normalizePikminSourceGroup(group))
+                        .filter((group) => Boolean(group));
+                    if (!normalizedGroups.length) {
+                        console.warn('pikmin_sources.json 沒有可用來源群組，改用內建圖示來源。');
+                        return;
+                    }
+
+                    applyPikminSourceGroups(normalizedGroups, true);
+                };
+                loadPikminSourceGroups();
 
                 const selectedPikmins = ref(['purple', 'yellow', 'rock']);
 
@@ -507,15 +576,15 @@
                         .map(v => Number.parseInt(v, 10))
                         .filter(v => !Number.isNaN(v));
 
-                    if (!attemptedGroups.includes(primarySourceGroupIndex)) {
-                        attemptedGroups.push(primarySourceGroupIndex);
+                    if (!attemptedGroups.includes(primarySourceGroupIndex.value)) {
+                        attemptedGroups.push(primarySourceGroupIndex.value);
                     }
 
-                    for (let offset = 1; offset < PIKMIN_SOURCE_GROUPS.length; offset += 1) {
-                        const nextGroupIndex = (primarySourceGroupIndex + offset) % PIKMIN_SOURCE_GROUPS.length;
+                    for (let offset = 1; offset < pikminSourceGroups.value.length; offset += 1) {
+                        const nextGroupIndex = (primarySourceGroupIndex.value + offset) % pikminSourceGroups.value.length;
                         if (attemptedGroups.includes(nextGroupIndex)) continue;
 
-                        const nextUrl = PIKMIN_SOURCE_GROUPS[nextGroupIndex]?.[optionId];
+                        const nextUrl = pikminSourceGroups.value[nextGroupIndex]?.[optionId];
                         if (nextUrl) {
                             attemptedGroups.push(nextGroupIndex);
                             imgEl.dataset.attemptedSourceGroups = attemptedGroups.join(',');
