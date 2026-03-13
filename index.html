@@ -115,12 +115,12 @@
                     <div class="flex flex-wrap justify-between items-center gap-2 mb-1">
                         <label class="block text-sm font-semibold text-neutral-700">3. 選擇皮克敏夥伴</label>
                         <div class="flex items-center gap-2">
-                            <button @click="randomizePikminLayout" :disabled="!selectedPikmins.length"
-                                class="px-3 py-1.5 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-700 hover:bg-indigo-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors active:scale-95">
+                            <button @click="randomizePikminLayout"
+                                class="px-3 py-1.5 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-700 hover:bg-indigo-200 transition-colors active:scale-95">
                                 隨機位置
                             </button>
-                            <span class="text-xs text-neutral-400 font-medium">最多選 5 隻 ({{ selectedPikmins.length
-                                }}/5)</span>
+                            <span class="text-xs text-neutral-400 font-medium">候選顏色 {{ selectedPikmins.length }}/{{
+                                PIKMIN_OPTIONS.length }}（未選時自動套用全部）</span>
                         </div>
                     </div>
                     <div class="flex flex-wrap gap-2">
@@ -199,15 +199,17 @@
 
                         <!-- 底部皮克敏裝飾疊加 -->
                         <div class="absolute inset-0 pointer-events-none z-[8]">
-                            <template v-for="option in selectedPikminItems" :key="'img-'+option.id">
+                            <template v-for="instance in selectedPikminItems" :key="'img-'+instance.instanceId">
                                 <div class="absolute drop-shadow-[0_8px_10px_rgba(0,0,0,0.6)] transition-transform duration-300"
-                                    :style="getPikminOverlayStyle(option.id)">
-                                    <img :src="option.imgUrl" :alt="option.label" crossorigin="anonymous"
+                                    :style="getPikminOverlayStyle(instance.instanceId)">
+                                    <img :src="getPikminImageSrc(instance)" :alt="instance.label" crossorigin="anonymous"
                                         class="w-full h-auto object-contain select-none"
-                                        @error="handleImgError($event, option.id)" />
+                                        :style="{ visibility: isPikminImageVisible(instance.instanceId) ? 'visible' : 'hidden' }"
+                                        @load="handleImgLoad(instance.instanceId)"
+                                        @error="handleImgError(instance.instanceId, instance.id, instance.sourceIndex)" />
                                     <div
-                                        class="hidden absolute inset-0 items-center justify-center text-[clamp(20px,4vw,40px)] drop-shadow-lg">
-                                        {{ option.emoji }}
+                                        :class="[shouldShowPikminFallback(instance.instanceId) ? 'flex' : 'hidden', 'absolute inset-0 items-center justify-center text-[clamp(20px,4vw,40px)] drop-shadow-lg']">
+                                        {{ instance.emoji }}
                                     </div>
                                 </div>
                             </template>
@@ -312,6 +314,8 @@
                     { id: 'white', label: '白色', color: 'bg-gray-100', emoji: '⚪' },
                     { id: 'winged', label: '羽翅', color: 'bg-pink-400', emoji: '🧚' },
                 ];
+                const MAX_PIKMIN_INSTANCES = 6;
+                const ALL_PIKMIN_IDS = PIKMIN_BASE_OPTIONS.map((option) => option.id);
 
                 const createPikminDataUrlGroup = (pikmins) => {
                     const bgColors = {
@@ -342,6 +346,15 @@
 
                 const PIKMIN_SOURCE_STORAGE_KEY = 'pikmin-source-group-index';
                 const PIKMIN_SOURCE_JSON_URL = 'pikmin_sources.json';
+                const PIKMIN_CLASSIC_BASE_SOURCE_GROUP = Object.freeze({
+                    red: 'https://static.wikia.nocookie.net/pikmin/images/5/56/P4_Red_Pikmin.png/revision/latest?cb=20230818155739',
+                    blue: 'https://static.wikia.nocookie.net/pikmin/images/5/54/P4_Blue_Pikmin.png/revision/latest?cb=20230818163738',
+                    yellow: 'https://static.wikia.nocookie.net/pikmin/images/8/8d/P4_Yellow_Pikmin.png/revision/latest?cb=20230818163721',
+                    purple: 'https://static.wikia.nocookie.net/pikmin/images/e/e4/P4_Purple_Pikmin.png/revision/latest?cb=20230818164146',
+                    rock: 'https://static.wikia.nocookie.net/pikmin/images/a/a8/P4_Rock_Pikmin.png/revision/latest?cb=20230818164203',
+                    white: 'https://static.wikia.nocookie.net/pikmin/images/4/44/P4_White_Pikmin.png/revision/latest?cb=20230818164119',
+                    winged: 'https://static.wikia.nocookie.net/pikmin/images/9/9e/P4_Winged_Pikmin.png/revision/latest?cb=20230818164217'
+                });
                 const getNextSourceGroupIndex = (groupCount) => {
                     if (groupCount <= 1) return 0;
 
@@ -475,14 +488,19 @@
 
                     PIKMIN_BASE_OPTIONS.forEach((option) => {
                         const normalizedSources = normalizePikminSourceList(colorSourceLists?.[option.id]);
-                        const mergedSources = [...normalizedSources];
+                        const mergedSources = [];
+                        const appendedSourceSet = new Set();
+                        const appendSource = (source) => {
+                            if (typeof source !== 'string') return;
+                            const normalizedSource = source.trim();
+                            if (!normalizedSource || appendedSourceSet.has(normalizedSource)) return;
+                            appendedSourceSet.add(normalizedSource);
+                            mergedSources.push(normalizedSource);
+                        };
+                        normalizedSources.forEach(appendSource);
+                        appendSource(PIKMIN_CLASSIC_BASE_SOURCE_GROUP[option.id]);
                         const fallbackSource = fallbackGroup[option.id];
-                        if (fallbackSource && !mergedSources.includes(fallbackSource)) {
-                            mergedSources.push(fallbackSource);
-                        }
-                        if (!mergedSources.length && fallbackSource) {
-                            mergedSources.push(fallbackSource);
-                        }
+                        appendSource(fallbackSource);
                         mergedSourceLists[option.id] = mergedSources;
                     });
 
@@ -496,18 +514,32 @@
                     return listLengths.length ? Math.max(...listLengths) : 1;
                 };
 
+                const normalizeSourceIndex = (sourceListLength, sourceIndex, fallbackIndex = 0) => {
+                    if (!Number.isInteger(sourceListLength) || sourceListLength <= 0) {
+                        return 0;
+                    }
+                    const normalizedFallback = Number.isInteger(fallbackIndex) ? fallbackIndex : 0;
+                    const rawIndex = Number.isInteger(sourceIndex) ? sourceIndex : normalizedFallback;
+                    return ((rawIndex % sourceListLength) + sourceListLength) % sourceListLength;
+                };
+
                 const resolvePikminImageUrl = (colorSourceLists, optionId, sourceGroupIndex, fallbackGroup) => {
                     const sourceList = Array.isArray(colorSourceLists?.[optionId]) ? colorSourceLists[optionId] : [];
                     if (!sourceList.length) {
                         return fallbackGroup[optionId];
                     }
-                    const normalizedIndex = ((sourceGroupIndex % sourceList.length) + sourceList.length) % sourceList.length;
+                    const normalizedIndex = normalizeSourceIndex(sourceList.length, sourceGroupIndex);
                     return sourceList[normalizedIndex] || fallbackGroup[optionId];
                 };
 
                 const pikminDataUrlFallbackGroup = createPikminDataUrlGroup(PIKMIN_BASE_OPTIONS);
                 const pikminFallbackSourceLists = createPikminFallbackSourceLists(pikminDataUrlFallbackGroup);
-                const pikminColorSourceLists = ref(pikminFallbackSourceLists);
+                const pikminColorSourceLists = ref(
+                    mergePikminColorSourceListsWithFallback(
+                        pikminFallbackSourceLists,
+                        pikminDataUrlFallbackGroup
+                    )
+                );
                 const primarySourceGroupIndex = ref(0);
                 const buildPikminOptions = (colorSourceLists, sourceGroupIndex) => (
                     PIKMIN_BASE_OPTIONS.map((option) => ({
@@ -575,47 +607,344 @@
                     Math.floor(Math.random() * (max - min + 1)) + min
                 );
 
-                const getRandomUniquePikminSelection = () => {
-                    const shuffledOptions = [...PIKMIN_BASE_OPTIONS];
-                    for (let i = shuffledOptions.length - 1; i > 0; i -= 1) {
-                        const randomIndex = Math.floor(Math.random() * (i + 1));
-                        [shuffledOptions[i], shuffledOptions[randomIndex]] =
-                            [shuffledOptions[randomIndex], shuffledOptions[i]];
-                    }
-
-                    const randomCount = getRandomIntInclusive(1, 5);
-                    return shuffledOptions.slice(0, randomCount).map((option) => option.id);
+                const getCyclicIndexDistance = (fromIndex, toIndex, listLength) => {
+                    if (!Number.isInteger(listLength) || listLength <= 1) return 0;
+                    const forwardDistance = (toIndex - fromIndex + listLength) % listLength;
+                    const backwardDistance = (fromIndex - toIndex + listLength) % listLength;
+                    return Math.min(forwardDistance, backwardDistance);
                 };
 
-                const selectedPikmins = ref(getRandomUniquePikminSelection());
+                const assignPikminSourceIndices = (instanceColors, colorSourceLists, preferredSourceIndex) => {
+                    if (!Array.isArray(instanceColors) || !instanceColors.length) return [];
+
+                    const globalUsageByIndex = new Map();
+                    const perColorUsageByIndex = new Map();
+
+                    return instanceColors.map((optionId) => {
+                        const sourceList = Array.isArray(colorSourceLists?.[optionId])
+                            ? colorSourceLists[optionId]
+                            : [];
+                        const listLength = sourceList.length;
+                        if (!listLength) return 0;
+
+                        const normalizedPreferredIndex = normalizeSourceIndex(
+                            listLength,
+                            preferredSourceIndex,
+                            0
+                        );
+                        const allIndices = Array.from({ length: listLength }, (_, index) => index);
+                        let colorUsageMap = perColorUsageByIndex.get(optionId);
+                        if (!colorUsageMap) {
+                            colorUsageMap = new Map();
+                            perColorUsageByIndex.set(optionId, colorUsageMap);
+                        }
+
+                        const sameColorUnusedIndices = allIndices.filter(
+                            (index) => (colorUsageMap.get(index) || 0) === 0
+                        );
+                        const candidateIndices = sameColorUnusedIndices.length
+                            ? sameColorUnusedIndices
+                            : allIndices;
+
+                        let selectedIndex = candidateIndices[0];
+                        let selectedGlobalUsage = Number.POSITIVE_INFINITY;
+                        let selectedColorUsage = Number.POSITIVE_INFINITY;
+                        let selectedDistance = Number.POSITIVE_INFINITY;
+
+                        candidateIndices.forEach((index) => {
+                            const globalUsage = globalUsageByIndex.get(index) || 0;
+                            const colorUsage = colorUsageMap.get(index) || 0;
+                            const distance = getCyclicIndexDistance(
+                                normalizedPreferredIndex,
+                                index,
+                                listLength
+                            );
+
+                            const isBetterCandidate = (
+                                globalUsage < selectedGlobalUsage
+                                || (globalUsage === selectedGlobalUsage && colorUsage < selectedColorUsage)
+                                || (
+                                    globalUsage === selectedGlobalUsage
+                                    && colorUsage === selectedColorUsage
+                                    && distance < selectedDistance
+                                )
+                                || (
+                                    globalUsage === selectedGlobalUsage
+                                    && colorUsage === selectedColorUsage
+                                    && distance === selectedDistance
+                                    && Math.random() < 0.5
+                                )
+                            );
+
+                            if (isBetterCandidate) {
+                                selectedIndex = index;
+                                selectedGlobalUsage = globalUsage;
+                                selectedColorUsage = colorUsage;
+                                selectedDistance = distance;
+                            }
+                        });
+
+                        colorUsageMap.set(selectedIndex, (colorUsageMap.get(selectedIndex) || 0) + 1);
+                        globalUsageByIndex.set(selectedIndex, (globalUsageByIndex.get(selectedIndex) || 0) + 1);
+                        return selectedIndex;
+                    });
+                };
+
+                const buildRandomPikminInstanceColors = (candidatePool) => {
+                    if (!candidatePool.length) return [];
+
+                    const randomCount = getRandomIntInclusive(1, MAX_PIKMIN_INSTANCES);
+                    return Array.from({ length: randomCount }, () => (
+                        candidatePool[Math.floor(Math.random() * candidatePool.length)]
+                    ));
+                };
+
+                const selectedPikmins = ref([...ALL_PIKMIN_IDS]);
+                const pikminInstances = ref([]);
                 const pikminLayoutMap = ref({});
+                const rerollSeed = ref(0);
+                const pikminRenderStateMap = ref({});
+
+                const createPikminRenderState = (imgUrl) => ({
+                    currentSrc: typeof imgUrl === 'string' ? imgUrl : '',
+                    attemptedSourceIndices: [],
+                    isLoaded: false,
+                    showFallback: false
+                });
+                const setPikminRenderState = (instanceId, nextState) => {
+                    pikminRenderStateMap.value = {
+                        ...pikminRenderStateMap.value,
+                        [instanceId]: nextState
+                    };
+                };
 
                 const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+                const randomBetween = (min, max) => min + (Math.random() * (max - min));
+
+                const PIKMIN_OVERLAP_LIMIT = 0.3;
+                const PIKMIN_LAYOUT_ATTEMPTS = 60;
+                const PIKMIN_BOUNDS_HEIGHT_RATIO = 1.45;
+                const PIKMIN_MAX_RENDERED_SIZE = 60;
+                const PIKMIN_MIN_VISIBLE_RATIO = 0.42;
+                const PIKMIN_ZONE_SEQUENCE = ['left', 'right', 'bottom'];
+                const PIKMIN_PLACEMENT_ZONES = Object.freeze({
+                    left: {
+                        edgeOffsetRange: [-6, 0],
+                        topRange: [56, 92],
+                        rotationRange: [-18, 20]
+                    },
+                    right: {
+                        edgeOffsetRange: [0, 6],
+                        topRange: [56, 92],
+                        rotationRange: [-20, 18]
+                    },
+                    bottom: {
+                        leftRange: [18, 82],
+                        edgeOffsetRange: [0, 8],
+                        rotationRange: [-14, 14]
+                    }
+                });
+                const clampPikminSizeForScale = (size, scale) => {
+                    const normalizedScale = Number.isFinite(scale) && scale > 0 ? scale : 1;
+                    const maxSize = PIKMIN_MAX_RENDERED_SIZE / normalizedScale;
+                    return clamp(size, 0, maxSize);
+                };
+
+                const getCandidatePikminPool = () => {
+                    const validSelected = selectedPikmins.value.filter((id, index, arr) => (
+                        ALL_PIKMIN_IDS.includes(id) && arr.indexOf(id) === index
+                    ));
+                    return validSelected.length ? validSelected : [...ALL_PIKMIN_IDS];
+                };
+
+                const getPikminSizeRange = (instanceCount) => {
+                    const normalizedCount = clamp(instanceCount, 1, MAX_PIKMIN_INSTANCES);
+                    if (normalizedCount === 1) {
+                        return { min: 56, max: 80 };
+                    }
+
+                    const countRatio = (normalizedCount - 2) / Math.max(MAX_PIKMIN_INSTANCES - 2, 1);
+                    const min = 30 - (countRatio * 14);
+                    const max = 52 - (countRatio * 24);
+                    return {
+                        min: clamp(min, 14, 80),
+                        max: clamp(max, 24, 80)
+                    };
+                };
+
+                const getPlacementZoneKey = (instanceIndex, instanceCount) => {
+                    const preferredZone = instanceCount === 1
+                        ? 'bottom'
+                        : PIKMIN_ZONE_SEQUENCE[instanceIndex % PIKMIN_ZONE_SEQUENCE.length];
+                    if (Math.random() < 0.7) return preferredZone;
+                    return PIKMIN_ZONE_SEQUENCE[Math.floor(Math.random() * PIKMIN_ZONE_SEQUENCE.length)];
+                };
+
+                const buildLayoutBounds = (layout) => {
+                    const scale = Number.isFinite(layout.scale) && layout.scale > 0 ? layout.scale : 1;
+                    const size = clampPikminSizeForScale(layout.size, scale);
+                    const width = size * scale;
+                    const height = width * PIKMIN_BOUNDS_HEIGHT_RATIO;
+                    const halfWidth = width / 2;
+                    const halfHeight = height / 2;
+                    return {
+                        left: layout.left - halfWidth,
+                        right: layout.left + halfWidth,
+                        top: layout.top - halfHeight,
+                        bottom: layout.top + halfHeight,
+                        area: width * height
+                    };
+                };
+
+                const getOverlapRatio = (boundsA, boundsB) => {
+                    const overlapWidth = Math.max(
+                        0,
+                        Math.min(boundsA.right, boundsB.right) - Math.max(boundsA.left, boundsB.left)
+                    );
+                    const overlapHeight = Math.max(
+                        0,
+                        Math.min(boundsA.bottom, boundsB.bottom) - Math.max(boundsA.top, boundsB.top)
+                    );
+                    const overlapArea = overlapWidth * overlapHeight;
+                    const baseArea = Math.max(1, Math.min(boundsA.area, boundsB.area));
+                    return overlapArea / baseArea;
+                };
+
+                const getVisibleRatio = (bounds) => {
+                    const visibleWidth = Math.max(0, Math.min(bounds.right, 100) - Math.max(bounds.left, 0));
+                    const visibleHeight = Math.max(0, Math.min(bounds.bottom, 100) - Math.max(bounds.top, 0));
+                    const visibleArea = visibleWidth * visibleHeight;
+                    return bounds.area > 0 ? (visibleArea / bounds.area) : 0;
+                };
+
+                const evaluatePlacementCandidate = (candidateBounds, placedBounds) => {
+                    let maxOverlap = 0;
+                    let overlapSum = 0;
+                    placedBounds.forEach((placed) => {
+                        const overlap = getOverlapRatio(candidateBounds, placed);
+                        maxOverlap = Math.max(maxOverlap, overlap);
+                        overlapSum += overlap;
+                    });
+
+                    const visibleRatio = getVisibleRatio(candidateBounds);
+                    const visibilityPenalty = Math.max(0, PIKMIN_MIN_VISIBLE_RATIO - visibleRatio) * 2;
+                    const score = (maxOverlap * 4) + overlapSum + visibilityPenalty;
+                    return { maxOverlap, score, visibleRatio };
+                };
+
+                const createPlacementCandidate = (instanceIndex, instanceCount, sizeRange) => {
+                    const zoneKey = getPlacementZoneKey(instanceIndex, instanceCount);
+                    const zone = PIKMIN_PLACEMENT_ZONES[zoneKey];
+                    const rawSize = randomBetween(sizeRange.min, sizeRange.max);
+                    const scaleMin = instanceCount === 1 ? 0.95 : 0.88;
+                    const scaleMax = instanceCount === 1 ? 1.08 : 1.04;
+                    const scale = randomBetween(scaleMin, scaleMax);
+                    const size = clampPikminSizeForScale(rawSize, scale);
+                    const width = size * scale;
+                    const halfWidth = width / 2;
+                    const halfHeight = (width * PIKMIN_BOUNDS_HEIGHT_RATIO) / 2;
+                    let left;
+                    let top;
+
+                    if (zoneKey === 'left') {
+                        left = halfWidth + randomBetween(zone.edgeOffsetRange[0], zone.edgeOffsetRange[1]);
+                        top = randomBetween(zone.topRange[0], zone.topRange[1]);
+                    } else if (zoneKey === 'right') {
+                        left = (100 - halfWidth) + randomBetween(zone.edgeOffsetRange[0], zone.edgeOffsetRange[1]);
+                        top = randomBetween(zone.topRange[0], zone.topRange[1]);
+                    } else {
+                        left = randomBetween(zone.leftRange[0], zone.leftRange[1]);
+                        top = (100 - halfHeight) + randomBetween(zone.edgeOffsetRange[0], zone.edgeOffsetRange[1]);
+                    }
+
+                    const layout = {
+                        left,
+                        top,
+                        rotation: randomBetween(zone.rotationRange[0], zone.rotationRange[1]),
+                        scale,
+                        size
+                    };
+
+                    return {
+                        layout,
+                        bounds: buildLayoutBounds(layout)
+                    };
+                };
+
+                const getBestPikminPlacement = (instanceIndex, instanceCount, sizeRange, placedBounds) => {
+                    let bestCandidate = null;
+
+                    for (let attempt = 0; attempt < PIKMIN_LAYOUT_ATTEMPTS; attempt += 1) {
+                        const candidate = createPlacementCandidate(instanceIndex, instanceCount, sizeRange);
+                        const evaluation = evaluatePlacementCandidate(candidate.bounds, placedBounds);
+                        const candidateWithScore = {
+                            ...candidate,
+                            evaluation
+                        };
+
+                        if (!bestCandidate || candidateWithScore.evaluation.score < bestCandidate.evaluation.score) {
+                            bestCandidate = candidateWithScore;
+                        }
+
+                        if (
+                            evaluation.maxOverlap <= PIKMIN_OVERLAP_LIMIT
+                            && evaluation.visibleRatio >= PIKMIN_MIN_VISIBLE_RATIO
+                        ) {
+                            return candidateWithScore;
+                        }
+                    }
+
+                    return bestCandidate;
+                };
 
                 const randomizePikminLayout = () => {
-                    const selectedCount = selectedPikmins.value.length;
-                    if (!selectedCount) {
+                    const candidatePool = getCandidatePikminPool();
+                    const instanceColors = buildRandomPikminInstanceColors(candidatePool);
+                    if (!instanceColors.length) {
+                        pikminInstances.value = [];
                         pikminLayoutMap.value = {};
                         return;
                     }
 
-                    const countRatio = (Math.min(selectedCount, 5) - 1) / 4;
-                    const baseSize = 30 - (countRatio * 12);
+                    const sizeRange = getPikminSizeRange(instanceColors.length);
                     const nextLayoutMap = {};
+                    const nextInstances = [];
+                    const placedBounds = [];
+                    rerollSeed.value += 1;
+                    const nextSourceIndices = assignPikminSourceIndices(
+                        instanceColors,
+                        pikminColorSourceLists.value,
+                        primarySourceGroupIndex.value
+                    );
 
-                    selectedPikmins.value.forEach((id, index) => {
-                        const top = 24 + (Math.random() * 66);
-                        const size = clamp(baseSize * (0.88 + Math.random() * 0.24), 12, 34);
-                        nextLayoutMap[id] = {
-                            left: 10 + (Math.random() * 80),
-                            top,
-                            rotation: -22 + (Math.random() * 44),
-                            scale: 0.9 + (Math.random() * 0.25),
-                            size,
-                            zIndex: 20 + Math.round(top) + index
+                    instanceColors.forEach((id, index) => {
+                        const placement = getBestPikminPlacement(
+                            index,
+                            instanceColors.length,
+                            sizeRange,
+                            placedBounds
+                        );
+                        const layout = placement?.layout ?? {
+                            left: 50,
+                            top: 90,
+                            rotation: 0,
+                            scale: 1,
+                            size: clampPikminSizeForScale(sizeRange.min, 1)
                         };
+                        const instanceId = `pikmin-${rerollSeed.value}-${index}`;
+                        nextInstances.push({
+                            instanceId,
+                            optionId: id,
+                            sourceIndex: nextSourceIndices[index] ?? 0
+                        });
+                        nextLayoutMap[instanceId] = {
+                            ...layout,
+                            zIndex: 20 + Math.round(layout.top) + index
+                        };
+                        placedBounds.push(buildLayoutBounds(layout));
                     });
 
+                    pikminInstances.value = nextInstances;
                     pikminLayoutMap.value = nextLayoutMap;
                 };
 
@@ -623,20 +952,71 @@
                     const optionMap = new Map(
                         PIKMIN_OPTIONS.value.map((option) => [option.id, option])
                     );
-                    return selectedPikmins.value
-                        .map((id) => optionMap.get(id))
+                    return pikminInstances.value
+                        .map((instance) => {
+                            const option = optionMap.get(instance.optionId);
+                            if (!option) return null;
+                            const sourceList = Array.isArray(pikminColorSourceLists.value?.[instance.optionId])
+                                ? pikminColorSourceLists.value[instance.optionId]
+                                : [];
+                            const resolvedSourceIndex = sourceList.length
+                                ? normalizeSourceIndex(
+                                    sourceList.length,
+                                    instance.sourceIndex,
+                                    primarySourceGroupIndex.value
+                                )
+                                : 0;
+                            const imgUrl = sourceList.length
+                                ? (sourceList[resolvedSourceIndex] || pikminDataUrlFallbackGroup[instance.optionId])
+                                : pikminDataUrlFallbackGroup[instance.optionId];
+                            return {
+                                ...option,
+                                instanceId: instance.instanceId,
+                                sourceIndex: resolvedSourceIndex,
+                                imgUrl
+                            };
+                        })
                         .filter((option) => Boolean(option));
                 });
+                watch(selectedPikminItems, (items) => {
+                    const previousStates = pikminRenderStateMap.value;
+                    const nextStates = {};
+
+                    items.forEach((item) => {
+                        const previousState = previousStates[item.instanceId];
+                        if (previousState && previousState.currentSrc === item.imgUrl) {
+                            nextStates[item.instanceId] = previousState;
+                            return;
+                        }
+
+                        nextStates[item.instanceId] = createPikminRenderState(item.imgUrl);
+                    });
+
+                    pikminRenderStateMap.value = nextStates;
+                }, { immediate: true });
+
+                const getPikminImageSrc = (instance) => {
+                    const state = pikminRenderStateMap.value[instance.instanceId];
+                    return state?.currentSrc || instance.imgUrl;
+                };
+                const isPikminImageVisible = (instanceId) => Boolean(
+                    pikminRenderStateMap.value[instanceId]?.isLoaded
+                );
+                const shouldShowPikminFallback = (instanceId) => Boolean(
+                    pikminRenderStateMap.value[instanceId]?.showFallback
+                );
 
                 const getPikminOverlayStyle = (optionId) => {
                     const layout = pikminLayoutMap.value[optionId];
                     if (!layout) return {};
+                    const scale = Number.isFinite(layout.scale) && layout.scale > 0 ? layout.scale : 1;
+                    const size = clampPikminSizeForScale(layout.size, scale);
 
                     return {
                         left: `${layout.left}%`,
                         top: `${layout.top}%`,
-                        width: `${layout.size}%`,
-                        transform: `translate(-50%, -50%) rotate(${layout.rotation}deg) scale(${layout.scale})`,
+                        width: `${size}%`,
+                        transform: `translate(-50%, -50%) rotate(${layout.rotation}deg) scale(${scale})`,
                         zIndex: layout.zIndex
                     };
                 };
@@ -645,15 +1025,24 @@
                     if (selectedPikmins.value.includes(id)) {
                         selectedPikmins.value = selectedPikmins.value.filter(p => p !== id);
                     } else {
-                        if (selectedPikmins.value.length >= 5) {
-                            alert('畫面塞不下啦！最多只能選擇 5 隻皮克敏喔！');
-                            return;
-                        }
                         selectedPikmins.value = [...selectedPikmins.value, id];
                     }
                 };
 
                 watch(selectedPikmins, randomizePikminLayout);
+                watch([pikminColorSourceLists, primarySourceGroupIndex], () => {
+                    if (!pikminInstances.value.length) return;
+                    const instanceColors = pikminInstances.value.map((instance) => instance.optionId);
+                    const nextSourceIndices = assignPikminSourceIndices(
+                        instanceColors,
+                        pikminColorSourceLists.value,
+                        primarySourceGroupIndex.value
+                    );
+                    pikminInstances.value = pikminInstances.value.map((instance, index) => ({
+                        ...instance,
+                        sourceIndex: nextSourceIndices[index] ?? 0
+                    }));
+                });
                 randomizePikminLayout();
 
                 const generateRandomTitle = () => {
@@ -759,27 +1148,46 @@
                     }
                 };
 
-                const handleImgError = (e, optionId) => {
-                    const imgEl = e.target;
+                const handleImgLoad = (instanceId) => {
+                    const currentState = pikminRenderStateMap.value[instanceId];
+                    if (!currentState) return;
+
+                    setPikminRenderState(instanceId, {
+                        ...currentState,
+                        isLoaded: true,
+                        showFallback: false
+                    });
+                };
+
+                const handleImgError = (instanceId, optionId, preferredSourceIndex) => {
                     const sourceList = Array.isArray(pikminColorSourceLists.value?.[optionId])
                         ? pikminColorSourceLists.value[optionId]
                         : [];
+                    const currentState = pikminRenderStateMap.value[instanceId]
+                        || createPikminRenderState(sourceList[0] || '');
+                    const attemptedIndices = Array.isArray(currentState.attemptedSourceIndices)
+                        ? currentState.attemptedSourceIndices
+                            .map(v => Number.parseInt(v, 10))
+                            .filter(v => Number.isInteger(v) && v >= 0)
+                        : [];
+
                     if (!sourceList.length) {
-                        imgEl.style.display = 'none';
-                        if (imgEl.nextElementSibling) {
-                            imgEl.nextElementSibling.style.display = 'flex';
-                        }
+                        setPikminRenderState(instanceId, {
+                            ...currentState,
+                            attemptedSourceIndices: attemptedIndices,
+                            isLoaded: false,
+                            showFallback: true
+                        });
                         return;
                     }
 
-                    const attemptedRaw = imgEl.dataset.attemptedSourceIndices || '';
-                    const attemptedIndices = attemptedRaw
-                        .split(',')
-                        .map(v => Number.parseInt(v, 10))
-                        .filter(v => Number.isInteger(v) && v >= 0);
-                    const normalizedPrimaryIndex = (
-                        (primarySourceGroupIndex.value % sourceList.length) + sourceList.length
-                    ) % sourceList.length;
+                    const normalizedPrimaryIndex = normalizeSourceIndex(
+                        sourceList.length,
+                        Number.isInteger(preferredSourceIndex)
+                            ? preferredSourceIndex
+                            : primarySourceGroupIndex.value,
+                        primarySourceGroupIndex.value
+                    );
 
                     if (!attemptedIndices.includes(normalizedPrimaryIndex)) {
                         attemptedIndices.push(normalizedPrimaryIndex);
@@ -792,16 +1200,23 @@
                         const nextUrl = sourceList[nextIndex];
                         if (typeof nextUrl === 'string' && nextUrl.trim()) {
                             attemptedIndices.push(nextIndex);
-                            imgEl.dataset.attemptedSourceIndices = attemptedIndices.join(',');
-                            imgEl.src = nextUrl;
+                            setPikminRenderState(instanceId, {
+                                ...currentState,
+                                currentSrc: nextUrl,
+                                attemptedSourceIndices: attemptedIndices,
+                                isLoaded: false,
+                                showFallback: false
+                            });
                             return;
                         }
                     }
 
-                    imgEl.style.display = 'none';
-                    if (imgEl.nextElementSibling) {
-                        imgEl.nextElementSibling.style.display = 'flex';
-                    }
+                    setPikminRenderState(instanceId, {
+                        ...currentState,
+                        attemptedSourceIndices: attemptedIndices,
+                        isLoaded: false,
+                        showFallback: true
+                    });
                 };
 
                 return {
@@ -817,10 +1232,14 @@
                     togglePikmin,
                     randomizePikminLayout,
                     getPikminOverlayStyle,
+                    getPikminImageSrc,
+                    isPikminImageVisible,
+                    shouldShowPikminFallback,
                     generateRandomTitle,
                     handlePhotoUpload,
                     handleGetLocation,
                     handleDownload,
+                    handleImgLoad,
                     handleImgError
                 };
             }
