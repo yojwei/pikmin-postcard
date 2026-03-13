@@ -112,10 +112,16 @@
 
                 <!-- 皮克敏夥伴選擇區塊 -->
                 <div class="md:col-span-2 pt-4 border-t border-neutral-100 space-y-3">
-                    <div class="flex justify-between items-center mb-1">
+                    <div class="flex flex-wrap justify-between items-center gap-2 mb-1">
                         <label class="block text-sm font-semibold text-neutral-700">3. 選擇皮克敏夥伴</label>
-                        <span class="text-xs text-neutral-400 font-medium">最多選 5 隻 ({{ selectedPikmins.length
-                            }}/5)</span>
+                        <div class="flex items-center gap-2">
+                            <button @click="randomizePikminLayout" :disabled="!selectedPikmins.length"
+                                class="px-3 py-1.5 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-700 hover:bg-indigo-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors active:scale-95">
+                                隨機位置
+                            </button>
+                            <span class="text-xs text-neutral-400 font-medium">最多選 5 隻 ({{ selectedPikmins.length
+                                }}/5)</span>
+                        </div>
                     </div>
                     <div class="flex flex-wrap gap-2">
                         <button v-for="option in PIKMIN_OPTIONS" :key="option.id" @click="togglePikmin(option.id)"
@@ -192,16 +198,15 @@
                         </div>
 
                         <!-- 底部皮克敏裝飾疊加 -->
-                        <div
-                            class="absolute bottom-0 left-0 w-full h-[55%] pointer-events-none z-10 flex items-end justify-center gap-1 sm:gap-3 pb-[1%]">
-                            <template v-for="option in PIKMIN_OPTIONS" :key="'img-'+option.id">
-                                <div v-if="selectedPikmins.includes(option.id)"
-                                    class="relative h-full max-h-[90%] w-[18%] flex justify-center items-end drop-shadow-[0_8px_10px_rgba(0,0,0,0.6)] transition-transform hover:scale-105">
+                        <div class="absolute inset-0 pointer-events-none z-[8]">
+                            <template v-for="option in selectedPikminItems" :key="'img-'+option.id">
+                                <div class="absolute drop-shadow-[0_8px_10px_rgba(0,0,0,0.6)] transition-transform duration-300"
+                                    :style="getPikminOverlayStyle(option.id)">
                                     <img :src="option.imgUrl" :alt="option.label" crossorigin="anonymous"
-                                        class="max-w-full max-h-full object-contain object-bottom select-none"
+                                        class="w-full h-auto object-contain select-none"
                                         @error="handleImgError($event, option.id)" />
                                     <div
-                                        class="hidden absolute inset-0 items-end justify-center pb-4 text-[clamp(20px,4vw,40px)] drop-shadow-lg">
+                                        class="hidden absolute inset-0 items-center justify-center text-[clamp(20px,4vw,40px)] drop-shadow-lg">
                                         {{ option.emoji }}
                                     </div>
                                 </div>
@@ -287,7 +292,7 @@
     </div>
 
     <script>
-        const { createApp, ref } = Vue;
+        const { createApp, ref, computed, watch } = Vue;
 
         createApp({
             setup() {
@@ -566,7 +571,75 @@
                 };
                 loadPikminColorSourceLists();
 
-                const selectedPikmins = ref(['purple', 'yellow', 'rock']);
+                const getRandomIntInclusive = (min, max) => (
+                    Math.floor(Math.random() * (max - min + 1)) + min
+                );
+
+                const getRandomUniquePikminSelection = () => {
+                    const shuffledOptions = [...PIKMIN_BASE_OPTIONS];
+                    for (let i = shuffledOptions.length - 1; i > 0; i -= 1) {
+                        const randomIndex = Math.floor(Math.random() * (i + 1));
+                        [shuffledOptions[i], shuffledOptions[randomIndex]] =
+                            [shuffledOptions[randomIndex], shuffledOptions[i]];
+                    }
+
+                    const randomCount = getRandomIntInclusive(1, 5);
+                    return shuffledOptions.slice(0, randomCount).map((option) => option.id);
+                };
+
+                const selectedPikmins = ref(getRandomUniquePikminSelection());
+                const pikminLayoutMap = ref({});
+
+                const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+
+                const randomizePikminLayout = () => {
+                    const selectedCount = selectedPikmins.value.length;
+                    if (!selectedCount) {
+                        pikminLayoutMap.value = {};
+                        return;
+                    }
+
+                    const countRatio = (Math.min(selectedCount, 5) - 1) / 4;
+                    const baseSize = 30 - (countRatio * 12);
+                    const nextLayoutMap = {};
+
+                    selectedPikmins.value.forEach((id, index) => {
+                        const top = 24 + (Math.random() * 66);
+                        const size = clamp(baseSize * (0.88 + Math.random() * 0.24), 12, 34);
+                        nextLayoutMap[id] = {
+                            left: 10 + (Math.random() * 80),
+                            top,
+                            rotation: -22 + (Math.random() * 44),
+                            scale: 0.9 + (Math.random() * 0.25),
+                            size,
+                            zIndex: 20 + Math.round(top) + index
+                        };
+                    });
+
+                    pikminLayoutMap.value = nextLayoutMap;
+                };
+
+                const selectedPikminItems = computed(() => {
+                    const optionMap = new Map(
+                        PIKMIN_OPTIONS.value.map((option) => [option.id, option])
+                    );
+                    return selectedPikmins.value
+                        .map((id) => optionMap.get(id))
+                        .filter((option) => Boolean(option));
+                });
+
+                const getPikminOverlayStyle = (optionId) => {
+                    const layout = pikminLayoutMap.value[optionId];
+                    if (!layout) return {};
+
+                    return {
+                        left: `${layout.left}%`,
+                        top: `${layout.top}%`,
+                        width: `${layout.size}%`,
+                        transform: `translate(-50%, -50%) rotate(${layout.rotation}deg) scale(${layout.scale})`,
+                        zIndex: layout.zIndex
+                    };
+                };
 
                 const togglePikmin = (id) => {
                     if (selectedPikmins.value.includes(id)) {
@@ -576,9 +649,12 @@
                             alert('畫面塞不下啦！最多只能選擇 5 隻皮克敏喔！');
                             return;
                         }
-                        selectedPikmins.value.push(id);
+                        selectedPikmins.value = [...selectedPikmins.value, id];
                     }
                 };
+
+                watch(selectedPikmins, randomizePikminLayout);
+                randomizePikminLayout();
 
                 const generateRandomTitle = () => {
                     const randomTitles = [
@@ -737,7 +813,10 @@
                     postcardRef,
                     PIKMIN_OPTIONS,
                     selectedPikmins,
+                    selectedPikminItems,
                     togglePikmin,
+                    randomizePikminLayout,
+                    getPikminOverlayStyle,
                     generateRandomTitle,
                     handlePhotoUpload,
                     handleGetLocation,
