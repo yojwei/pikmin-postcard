@@ -143,23 +143,46 @@
             <!-- 預覽與下載按鈕 -->
             <div class="flex justify-between items-end pb-2 border-b border-neutral-200 mt-8">
                 <h2 class="text-xl font-bold text-neutral-800">預覽結果</h2>
-                <button @click="handleDownload" :disabled="isDownloading"
-                    class="bg-pink-500 hover:bg-pink-600 text-white px-5 py-2.5 rounded-full flex items-center gap-2 shadow-md shadow-pink-200 transition-all hover:-translate-y-0.5 active:translate-y-0 active:scale-95 disabled:opacity-70 disabled:hover:translate-y-0">
-                    <!-- Loader Icon -->
-                    <svg v-if="isDownloading" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor"
-                        stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
-                        class="animate-spin">
-                        <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
-                    </svg>
-                    <!-- Download Icon -->
-                    <svg v-else viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2"
-                        fill="none" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                        <polyline points="7 10 12 15 17 10"></polyline>
-                        <line x1="12" y1="15" x2="12" y2="3"></line>
-                    </svg>
-                    <span class="font-semibold">{{ isDownloading ? '處理中...' : '下載明信片' }}</span>
-                </button>
+                <div class="flex gap-2">
+                    <!-- Share Button -->
+                    <button @click="handleShare" :disabled="isSharing || isDownloading"
+                        class="bg-blue-500 hover:bg-blue-600 text-white px-5 py-2.5 rounded-full flex items-center gap-2 shadow-md shadow-blue-200 transition-all hover:-translate-y-0.5 active:translate-y-0 active:scale-95 disabled:opacity-70 disabled:hover:translate-y-0">
+                        <!-- Loader Icon -->
+                        <svg v-if="isSharing" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor"
+                            stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+                            class="animate-spin">
+                            <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
+                        </svg>
+                        <!-- Share Icon -->
+                        <svg v-else viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2"
+                            fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="18" cy="5" r="3"></circle>
+                            <circle cx="6" cy="12" r="3"></circle>
+                            <circle cx="18" cy="19" r="3"></circle>
+                            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                        </svg>
+                        <span class="font-semibold">{{ isSharing ? '處理中...' : '分享明信片' }}</span>
+                    </button>
+                    <!-- Download Button -->
+                    <button @click="handleDownload" :disabled="isDownloading || isSharing"
+                        class="bg-pink-500 hover:bg-pink-600 text-white px-5 py-2.5 rounded-full flex items-center gap-2 shadow-md shadow-pink-200 transition-all hover:-translate-y-0.5 active:translate-y-0 active:scale-95 disabled:opacity-70 disabled:hover:translate-y-0">
+                        <!-- Loader Icon -->
+                        <svg v-if="isDownloading" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor"
+                            stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+                            class="animate-spin">
+                            <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
+                        </svg>
+                        <!-- Download Icon -->
+                        <svg v-else viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2"
+                            fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        <span class="font-semibold">{{ isDownloading ? '處理中...' : '下載明信片' }}</span>
+                    </button>
+                </div>
             </div>
 
             <!-- 明信片本體 -->
@@ -399,6 +422,7 @@
                 const location = ref('江陵里, 新店區');
                 const isLocating = ref(false);
                 const isDownloading = ref(false);
+                const isSharing = ref(false);
                 const postcardRef = ref(null);
                 const STAMP_VARIANTS = [
                     {
@@ -1440,41 +1464,72 @@
                     }
                 };
 
+                const capturePostcardCanvas = async () => {
+                    if (!window.html2canvas) throw new Error('html2canvas not loaded');
+                    if (!postcardRef.value) throw new Error('postcard element not found');
+                    await waitForPostcardRenderStability();
+                    const el = postcardRef.value;
+                    const rect = el.getBoundingClientRect();
+                    return window.html2canvas(el, {
+                        scale: 2,
+                        useCORS: true,
+                        backgroundColor: null,
+                        width: Math.round(rect.width),
+                        height: Math.round(rect.height)
+                    });
+                };
+
+                const downloadCanvas = (canvas) => {
+                    const link = document.createElement('a');
+                    link.download = `pikmin-postcard-${Date.now()}.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                };
+
                 const handleDownload = async () => {
                     isDownloading.value = true;
-
-                    if (!window.html2canvas) {
-                        alert('截圖工具載入中，請稍後再試！');
-                        isDownloading.value = false;
-                        return;
-                    }
-
-                    if (!postcardRef.value) {
-                        isDownloading.value = false;
-                        return;
-                    }
-
                     try {
-                        await waitForPostcardRenderStability();
-                        const el = postcardRef.value;
-                        const rect = el.getBoundingClientRect();
-                        const canvas = await window.html2canvas(el, {
-                            scale: 2,
-                            useCORS: true,
-                            backgroundColor: null,
-                            width: Math.round(rect.width),
-                            height: Math.round(rect.height)
-                        });
-
-                        const link = document.createElement('a');
-                        link.download = `pikmin-postcard-${Date.now()}.png`;
-                        link.href = canvas.toDataURL('image/png');
-                        link.click();
+                        const canvas = await capturePostcardCanvas();
+                        downloadCanvas(canvas);
                     } catch (err) {
                         console.error("Canvas export failed", err);
                         alert("輸出圖片失敗");
                     } finally {
                         isDownloading.value = false;
+                    }
+                };
+
+                const handleShare = async () => {
+                    isSharing.value = true;
+                    try {
+                        const canvas = await capturePostcardCanvas();
+                        const filename = `pikmin-postcard-${Date.now()}.png`;
+
+                        const blob = await new Promise((resolve, reject) =>
+                            canvas.toBlob(b => b ? resolve(b) : reject(new Error('toBlob returned null')), 'image/png')
+                        );
+                        const file = new File([blob], filename, { type: 'image/png' });
+
+                        if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+                            await navigator.share({
+                                files: [file],
+                                title: '皮克敏風格明信片'
+                            });
+                        } else {
+                            downloadCanvas(canvas);
+                        }
+                    } catch (err) {
+                        if (err.name === 'AbortError') return;
+                        console.error("Share failed", err);
+                        try {
+                            const canvas = await capturePostcardCanvas();
+                            downloadCanvas(canvas);
+                        } catch (fallbackErr) {
+                            console.error("Fallback download failed", fallbackErr);
+                            alert("分享失敗");
+                        }
+                    } finally {
+                        isSharing.value = false;
                     }
                 };
 
@@ -1555,6 +1610,7 @@
                     location,
                     isLocating,
                     isDownloading,
+                    isSharing,
                     postcardRef,
                     currentStampVariant,
                     STAMP_PRICE_MIN,
@@ -1574,6 +1630,7 @@
                     handlePhotoUpload,
                     handleGetLocation,
                     handleDownload,
+                    handleShare,
                     handleImgLoad,
                     handleImgError
                 };
