@@ -47,7 +47,7 @@
                                     placeholder="輸入標題..." />
                             </div>
                             <button @click="generateRandomTitle"
-                                class="bg-pink-100 hover:bg-pink-200 text-pink-700 px-3 py-2 rounded-xl flex items-center justify-center transition-colors active:scale-95 shadow-sm"
+                                class="shrink-0 bg-pink-100 hover:bg-pink-200 text-pink-700 px-3 py-2 min-h-[44px] min-w-[44px] rounded-xl flex items-center justify-center transition-colors active:scale-95 shadow-sm"
                                 title="隨機產生標題">
                                 <!-- Sparkles Icon -->
                                 <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2"
@@ -71,7 +71,7 @@
                                 class="w-full px-3 py-2 bg-transparent outline-none text-sm" placeholder="地點描述..." />
                         </div>
                         <button @click="handleGetLocation" :disabled="isLocating"
-                            class="bg-blue-100 hover:bg-blue-200 text-blue-700 px-4 py-2 rounded-xl flex items-center gap-2 transition-colors font-medium disabled:opacity-50 whitespace-nowrap active:scale-95">
+                            class="shrink-0 bg-blue-100 hover:bg-blue-200 text-blue-700 px-4 py-2 min-h-[44px] rounded-xl flex items-center gap-2 transition-colors font-medium disabled:opacity-50 whitespace-nowrap active:scale-95">
                             <!-- Loader Icon -->
                             <svg v-if="isLocating" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor"
                                 stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
@@ -116,7 +116,7 @@
                         <label class="block text-sm font-semibold text-neutral-700">3. 選擇皮克敏夥伴</label>
                         <div class="flex items-center gap-2">
                             <button @click="randomizePikminLayout"
-                                class="px-3 py-1.5 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-700 hover:bg-indigo-200 transition-colors active:scale-95">
+                                class="px-3 py-2 min-h-[36px] rounded-full text-xs font-semibold bg-indigo-100 text-indigo-700 hover:bg-indigo-200 transition-colors active:scale-95">
                                 隨機位置
                             </button>
                             <span class="text-xs text-neutral-400 font-medium">候選顏色 {{ selectedPikmins.length }}/{{
@@ -126,7 +126,7 @@
                     <div class="flex flex-wrap gap-2">
                         <button v-for="option in PIKMIN_OPTIONS" :key="option.id" @click="togglePikmin(option.id)"
                             :class="[
-                'flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all active:scale-95 border',
+                'flex items-center gap-1.5 px-3 py-2 rounded-full text-sm font-medium transition-all active:scale-95 border',
                 selectedPikmins.includes(option.id) 
                   ? option.color + ' text-white border-transparent shadow-md transform scale-105' 
                   : 'bg-white text-neutral-600 border-neutral-200 hover:bg-neutral-50',
@@ -141,12 +141,12 @@
             </div>
 
             <!-- 預覽與下載按鈕 -->
-            <div class="flex justify-between items-end pb-2 border-b border-neutral-200 mt-8">
+            <div class="flex flex-wrap justify-between items-center gap-x-4 gap-y-2 pb-2 border-b border-neutral-200 mt-8">
                 <h2 class="text-xl font-bold text-neutral-800">預覽結果</h2>
-                <div class="flex gap-2">
+                <div class="flex flex-wrap gap-2">
                     <!-- Share Button -->
                     <button @click="handleShare" :disabled="isSharing || isDownloading"
-                        class="bg-blue-500 hover:bg-blue-600 text-white px-5 py-2.5 rounded-full flex items-center gap-2 shadow-md shadow-blue-200 transition-all hover:-translate-y-0.5 active:translate-y-0 active:scale-95 disabled:opacity-70 disabled:hover:translate-y-0">
+                        class="bg-blue-500 hover:bg-blue-600 text-white px-5 py-2.5 min-h-[44px] rounded-full flex items-center gap-2 shadow-md shadow-blue-200 transition-all hover:-translate-y-0.5 active:translate-y-0 active:scale-95 disabled:opacity-70 disabled:hover:translate-y-0">
                         <!-- Loader Icon -->
                         <svg v-if="isSharing" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor"
                             stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
@@ -166,7 +166,7 @@
                     </button>
                     <!-- Download Button -->
                     <button @click="handleDownload" :disabled="isDownloading || isSharing"
-                        class="bg-pink-500 hover:bg-pink-600 text-white px-5 py-2.5 rounded-full flex items-center gap-2 shadow-md shadow-pink-200 transition-all hover:-translate-y-0.5 active:translate-y-0 active:scale-95 disabled:opacity-70 disabled:hover:translate-y-0">
+                        class="bg-pink-500 hover:bg-pink-600 text-white px-5 py-2.5 min-h-[44px] rounded-full flex items-center gap-2 shadow-md shadow-pink-200 transition-all hover:-translate-y-0.5 active:translate-y-0 active:scale-95 disabled:opacity-70 disabled:hover:translate-y-0">
                         <!-- Loader Icon -->
                         <svg v-if="isDownloading" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor"
                             stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
