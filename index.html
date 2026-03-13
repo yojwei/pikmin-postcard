@@ -202,8 +202,8 @@
                             <template v-for="instance in selectedPikminItems" :key="'img-'+instance.instanceId">
                                 <div class="absolute drop-shadow-[0_8px_10px_rgba(0,0,0,0.6)] transition-transform duration-300"
                                     :style="getPikminOverlayStyle(instance.instanceId)">
-                                    <img :src="getPikminImageSrc(instance)" :alt="instance.label" crossorigin="anonymous"
-                                        class="w-full h-auto object-contain select-none"
+                                    <img :src="getPikminImageSrc(instance)" :alt="instance.label"
+                                        crossorigin="anonymous" class="w-full h-auto object-contain select-none"
                                         :style="{ visibility: isPikminImageVisible(instance.instanceId) ? 'visible' : 'hidden' }"
                                         @load="handleImgLoad(instance.instanceId)"
                                         @error="handleImgError(instance.instanceId, instance.id, instance.sourceIndex)" />
@@ -262,13 +262,97 @@
                         </div>
 
                         <!-- 郵票 Stamp -->
-                        <div
-                            class="absolute top-[8%] right-[8%] z-10 w-[26%] aspect-[0.8] bg-[#e34857] p-[1.5%] shadow-md rotate-2">
-                            <div
-                                class="w-full h-full border-[1.5px] border-white/80 border-dashed flex flex-col items-center justify-between relative p-[5%]">
+                        <div data-stamp-container
+                            class="absolute top-[8%] right-[8%] z-20 w-[26%] aspect-[0.8] p-[1.5%] shadow-md" :style="{
+                            background: `linear-gradient(135deg, ${currentStampVariant?.frameFrom || '#e34857'} 0%, ${currentStampVariant?.frameTo || '#be2948'} 100%)`,
+                            transform: `rotate(${currentStampVariant?.rotation ?? currentStampVariant?.rotationDeg ?? 2}deg)`
+                        }">
+                            <div class="w-full h-full border-[1.5px] flex flex-col items-center justify-between relative p-[5%]"
+                                :style="{
+                                    borderColor: currentStampVariant?.borderColor || 'rgba(255,255,255,0.82)',
+                                    borderStyle: currentStampVariant?.borderStyle || 'dashed',
+                                    background: currentStampVariant?.innerBackground || currentStampVariant?.innerBg || 'rgba(255,255,255,0.08)'
+                                }">
 
-                                <!-- 低面數寶石心型 -->
-                                <svg viewBox="0 0 100 100" class="w-[85%] mt-[5%] drop-shadow-sm overflow-visible">
+                                <svg v-if="['gem-heart','gem','diamond','crystal','寶石'].includes(currentStampVariant?.motifType || currentStampVariant?.motif)"
+                                    viewBox="0 0 100 100" class="w-[78%] mt-[8%] drop-shadow-sm overflow-visible">
+                                    <polygon points="30,20 50,35 15,40 20,25" fill="#f8b456" />
+                                    <polygon points="30,20 70,20 50,35" fill="#fae6e3" />
+                                    <polygon points="70,20 80,25 85,40 50,35" fill="#f47fae" />
+                                    <polygon points="15,40 50,35 50,65 10,50" fill="#69bbf2" />
+                                    <polygon points="85,40 50,35 50,65 90,50" fill="#e395d8" />
+                                    <polygon points="10,50 50,65 50,95" fill="#4166d1" />
+                                    <polygon points="90,50 50,65 50,95" fill="#9c6fd8" />
+                                </svg>
+                                <svg v-else-if="['petal-wave','flower','blossom','sakura','花朵'].includes(currentStampVariant?.motifType || currentStampVariant?.motif)"
+                                    viewBox="0 0 100 100" class="w-[78%] mt-[8%] drop-shadow-sm overflow-visible">
+                                    <circle cx="50" cy="50" r="11" fill="#ffe7ad" />
+                                    <ellipse cx="50" cy="30" rx="12" ry="18" fill="#ffd0de" />
+                                    <ellipse cx="68" cy="44" rx="12" ry="18" fill="#ffc0d2" />
+                                    <ellipse cx="62" cy="66" rx="12" ry="18" fill="#ffb0c9" />
+                                    <ellipse cx="38" cy="66" rx="12" ry="18" fill="#ffc5d6" />
+                                    <ellipse cx="32" cy="44" rx="12" ry="18" fill="#ffd9e4" />
+                                </svg>
+                                <svg v-else-if="['citrus-star','star','sparkle','burst','星星'].includes(currentStampVariant?.motifType || currentStampVariant?.motif)"
+                                    viewBox="0 0 100 100" class="w-[78%] mt-[8%] drop-shadow-sm overflow-visible">
+                                    <polygon points="50,12 60,38 88,38 66,54 74,82 50,66 26,82 34,54 12,38 40,38"
+                                        fill="#ffe082" />
+                                    <circle cx="50" cy="50" r="9" fill="#fff6cc" />
+                                </svg>
+                                <svg v-else-if="['prism-dusk','prism','crystal-prism'].includes(currentStampVariant?.motifType || currentStampVariant?.motif)"
+                                    viewBox="0 0 100 100" class="w-[78%] mt-[8%] drop-shadow-sm overflow-visible">
+                                    <polygon points="50,10 84,36 72,86 28,86 16,36" fill="#d8b4fe" />
+                                    <polygon points="50,24 70,39 63,73 37,73 30,39" fill="#f3e8ff" opacity="0.85" />
+                                    <path d="M28 86 L50 58 L72 86 Z" fill="#a855f7" opacity="0.9" />
+                                </svg>
+                                <svg v-else-if="['ocean-comet','comet','wave-comet'].includes(currentStampVariant?.motifType || currentStampVariant?.motif)"
+                                    viewBox="0 0 100 100" class="w-[78%] mt-[8%] drop-shadow-sm overflow-visible">
+                                    <path d="M20 58 C42 58 58 45 72 28 L80 36 C66 52 48 68 22 68 Z" fill="#7dd3fc" />
+                                    <circle cx="74" cy="29" r="11" fill="#38bdf8" />
+                                    <circle cx="76" cy="27" r="4" fill="#e0f2fe" />
+                                </svg>
+                                <svg v-else-if="['cloud-bloom','cloud','mist-bloom'].includes(currentStampVariant?.motifType || currentStampVariant?.motif)"
+                                    viewBox="0 0 100 100" class="w-[78%] mt-[8%] drop-shadow-sm overflow-visible">
+                                    <circle cx="36" cy="48" r="13" fill="#fbcfe8" />
+                                    <circle cx="50" cy="42" r="16" fill="#f9a8d4" />
+                                    <circle cx="64" cy="49" r="12" fill="#f472b6" />
+                                    <ellipse cx="50" cy="60" rx="24" ry="10" fill="#fdf2f8" opacity="0.85" />
+                                </svg>
+                                <svg v-else-if="['aurora-spark','aurora','spark'].includes(currentStampVariant?.motifType || currentStampVariant?.motif)"
+                                    viewBox="0 0 100 100" class="w-[78%] mt-[8%] drop-shadow-sm overflow-visible">
+                                    <path d="M18 58 C32 43 45 41 82 26 C69 43 56 55 22 73 Z" fill="#67e8f9" />
+                                    <path d="M20 52 C34 36 50 32 78 24 C67 38 53 49 24 66 Z" fill="#818cf8"
+                                        opacity="0.85" />
+                                    <circle cx="68" cy="28" r="6" fill="#e0f2fe" />
+                                </svg>
+                                <svg v-else-if="['leaf-crown','leaf','sprout','plant','葉子'].includes(currentStampVariant?.motifType || currentStampVariant?.motif)"
+                                    viewBox="0 0 100 100" class="w-[78%] mt-[8%] drop-shadow-sm overflow-visible">
+                                    <circle cx="40" cy="36" r="14" fill="#7fd36c" />
+                                    <circle cx="60" cy="36" r="14" fill="#66c95f" />
+                                    <circle cx="40" cy="56" r="14" fill="#66bf58" />
+                                    <circle cx="60" cy="56" r="14" fill="#86db73" />
+                                    <path d="M50 68 C50 74 47 79 43 84" stroke="#4a9a43" stroke-width="4" fill="none"
+                                        stroke-linecap="round" />
+                                </svg>
+                                <svg v-else-if="['berry-flare','berry','heart','love','愛心'].includes(currentStampVariant?.motifType || currentStampVariant?.motif)"
+                                    viewBox="0 0 100 100" class="w-[78%] mt-[8%] drop-shadow-sm overflow-visible">
+                                    <path
+                                        d="M50 84 C34 70 18 58 18 40 C18 29 27 20 38 20 C44 20 48 23 50 28 C52 23 56 20 62 20 C73 20 82 29 82 40 C82 58 66 70 50 84 Z"
+                                        fill="#ff8fb1" />
+                                    <path
+                                        d="M50 76 C38 64 26 54 26 40 C26 33 31 28 38 28 C44 28 48 31 50 35 C52 31 56 28 62 28 C69 28 74 33 74 40 C74 54 62 64 50 76 Z"
+                                        fill="#ffd4e3" opacity="0.85" />
+                                </svg>
+                                <svg v-else-if="['moon-glint','moon','crescent','night','月亮'].includes(currentStampVariant?.motifType || currentStampVariant?.motif)"
+                                    viewBox="0 0 100 100" class="w-[78%] mt-[8%] drop-shadow-sm overflow-visible">
+                                    <circle cx="55" cy="50" r="25" fill="#fde68a" />
+                                    <circle cx="65" cy="45" r="24" fill="#2f4361" />
+                                    <circle cx="38" cy="35" r="3" fill="#fff7d2" />
+                                    <circle cx="44" cy="64" r="2.5" fill="#fff7d2" />
+                                    <circle cx="30" cy="54" r="2" fill="#fff7d2" />
+                                </svg>
+                                <svg v-else viewBox="0 0 100 100"
+                                    class="w-[78%] mt-[8%] drop-shadow-sm overflow-visible">
                                     <polygon points="30,20 50,35 15,40 20,25" fill="#f8b456" />
                                     <polygon points="30,20 70,20 50,35" fill="#fae6e3" />
                                     <polygon points="70,20 80,25 85,40 50,35" fill="#f47fae" />
@@ -278,10 +362,18 @@
                                     <polygon points="90,50 50,65 50,95" fill="#9c6fd8" />
                                 </svg>
 
-                                <!-- 數字 30 -->
-                                <div
-                                    class="absolute bottom-[2%] left-[8%] font-black text-white text-[clamp(12px,1.8vw,22px)] leading-none">
-                                    30
+                                <div class="absolute bottom-[3%] left-[4.5%] w-[86%] h-[32%] pointer-events-none">
+                                    <svg viewBox="0 0 260 100" class="w-full h-full overflow-visible"
+                                        xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                        <text x="14" y="53" text-anchor="start" dominant-baseline="middle"
+                                            font-size="104" font-weight="900"
+                                            font-family="Arial Black, 'Noto Sans TC', sans-serif"
+                                            :fill="currentStampVariant?.priceColor || '#ffffff'"
+                                            stroke="rgba(0,0,0,0.5)" stroke-width="9.6" stroke-linejoin="round"
+                                            paint-order="stroke fill" style="font-variant-numeric: tabular-nums;">
+                                            {{ normalizedStampPrice }}
+                                        </text>
+                                    </svg>
                                 </div>
                             </div>
                         </div>
@@ -294,7 +386,7 @@
     </div>
 
     <script>
-        const { createApp, ref, computed, watch } = Vue;
+        const { createApp, ref, computed, watch, onMounted, nextTick } = Vue;
 
         createApp({
             setup() {
@@ -304,6 +396,201 @@
                 const isLocating = ref(false);
                 const isDownloading = ref(false);
                 const postcardRef = ref(null);
+                const STAMP_VARIANTS = [
+                    {
+                        id: 'ruby-blossom',
+                        motif: 'gem-heart',
+                        frameFrom: '#fb7185',
+                        frameTo: '#e11d48',
+                        innerBg: 'rgba(255,255,255,0.10)',
+                        borderColor: 'rgba(255,255,255,0.85)',
+                        borderStyle: 'dashed',
+                        priceColor: '#ffffff',
+                        rotationDeg: 2
+                    },
+                    {
+                        id: 'mint-splash',
+                        motif: 'petal-wave',
+                        frameFrom: '#34d399',
+                        frameTo: '#0f766e',
+                        innerBg: 'rgba(240,255,250,0.12)',
+                        borderColor: 'rgba(220,252,231,0.92)',
+                        borderStyle: 'dotted',
+                        priceColor: '#ecfeff',
+                        rotationDeg: -3
+                    },
+                    {
+                        id: 'citrus-pop',
+                        motif: 'citrus-star',
+                        frameFrom: '#facc15',
+                        frameTo: '#f97316',
+                        innerBg: 'rgba(255,251,235,0.20)',
+                        borderColor: 'rgba(255,247,237,0.88)',
+                        borderStyle: 'solid',
+                        priceColor: '#7c2d12',
+                        rotationDeg: 4
+                    },
+                    {
+                        id: 'amethyst-dream',
+                        motif: 'prism-dusk',
+                        frameFrom: '#a855f7',
+                        frameTo: '#6d28d9',
+                        innerBg: 'rgba(243,232,255,0.16)',
+                        borderColor: 'rgba(250,245,255,0.9)',
+                        borderStyle: 'double',
+                        priceColor: '#f5f3ff',
+                        rotationDeg: -2
+                    },
+                    {
+                        id: 'cobalt-night',
+                        motif: 'ocean-comet',
+                        frameFrom: '#38bdf8',
+                        frameTo: '#1d4ed8',
+                        innerBg: 'rgba(219,234,254,0.12)',
+                        borderColor: 'rgba(239,246,255,0.92)',
+                        borderStyle: 'dashed',
+                        priceColor: '#f8fafc',
+                        rotationDeg: 3
+                    },
+                    {
+                        id: 'sakura-mist',
+                        motif: 'cloud-bloom',
+                        frameFrom: '#f9a8d4',
+                        frameTo: '#db2777',
+                        innerBg: 'rgba(253,242,248,0.16)',
+                        borderColor: 'rgba(255,255,255,0.9)',
+                        borderStyle: 'dotted',
+                        priceColor: '#fff1f2',
+                        rotationDeg: -4
+                    },
+                    {
+                        id: 'aurora-sky',
+                        motif: 'aurora-spark',
+                        frameFrom: '#22d3ee',
+                        frameTo: '#818cf8',
+                        innerBg: 'rgba(224,231,255,0.15)',
+                        borderColor: 'rgba(224,242,254,0.9)',
+                        borderStyle: 'solid',
+                        priceColor: '#ecfeff',
+                        rotationDeg: 1
+                    },
+                    {
+                        id: 'sunlit-leaf',
+                        motif: 'leaf-crown',
+                        frameFrom: '#84cc16',
+                        frameTo: '#4d7c0f',
+                        innerBg: 'rgba(247,254,231,0.15)',
+                        borderColor: 'rgba(236,253,245,0.9)',
+                        borderStyle: 'dashed',
+                        priceColor: '#f7fee7',
+                        rotationDeg: -1
+                    },
+                    {
+                        id: 'berry-garden',
+                        motif: 'berry-flare',
+                        frameFrom: '#f472b6',
+                        frameTo: '#9333ea',
+                        innerBg: 'rgba(250,245,255,0.14)',
+                        borderColor: 'rgba(252,231,243,0.9)',
+                        borderStyle: 'double',
+                        priceColor: '#fff7ed',
+                        rotationDeg: 5
+                    },
+                    {
+                        id: 'moonstone-frost',
+                        motif: 'moon-glint',
+                        frameFrom: '#cbd5e1',
+                        frameTo: '#64748b',
+                        innerBg: 'rgba(248,250,252,0.22)',
+                        borderColor: 'rgba(255,255,255,0.88)',
+                        borderStyle: 'solid',
+                        priceColor: '#f8fafc',
+                        rotationDeg: -5
+                    }
+                ];
+
+                const STAMP_MOTIF_PALETTES = {
+                    'gem-heart': ['#f8b456', '#fae6e3', '#f47fae', '#69bbf2', '#e395d8', '#4166d1', '#9c6fd8'],
+                    'petal-wave': ['#a7f3d0', '#34d399', '#2dd4bf', '#5eead4', '#14b8a6', '#0f766e', '#99f6e4'],
+                    'citrus-star': ['#fde68a', '#facc15', '#fb923c', '#f59e0b', '#f97316', '#fef3c7', '#ea580c'],
+                    'prism-dusk': ['#ddd6fe', '#c4b5fd', '#a78bfa', '#8b5cf6', '#7c3aed', '#6d28d9', '#ede9fe'],
+                    'ocean-comet': ['#bae6fd', '#7dd3fc', '#38bdf8', '#0ea5e9', '#2563eb', '#1d4ed8', '#dbeafe'],
+                    'cloud-bloom': ['#fbcfe8', '#f9a8d4', '#f472b6', '#ec4899', '#db2777', '#be185d', '#fdf2f8'],
+                    'aurora-spark': ['#cffafe', '#67e8f9', '#22d3ee', '#06b6d4', '#818cf8', '#6366f1', '#e0f2fe'],
+                    'leaf-crown': ['#d9f99d', '#a3e635', '#84cc16', '#65a30d', '#4d7c0f', '#bef264', '#ecfccb'],
+                    'berry-flare': ['#fbcfe8', '#f472b6', '#ec4899', '#d946ef', '#a855f7', '#9333ea', '#fae8ff'],
+                    'moon-glint': ['#e2e8f0', '#cbd5e1', '#94a3b8', '#64748b', '#475569', '#334155', '#f1f5f9']
+                };
+
+                const STAMP_PRICE_MIN = 30;
+                const STAMP_PRICE_MAX = 90;
+                const STAMP_PRICE_STEP = 5;
+                const STAMP_ALLOWED_PRICES = Array.from(
+                    { length: Math.floor((STAMP_PRICE_MAX - STAMP_PRICE_MIN) / STAMP_PRICE_STEP) + 1 },
+                    (_, index) => STAMP_PRICE_MIN + (index * STAMP_PRICE_STEP)
+                );
+                const normalizeStampPrice = (rawPrice) => {
+                    const parsedPrice = Number.parseInt(rawPrice, 10);
+                    if (Number.isNaN(parsedPrice)) return STAMP_PRICE_MIN;
+                    const clampedPrice = Math.min(STAMP_PRICE_MAX, Math.max(STAMP_PRICE_MIN, parsedPrice));
+                    const snappedPrice = Math.round(clampedPrice / STAMP_PRICE_STEP) * STAMP_PRICE_STEP;
+                    return Math.min(STAMP_PRICE_MAX, Math.max(STAMP_PRICE_MIN, snappedPrice));
+                };
+                const getRandomStampPrice = () => {
+                    if (!STAMP_ALLOWED_PRICES.length) return STAMP_PRICE_MIN;
+                    const randomIndex = Math.floor(Math.random() * STAMP_ALLOWED_PRICES.length);
+                    return STAMP_ALLOWED_PRICES[randomIndex] ?? STAMP_PRICE_MIN;
+                };
+
+                const stampPrice = ref(getRandomStampPrice());
+                const normalizedStampPrice = computed(() => normalizeStampPrice(stampPrice.value));
+                const currentStampVariant = ref(STAMP_VARIANTS[0]);
+                const getStampElements = () => {
+                    if (!(postcardRef.value instanceof HTMLElement)) {
+                        return null;
+                    }
+
+                    const stampContainer = postcardRef.value.querySelector('[data-stamp-container]');
+                    if (!(stampContainer instanceof HTMLElement)) {
+                        return null;
+                    }
+
+                    const motifSvgRaw = stampContainer.querySelector('svg[viewBox="0 0 100 100"]');
+
+                    return {
+                        stampContainer,
+                        motifSvg: motifSvgRaw instanceof SVGElement ? motifSvgRaw : null
+                    };
+                };
+                const applyStampVariantToDom = (variant) => {
+                    if (!variant) return;
+
+                    const stampElements = getStampElements();
+                    if (!stampElements) return;
+
+                    const { stampContainer, motifSvg } = stampElements;
+                    stampContainer.dataset.stampVariantId = variant.id;
+
+                    if (motifSvg) {
+                        motifSvg.dataset.motif = variant.motif;
+                        const palette = STAMP_MOTIF_PALETTES[variant.motif] || STAMP_MOTIF_PALETTES['gem-heart'];
+                        motifSvg.querySelectorAll('polygon').forEach((polygon, index) => {
+                            polygon.setAttribute('fill', palette[index % palette.length]);
+                        });
+                    }
+                };
+                const rollRandomStampVariant = () => {
+                    const randomIndex = Math.floor(Math.random() * STAMP_VARIANTS.length);
+                    const nextVariant = STAMP_VARIANTS[randomIndex];
+                    currentStampVariant.value = nextVariant;
+                    applyStampVariantToDom(nextVariant);
+                    return nextVariant;
+                };
+
+                rollRandomStampVariant();
+                onMounted(() => {
+                    applyStampVariantToDom(currentStampVariant.value);
+                });
 
                 const PIKMIN_BASE_OPTIONS = [
                     { id: 'red', label: '紅色', color: 'bg-red-500', emoji: '🔴' },
@@ -1120,7 +1407,36 @@
                     );
                 };
 
-                const handleDownload = () => {
+                const waitForPostcardRenderStability = async () => {
+                    await nextTick();
+                    if (document.fonts?.ready) {
+                        await document.fonts.ready;
+                    }
+
+                    if (postcardRef.value instanceof HTMLElement) {
+                        const postcardImages = Array.from(postcardRef.value.querySelectorAll('img'));
+                        await Promise.allSettled(postcardImages.map((img) => {
+                            if (!(img instanceof HTMLImageElement)) return Promise.resolve();
+                            if (typeof img.decode === 'function') {
+                                return img.decode().catch(() => undefined);
+                            }
+                            if (img.complete) return Promise.resolve();
+                            return new Promise((resolve) => {
+                                const done = () => resolve();
+                                img.addEventListener('load', done, { once: true });
+                                img.addEventListener('error', done, { once: true });
+                            });
+                        }));
+                    }
+
+                    if (typeof requestAnimationFrame === 'function') {
+                        await new Promise((resolve) => {
+                            requestAnimationFrame(() => requestAnimationFrame(resolve));
+                        });
+                    }
+                };
+
+                const handleDownload = async () => {
                     isDownloading.value = true;
 
                     if (!window.html2canvas) {
@@ -1129,22 +1445,28 @@
                         return;
                     }
 
-                    if (postcardRef.value) {
-                        window.html2canvas(postcardRef.value, {
+                    if (!postcardRef.value) {
+                        isDownloading.value = false;
+                        return;
+                    }
+
+                    try {
+                        await waitForPostcardRenderStability();
+                        const canvas = await window.html2canvas(postcardRef.value, {
                             scale: 2,
                             useCORS: true,
                             backgroundColor: null
-                        }).then((canvas) => {
-                            const link = document.createElement('a');
-                            link.download = `pikmin-postcard-${Date.now()}.png`;
-                            link.href = canvas.toDataURL('image/png');
-                            link.click();
-                            isDownloading.value = false;
-                        }).catch(err => {
-                            console.error("Canvas export failed", err);
-                            alert("輸出圖片失敗");
-                            isDownloading.value = false;
                         });
+
+                        const link = document.createElement('a');
+                        link.download = `pikmin-postcard-${Date.now()}.png`;
+                        link.href = canvas.toDataURL('image/png');
+                        link.click();
+                    } catch (err) {
+                        console.error("Canvas export failed", err);
+                        alert("輸出圖片失敗");
+                    } finally {
+                        isDownloading.value = false;
                     }
                 };
 
@@ -1226,6 +1548,10 @@
                     isLocating,
                     isDownloading,
                     postcardRef,
+                    currentStampVariant,
+                    STAMP_PRICE_MIN,
+                    stampPrice,
+                    normalizedStampPrice,
                     PIKMIN_OPTIONS,
                     selectedPikmins,
                     selectedPikminItems,
@@ -1236,6 +1562,7 @@
                     isPikminImageVisible,
                     shouldShowPikminFallback,
                     generateRandomTitle,
+                    rollRandomStampVariant,
                     handlePhotoUpload,
                     handleGetLocation,
                     handleDownload,
