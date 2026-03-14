@@ -174,10 +174,13 @@
                 selectedPikmins.includes(option.id) 
                   ? option.color + ' text-white border-transparent shadow-lg transform scale-[1.06] ring-2 ring-offset-1 ring-indigo-300' 
                   : 'bg-white text-neutral-600 border-neutral-200 hover:bg-neutral-50 hover:border-neutral-300',
-                option.id === 'white' && selectedPikmins.includes(option.id) ? '!text-neutral-800 border-neutral-300' : ''
+                ['white', 'yellow'].includes(option.id) && selectedPikmins.includes(option.id) ? '!text-neutral-800 border-neutral-300' : ''
               ]">
                         <span v-if="selectedPikmins.includes(option.id)"
-                            class="inline-flex h-4 w-4 items-center justify-center rounded-full bg-white/90 text-[10px] font-bold text-indigo-600">✓</span>
+                            :class="[
+                                'inline-flex h-4 w-4 items-center justify-center rounded-full text-[10px] font-bold',
+                                ['white', 'yellow'].includes(option.id) ? 'bg-neutral-100 text-neutral-700' : 'bg-white/90 text-indigo-600'
+                            ]">✓</span>
                         <span>{{ option.emoji }}</span>
                         <span>{{ option.label }}</span>
                     </button>
@@ -192,7 +195,7 @@
                 <h2 class="text-xl font-bold text-neutral-800">預覽結果</h2>
                 <div class="w-full sm:w-auto flex flex-wrap sm:flex-nowrap gap-2">
                     <!-- Download Button -->
-                    <button @click="handleDownload" :disabled="isDownloading || isSharing"
+                    <button @click="handleDownload" :disabled="!photo || isDownloading || isSharing"
                         :aria-label="isDownloading ? '下載明信片處理中' : '下載明信片'"
                         class="bg-pink-500 hover:bg-pink-600 text-white px-5 py-2.5 min-h-[44px] rounded-full flex flex-1 sm:flex-none justify-center items-center gap-2 shadow-md shadow-pink-200 transition-all hover:-translate-y-0.5 active:translate-y-0 active:scale-95 disabled:opacity-70 disabled:hover:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-pink-400">
                         <!-- Loader Icon -->
@@ -212,7 +215,7 @@
                         <span class="font-semibold">{{ isDownloading ? '處理中...' : '下載明信片' }}</span>
                     </button>
                     <!-- Share Button -->
-                    <button @click="handleShare" :disabled="isSharing || isDownloading"
+                    <button @click="handleShare" :disabled="!photo || isSharing || isDownloading"
                         :aria-label="isSharing ? '分享明信片處理中' : '分享明信片'"
                         class="bg-white hover:bg-blue-50 text-blue-700 px-5 py-2.5 min-h-[44px] rounded-full border border-blue-200 flex flex-1 sm:flex-none justify-center items-center gap-2 shadow-sm transition-all hover:-translate-y-0.5 active:translate-y-0 active:scale-95 disabled:opacity-70 disabled:hover:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-300">
                         <!-- Loader Icon -->
@@ -244,7 +247,10 @@
                     style="box-sizing: border-box;">
                     <!-- 左側：照片區 -->
                     <div
-                        class="relative w-[65%] h-full bg-black flex flex-col justify-center items-center overflow-hidden">
+                        class="relative w-[65%] h-full flex flex-col justify-center items-center overflow-hidden"
+                        :class="photo
+                            ? 'bg-black'
+                            : 'bg-gradient-to-br from-[#f8ecea] via-[#fdf6f8] to-[#f1eaf8] border border-dashed border-pink-200'">
 
                         <!-- Background-image cover div: html2canvas renders background-size:cover
                              correctly, whereas object-fit:cover on an img element can produce
@@ -253,20 +259,26 @@
                             :style="{ backgroundImage: 'url(' + photo + ')', backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }">
                         </div>
 
-                        <div v-else class="text-neutral-600 flex flex-col items-center gap-2 opacity-50">
+                        <div v-if="photo" class="absolute inset-0 pointer-events-none z-[6]"
+                            style="background: linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.3) 28%, rgba(0,0,0,0.12) 56%, rgba(0,0,0,0) 78%);">
+                        </div>
+
+                        <div v-else
+                            class="flex flex-col items-center gap-2 rounded-2xl border border-pink-200/90 bg-white/70 px-6 py-5 text-pink-600 shadow-sm backdrop-blur-[1px]">
                             <!-- ImageIcon -->
                             <svg viewBox="0 0 24 24" width="48" height="48" stroke="currentColor" stroke-width="2"
-                                fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
+                                focusable="false">
                                 <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
                                 <circle cx="8.5" cy="8.5" r="1.5"></circle>
                                 <polyline points="21 15 16 10 5 21"></polyline>
                             </svg>
-                            <span class="text-sm">等待照片...</span>
+                            <span class="text-sm font-medium tracking-wide text-pink-700/80">等待照片...</span>
                         </div>
 
                         <!-- 左上角文字疊加 -->
                         <div class="absolute top-[5%] left-[5%] text-white z-10"
-                            style="text-shadow: 1px 1px 3px rgba(0,0,0,0.8), 0 0 8px rgba(0,0,0,0.5);">
+                            style="text-shadow: 0 2px 6px rgba(0,0,0,0.82), 0 0 12px rgba(0,0,0,0.55);">
                             <h2 class="font-bold tracking-wide text-lg sm:text-2xl md:text-3xl lg:text-4xl">
                                 {{ title || ' ' }}
                             </h2>
@@ -1538,6 +1550,7 @@
                 };
 
                 const handleDownload = async () => {
+                    if (!photo.value || isDownloading.value || isSharing.value) return;
                     isDownloading.value = true;
                     try {
                         const canvas = await capturePostcardCanvas();
@@ -1551,6 +1564,7 @@
                 };
 
                 const handleShare = async () => {
+                    if (!photo.value || isSharing.value || isDownloading.value) return;
                     isSharing.value = true;
                     try {
                         const canvas = await capturePostcardCanvas();
