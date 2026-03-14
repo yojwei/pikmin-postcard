@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌸 皮克敏風格明信片產生器 (Vue)</title>
+    <title>🌸 皮克敏風格明信片產生器</title>
     <!-- 引入 Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- 引入 Vue 3 -->
@@ -50,8 +50,7 @@
                                     </svg>
                                 </div>
                                 <input id="titleInput" type="text" v-model="title"
-                                    class="w-full px-3 py-2 bg-transparent outline-none"
-                                    placeholder="輸入標題..." />
+                                    class="w-full px-3 py-2 bg-transparent outline-none" placeholder="輸入標題..." />
                             </div>
                             <button @click="generateRandomTitle" aria-label="隨機產生標題"
                                 class="shrink-0 bg-pink-100 hover:bg-pink-200 text-pink-700 px-3 py-2 min-h-[48px] min-w-[48px] rounded-xl flex items-center justify-center transition-colors active:scale-95 shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-pink-400"
@@ -78,7 +77,8 @@
                             <div
                                 class="flex-1 flex bg-neutral-50 rounded-xl overflow-hidden border border-neutral-200 focus-within:border-pink-400 transition-all">
                                 <input id="locationInput" type="text" v-model="location"
-                                    class="w-full px-3 py-2 bg-transparent outline-none text-sm" placeholder="地點描述..." />
+                                    class="w-full px-3 py-2 bg-transparent outline-none text-sm"
+                                    placeholder="地點描述..." />
                             </div>
                             <button @click="handleGetLocation" :disabled="isLocating"
                                 :aria-busy="isLocating ? 'true' : 'false'" :aria-label="isLocating ? '定位中…' : '取得目前位置'"
@@ -212,522 +212,525 @@
                         <p v-if="!photo" class="text-xs font-medium text-pink-700">點此上傳照片（請先使用上方步驟 2）</p>
                     </div>
                     <div class="w-full sm:w-auto flex flex-wrap sm:flex-nowrap gap-2">
-                    <!-- Download Button -->
-                    <button @click="handleDownload" :disabled="!photo || isDownloading || isSharing"
-                        :aria-label="isDownloading ? '下載明信片處理中' : '下載明信片'"
-                        class="bg-pink-500 hover:bg-pink-600 text-white px-5 py-2.5 min-h-[44px] rounded-full flex flex-1 sm:flex-none justify-center items-center gap-2 shadow-md shadow-pink-200 transition-all hover:-translate-y-0.5 active:translate-y-0 active:scale-95 disabled:opacity-70 disabled:hover:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-pink-400">
-                        <!-- Loader Icon -->
-                        <svg v-if="isDownloading" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor"
-                            stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
-                            class="animate-spin" aria-hidden="true" focusable="false">
-                            <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
-                        </svg>
-                        <!-- Download Icon -->
-                        <svg v-else viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2"
-                            fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
-                            focusable="false">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                            <polyline points="7 10 12 15 17 10"></polyline>
-                            <line x1="12" y1="15" x2="12" y2="3"></line>
-                        </svg>
-                        <span class="font-semibold">{{ isDownloading ? '處理中...' : '下載明信片' }}</span>
-                    </button>
-                    <!-- Share Button -->
-                    <button @click="handleShare" :disabled="!photo || isSharing || isDownloading"
-                        :aria-label="isSharing ? '分享明信片處理中' : '分享明信片'"
-                        class="bg-white hover:bg-blue-50 text-blue-700 px-5 py-2.5 min-h-[44px] rounded-full border border-blue-200 flex flex-1 sm:flex-none justify-center items-center gap-2 shadow-sm transition-all hover:-translate-y-0.5 active:translate-y-0 active:scale-95 disabled:opacity-70 disabled:hover:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-300">
-                        <!-- Loader Icon -->
-                        <svg v-if="isSharing" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor"
-                            stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
-                            class="animate-spin" aria-hidden="true" focusable="false">
-                            <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
-                        </svg>
-                        <!-- Share Icon -->
-                        <svg v-else viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2"
-                            fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
-                            focusable="false">
-                            <circle cx="18" cy="5" r="3"></circle>
-                            <circle cx="6" cy="12" r="3"></circle>
-                            <circle cx="18" cy="19" r="3"></circle>
-                            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
-                            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
-                        </svg>
-                        <span class="font-semibold">{{ isSharing ? '處理中...' : '分享明信片' }}</span>
-                    </button>
+                        <!-- Download Button -->
+                        <button @click="handleDownload" :disabled="!photo || isDownloading || isSharing"
+                            :aria-label="isDownloading ? '下載明信片處理中' : '下載明信片'"
+                            class="bg-pink-500 hover:bg-pink-600 text-white px-5 py-2.5 min-h-[44px] rounded-full flex flex-1 sm:flex-none justify-center items-center gap-2 shadow-md shadow-pink-200 transition-all hover:-translate-y-0.5 active:translate-y-0 active:scale-95 disabled:opacity-70 disabled:hover:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-pink-400">
+                            <!-- Loader Icon -->
+                            <svg v-if="isDownloading" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor"
+                                stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+                                class="animate-spin" aria-hidden="true" focusable="false">
+                                <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
+                            </svg>
+                            <!-- Download Icon -->
+                            <svg v-else viewBox="0 0 24 24" width="20" height="20" stroke="currentColor"
+                                stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+                                aria-hidden="true" focusable="false">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="7 10 12 15 17 10"></polyline>
+                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
+                            <span class="font-semibold">{{ isDownloading ? '處理中...' : '下載明信片' }}</span>
+                        </button>
+                        <!-- Share Button -->
+                        <button @click="handleShare" :disabled="!photo || isSharing || isDownloading"
+                            :aria-label="isSharing ? '分享明信片處理中' : '分享明信片'"
+                            class="bg-white hover:bg-blue-50 text-blue-700 px-5 py-2.5 min-h-[44px] rounded-full border border-blue-200 flex flex-1 sm:flex-none justify-center items-center gap-2 shadow-sm transition-all hover:-translate-y-0.5 active:translate-y-0 active:scale-95 disabled:opacity-70 disabled:hover:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-300">
+                            <!-- Loader Icon -->
+                            <svg v-if="isSharing" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor"
+                                stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+                                class="animate-spin" aria-hidden="true" focusable="false">
+                                <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
+                            </svg>
+                            <!-- Share Icon -->
+                            <svg v-else viewBox="0 0 24 24" width="20" height="20" stroke="currentColor"
+                                stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+                                aria-hidden="true" focusable="false">
+                                <circle cx="18" cy="5" r="3"></circle>
+                                <circle cx="6" cy="12" r="3"></circle>
+                                <circle cx="18" cy="19" r="3"></circle>
+                                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                            </svg>
+                            <span class="font-semibold">{{ isSharing ? '處理中...' : '分享明信片' }}</span>
+                        </button>
                     </div>
                 </div>
 
                 <!-- 明信片本體 -->
                 <div
                     class="w-full overflow-hidden flex justify-center bg-white border border-pink-200/90 p-1.5 sm:p-2 lg:p-3 rounded-xl shadow-md shadow-pink-100 ring-1 ring-pink-100">
-                <div ref="postcardRef"
-                    class="relative flex w-full max-w-[800px] lg:max-w-[920px] xl:max-w-[1040px] aspect-[1.45/1] sm:aspect-[1.6/1] bg-[#e3aaa6] p-[2.5%] rounded shadow-sm overflow-hidden select-none"
-                    style="box-sizing: border-box;">
-                    <!-- 左側：照片區 -->
-                    <div
-                        class="relative w-[65%] h-full flex flex-col justify-center items-center overflow-hidden"
-                        :class="photo
+                    <div ref="postcardRef"
+                        class="relative flex w-full max-w-[800px] lg:max-w-[920px] xl:max-w-[1040px] aspect-[1.45/1] sm:aspect-[1.6/1] bg-[#e3aaa6] p-[2.5%] rounded shadow-sm overflow-hidden select-none"
+                        style="box-sizing: border-box;">
+                        <!-- 左側：照片區 -->
+                        <div class="relative w-[65%] h-full flex flex-col justify-center items-center overflow-hidden"
+                            :class="photo
                             ? 'bg-black'
                             : 'bg-gradient-to-br from-[#f8ecea] via-[#fdf6f8] to-[#f1eaf8] border border-dashed border-pink-200'">
 
-                        <!-- Background-image cover div: html2canvas renders background-size:cover
+                            <!-- Background-image cover div: html2canvas renders background-size:cover
                              correctly, whereas object-fit:cover on an img element can produce
                              squashed output in the exported canvas. -->
-                        <div v-if="photo" class="absolute inset-0 w-full h-full"
-                            :style="{ backgroundImage: 'url(' + photo + ')', backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }">
-                        </div>
-
-                        <div v-if="photo" class="absolute inset-0 pointer-events-none z-[6]"
-                            style="background: linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.3) 28%, rgba(0,0,0,0.12) 56%, rgba(0,0,0,0) 78%);">
-                        </div>
-
-                        <div v-else
-                            class="flex flex-col items-center gap-2.5 rounded-2xl border-2 border-pink-300/90 bg-white/80 px-6 py-5 text-pink-600 shadow-sm backdrop-blur-[1px]">
-                            <!-- ImageIcon -->
-                            <svg viewBox="0 0 24 24" width="48" height="48" stroke="currentColor" stroke-width="2"
-                                fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
-                                focusable="false">
-                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                                <circle cx="8.5" cy="8.5" r="1.5"></circle>
-                                <polyline points="21 15 16 10 5 21"></polyline>
-                            </svg>
-                            <span class="text-sm font-semibold tracking-wide text-pink-700">點此上傳照片</span>
-                            <span class="text-xs font-medium text-pink-700/80">可用上方「開啟相機」或「開啟相簿」</span>
-                        </div>
-
-                        <!-- 左上角文字疊加 -->
-                        <div class="absolute top-[5%] left-[5%] text-white z-10"
-                            style="text-shadow: 0 2px 6px rgba(0,0,0,0.82), 0 0 12px rgba(0,0,0,0.55);">
-                            <h2 class="font-bold tracking-wide text-lg sm:text-2xl md:text-3xl lg:text-4xl">
-                                {{ title || ' ' }}
-                            </h2>
-                            <p class="font-medium mt-1 text-xs sm:text-sm md:text-base tracking-wider text-gray-100">
-                                {{ location || ' ' }}
-                            </p>
-                        </div>
-
-                        <!-- 底部皮克敏裝飾疊加 -->
-                        <div class="absolute inset-0 pointer-events-none z-[8]">
-                            <template v-for="instance in selectedPikminItems" :key="'img-'+instance.instanceId">
-                                <div class="absolute drop-shadow-[0_8px_10px_rgba(0,0,0,0.6)] transition-transform duration-300"
-                                    :style="getPikminOverlayStyle(instance.instanceId)">
-                                    <img :src="getPikminImageSrc(instance)" :alt="instance.label"
-                                        crossorigin="anonymous" class="w-full h-auto object-contain select-none"
-                                        :style="{ visibility: isPikminImageVisible(instance.instanceId) ? 'visible' : 'hidden' }"
-                                        @load="handleImgLoad(instance.instanceId)"
-                                        @error="handleImgError(instance.instanceId, instance.id, instance.sourceIndex)" />
-                                    <div
-                                        :class="[shouldShowPikminFallback(instance.instanceId) ? 'flex' : 'hidden', 'absolute inset-0 items-center justify-center text-[clamp(20px,4vw,40px)] drop-shadow-lg']">
-                                        {{ instance.emoji }}
-                                    </div>
-                                </div>
-                            </template>
-                        </div>
-                    </div>
-
-                    <!-- 右側：設計區 -->
-                    <div class="relative w-[35%] h-full bg-[#fdfaf2] overflow-hidden border-l-[3px] border-white">
-
-                        <!-- 背景花瓣裝飾 (SVG 模擬層疊水彩感) -->
-                        <svg class="absolute inset-0 w-full h-full pointer-events-none opacity-90"
-                            preserveAspectRatio="xMidYMid slice" viewBox="0 0 200 300">
-                            <path d="M-20,0 Q30,10 40,50 Q10,60 -20,30 Z" fill="#eacbe5" opacity="0.85" />
-                            <path d="M-10,30 C20,20 60,50 30,80 Z" fill="#f7b5c8" opacity="0.8" />
-                            <path d="M20,-10 C50,0 60,40 30,50 C0,30 -10,10 20,-10 Z" fill="#f8cfdd" opacity="0.9" />
-                            <path d="M220,70 C170,60 140,100 150,150 C180,180 220,150 220,70 Z" fill="#b9e1db"
-                                opacity="0.85" />
-                            <path d="M210,130 C190,140 180,180 200,200 C220,210 230,160 210,130 Z" fill="#c4dfec"
-                                opacity="0.7" />
-                            <circle cx="170" cy="240" r="50" fill="#fbd1df" opacity="0.9" />
-                            <path d="M130,210 C180,190 220,230 180,270 C140,290 100,240 130,210 Z" fill="#f4a7c0"
-                                opacity="0.85" />
-                            <path d="M150,230 C190,220 200,260 170,280 C130,290 120,250 150,230 Z" fill="#ffffff"
-                                opacity="0.5" />
-                            <circle cx="190" cy="270" r="30" fill="#eacbe5" opacity="0.7" />
-                            <path d="M-20,180 C30,170 50,220 20,260 C-10,280 -30,230 -20,180 Z" fill="#f8cfdd"
-                                opacity="0.9" />
-                            <path d="M10,230 C60,210 80,270 40,310 C0,330 -20,270 10,230 Z" fill="#f4a7c0"
-                                opacity="0.8" />
-                            <path d="M40,260 C90,250 100,310 60,340 C20,350 10,290 40,260 Z" fill="#eacbe5"
-                                opacity="0.75" />
-                            <path d="M90,120 C105,100 120,115 110,135 C100,145 80,130 90,120 Z" fill="#f4a7c0"
-                                opacity="0.8" />
-                            <path d="M160,30 C175,20 185,35 175,50 C165,60 145,45 160,30 Z" fill="#eacbe5"
-                                opacity="0.7" />
-                            <path d="M50,150 C65,140 75,160 65,175 C55,185 35,165 50,150 Z" fill="#b9e1db"
-                                opacity="0.8" />
-                        </svg>
-
-                        <!-- Logo: PIKMIN BLOOM -->
-                        <div class="absolute top-[5%] left-[6%] z-10 flex items-start gap-1 drop-shadow-sm">
-                            <div class="flex flex-col items-start leading-none font-black">
-                                <span class="text-[#3ed096] text-[clamp(14px,2.2vw,28px)] tracking-wider"
-                                    :style="{ WebkitTextStroke: '2.5px white', paintOrder: 'stroke fill' }">PIKMIN</span>
-                                <span class="text-[#3ed096] text-[clamp(14px,2.2vw,28px)] tracking-wider -mt-[5%]"
-                                    :style="{ WebkitTextStroke: '2.5px white', paintOrder: 'stroke fill' }">BLOOM</span>
+                            <div v-if="photo" class="absolute inset-0 w-full h-full"
+                                :style="{ backgroundImage: 'url(' + photo + ')', backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }">
                             </div>
-                            <span
-                                class="text-[clamp(10px,1.5vw,18px)] mt-[2%] transform rotate-12 drop-shadow-md">🌱</span>
+
+                            <div v-if="photo" class="absolute inset-0 pointer-events-none z-[6]"
+                                style="background: linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.3) 28%, rgba(0,0,0,0.12) 56%, rgba(0,0,0,0) 78%);">
+                            </div>
+
+                            <div v-else
+                                class="flex flex-col items-center gap-2.5 rounded-2xl border-2 border-pink-300/90 bg-white/80 px-6 py-5 text-pink-600 shadow-sm backdrop-blur-[1px]">
+                                <!-- ImageIcon -->
+                                <svg viewBox="0 0 24 24" width="48" height="48" stroke="currentColor" stroke-width="2"
+                                    fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
+                                    focusable="false">
+                                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                    <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                    <polyline points="21 15 16 10 5 21"></polyline>
+                                </svg>
+                                <span class="text-sm font-semibold tracking-wide text-pink-700">點此上傳照片</span>
+                                <span class="text-xs font-medium text-pink-700/80">可用上方「開啟相機」或「開啟相簿」</span>
+                            </div>
+
+                            <!-- 左上角文字疊加 -->
+                            <div class="absolute top-[5%] left-[5%] text-white z-10"
+                                style="text-shadow: 0 2px 6px rgba(0,0,0,0.82), 0 0 12px rgba(0,0,0,0.55);">
+                                <h2 class="font-bold tracking-wide text-lg sm:text-2xl md:text-3xl lg:text-4xl">
+                                    {{ title || ' ' }}
+                                </h2>
+                                <p
+                                    class="font-medium mt-1 text-xs sm:text-sm md:text-base tracking-wider text-gray-100">
+                                    {{ location || ' ' }}
+                                </p>
+                            </div>
+
+                            <!-- 底部皮克敏裝飾疊加 -->
+                            <div class="absolute inset-0 pointer-events-none z-[8]">
+                                <template v-for="instance in selectedPikminItems" :key="'img-'+instance.instanceId">
+                                    <div class="absolute drop-shadow-[0_8px_10px_rgba(0,0,0,0.6)] transition-transform duration-300"
+                                        :style="getPikminOverlayStyle(instance.instanceId)">
+                                        <img :src="getPikminImageSrc(instance)" :alt="instance.label"
+                                            crossorigin="anonymous" class="w-full h-auto object-contain select-none"
+                                            :style="{ visibility: isPikminImageVisible(instance.instanceId) ? 'visible' : 'hidden' }"
+                                            @load="handleImgLoad(instance.instanceId)"
+                                            @error="handleImgError(instance.instanceId, instance.id, instance.sourceIndex)" />
+                                        <div
+                                            :class="[shouldShowPikminFallback(instance.instanceId) ? 'flex' : 'hidden', 'absolute inset-0 items-center justify-center text-[clamp(20px,4vw,40px)] drop-shadow-lg']">
+                                            {{ instance.emoji }}
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
                         </div>
 
-                        <!-- 郵票 Stamp -->
-                        <div data-stamp-container
-                            class="absolute top-[8%] right-[8%] z-20 w-[26%] aspect-[0.8] p-[1.5%] shadow-md" :style="{
+                        <!-- 右側：設計區 -->
+                        <div class="relative w-[35%] h-full bg-[#fdfaf2] overflow-hidden border-l-[3px] border-white">
+
+                            <!-- 背景花瓣裝飾 (SVG 模擬層疊水彩感) -->
+                            <svg class="absolute inset-0 w-full h-full pointer-events-none opacity-90"
+                                preserveAspectRatio="xMidYMid slice" viewBox="0 0 200 300">
+                                <path d="M-20,0 Q30,10 40,50 Q10,60 -20,30 Z" fill="#eacbe5" opacity="0.85" />
+                                <path d="M-10,30 C20,20 60,50 30,80 Z" fill="#f7b5c8" opacity="0.8" />
+                                <path d="M20,-10 C50,0 60,40 30,50 C0,30 -10,10 20,-10 Z" fill="#f8cfdd"
+                                    opacity="0.9" />
+                                <path d="M220,70 C170,60 140,100 150,150 C180,180 220,150 220,70 Z" fill="#b9e1db"
+                                    opacity="0.85" />
+                                <path d="M210,130 C190,140 180,180 200,200 C220,210 230,160 210,130 Z" fill="#c4dfec"
+                                    opacity="0.7" />
+                                <circle cx="170" cy="240" r="50" fill="#fbd1df" opacity="0.9" />
+                                <path d="M130,210 C180,190 220,230 180,270 C140,290 100,240 130,210 Z" fill="#f4a7c0"
+                                    opacity="0.85" />
+                                <path d="M150,230 C190,220 200,260 170,280 C130,290 120,250 150,230 Z" fill="#ffffff"
+                                    opacity="0.5" />
+                                <circle cx="190" cy="270" r="30" fill="#eacbe5" opacity="0.7" />
+                                <path d="M-20,180 C30,170 50,220 20,260 C-10,280 -30,230 -20,180 Z" fill="#f8cfdd"
+                                    opacity="0.9" />
+                                <path d="M10,230 C60,210 80,270 40,310 C0,330 -20,270 10,230 Z" fill="#f4a7c0"
+                                    opacity="0.8" />
+                                <path d="M40,260 C90,250 100,310 60,340 C20,350 10,290 40,260 Z" fill="#eacbe5"
+                                    opacity="0.75" />
+                                <path d="M90,120 C105,100 120,115 110,135 C100,145 80,130 90,120 Z" fill="#f4a7c0"
+                                    opacity="0.8" />
+                                <path d="M160,30 C175,20 185,35 175,50 C165,60 145,45 160,30 Z" fill="#eacbe5"
+                                    opacity="0.7" />
+                                <path d="M50,150 C65,140 75,160 65,175 C55,185 35,165 50,150 Z" fill="#b9e1db"
+                                    opacity="0.8" />
+                            </svg>
+
+                            <!-- Logo: PIKMIN BLOOM -->
+                            <div class="absolute top-[5%] left-[6%] z-10 flex items-start gap-1 drop-shadow-sm">
+                                <div class="flex flex-col items-start leading-none font-black">
+                                    <span class="text-[#3ed096] text-[clamp(14px,2.2vw,28px)] tracking-wider"
+                                        :style="{ WebkitTextStroke: '2.5px white', paintOrder: 'stroke fill' }">PIKMIN</span>
+                                    <span class="text-[#3ed096] text-[clamp(14px,2.2vw,28px)] tracking-wider -mt-[5%]"
+                                        :style="{ WebkitTextStroke: '2.5px white', paintOrder: 'stroke fill' }">BLOOM</span>
+                                </div>
+                                <span
+                                    class="text-[clamp(10px,1.5vw,18px)] mt-[2%] transform rotate-12 drop-shadow-md">🌱</span>
+                            </div>
+
+                            <!-- 郵票 Stamp -->
+                            <div data-stamp-container
+                                class="absolute top-[8%] right-[8%] z-20 w-[26%] aspect-[0.8] p-[1.5%] shadow-md"
+                                :style="{
                             background: `linear-gradient(135deg, ${currentStampVariant?.frameFrom || '#e34857'} 0%, ${currentStampVariant?.frameTo || '#be2948'} 100%)`,
                             transform: `rotate(${currentStampVariant?.rotation ?? currentStampVariant?.rotationDeg ?? 2}deg)`
                         }">
-                            <div class="w-full h-full border-[1.5px] flex flex-col items-center justify-between relative p-[5%]"
-                                :style="{
+                                <div class="w-full h-full border-[1.5px] flex flex-col items-center justify-between relative p-[5%]"
+                                    :style="{
                                     borderColor: currentStampVariant?.borderColor || 'rgba(255,255,255,0.82)',
                                     borderStyle: currentStampVariant?.borderStyle || 'dashed',
                                     background: currentStampVariant?.innerBackground || currentStampVariant?.innerBg || 'rgba(255,255,255,0.08)'
                                 }">
 
-                                <svg v-if="['gem-heart','gem','diamond','crystal','寶石'].includes(currentStampVariant?.motifType || currentStampVariant?.motif)"
-                                    viewBox="0 0 100 100" class="w-[78%] mt-[8%] drop-shadow-sm overflow-visible">
-                                    <polygon points="30,20 50,35 15,40 20,25" fill="#f8b456" />
-                                    <polygon points="30,20 70,20 50,35" fill="#fae6e3" />
-                                    <polygon points="70,20 80,25 85,40 50,35" fill="#f47fae" />
-                                    <polygon points="15,40 50,35 50,65 10,50" fill="#69bbf2" />
-                                    <polygon points="85,40 50,35 50,65 90,50" fill="#e395d8" />
-                                    <polygon points="10,50 50,65 50,95" fill="#4166d1" />
-                                    <polygon points="90,50 50,65 50,95" fill="#9c6fd8" />
-                                </svg>
-                                <svg v-else-if="['petal-wave','flower','blossom','sakura','花朵'].includes(currentStampVariant?.motifType || currentStampVariant?.motif)"
-                                    viewBox="0 0 100 100" class="w-[78%] mt-[8%] drop-shadow-sm overflow-visible">
-                                    <circle cx="50" cy="50" r="11" fill="#ffe7ad" />
-                                    <ellipse cx="50" cy="30" rx="12" ry="18" fill="#ffd0de" />
-                                    <ellipse cx="68" cy="44" rx="12" ry="18" fill="#ffc0d2" />
-                                    <ellipse cx="62" cy="66" rx="12" ry="18" fill="#ffb0c9" />
-                                    <ellipse cx="38" cy="66" rx="12" ry="18" fill="#ffc5d6" />
-                                    <ellipse cx="32" cy="44" rx="12" ry="18" fill="#ffd9e4" />
-                                </svg>
-                                <svg v-else-if="['citrus-star','star','sparkle','burst','星星'].includes(currentStampVariant?.motifType || currentStampVariant?.motif)"
-                                    viewBox="0 0 100 100" class="w-[78%] mt-[8%] drop-shadow-sm overflow-visible">
-                                    <polygon points="50,12 60,38 88,38 66,54 74,82 50,66 26,82 34,54 12,38 40,38"
-                                        fill="#ffe082" />
-                                    <circle cx="50" cy="50" r="9" fill="#fff6cc" />
-                                </svg>
-                                <svg v-else-if="['prism-dusk','prism','crystal-prism'].includes(currentStampVariant?.motifType || currentStampVariant?.motif)"
-                                    viewBox="0 0 100 100" class="w-[78%] mt-[8%] drop-shadow-sm overflow-visible">
-                                    <polygon points="50,10 84,36 72,86 28,86 16,36" fill="#d8b4fe" />
-                                    <polygon points="50,24 70,39 63,73 37,73 30,39" fill="#f3e8ff" opacity="0.85" />
-                                    <path d="M28 86 L50 58 L72 86 Z" fill="#a855f7" opacity="0.9" />
-                                </svg>
-                                <svg v-else-if="['ocean-comet','comet','wave-comet'].includes(currentStampVariant?.motifType || currentStampVariant?.motif)"
-                                    viewBox="0 0 100 100" class="w-[78%] mt-[8%] drop-shadow-sm overflow-visible">
-                                    <path d="M20 58 C42 58 58 45 72 28 L80 36 C66 52 48 68 22 68 Z" fill="#7dd3fc" />
-                                    <circle cx="74" cy="29" r="11" fill="#38bdf8" />
-                                    <circle cx="76" cy="27" r="4" fill="#e0f2fe" />
-                                </svg>
-                                <svg v-else-if="['cloud-bloom','cloud','mist-bloom'].includes(currentStampVariant?.motifType || currentStampVariant?.motif)"
-                                    viewBox="0 0 100 100" class="w-[78%] mt-[8%] drop-shadow-sm overflow-visible">
-                                    <circle cx="36" cy="48" r="13" fill="#fbcfe8" />
-                                    <circle cx="50" cy="42" r="16" fill="#f9a8d4" />
-                                    <circle cx="64" cy="49" r="12" fill="#f472b6" />
-                                    <ellipse cx="50" cy="60" rx="24" ry="10" fill="#fdf2f8" opacity="0.85" />
-                                </svg>
-                                <svg v-else-if="['aurora-spark','aurora','spark'].includes(currentStampVariant?.motifType || currentStampVariant?.motif)"
-                                    viewBox="0 0 100 100" class="w-[78%] mt-[8%] drop-shadow-sm overflow-visible">
-                                    <path d="M18 58 C32 43 45 41 82 26 C69 43 56 55 22 73 Z" fill="#67e8f9" />
-                                    <path d="M20 52 C34 36 50 32 78 24 C67 38 53 49 24 66 Z" fill="#818cf8"
-                                        opacity="0.85" />
-                                    <circle cx="68" cy="28" r="6" fill="#e0f2fe" />
-                                </svg>
-                                <svg v-else-if="['leaf-crown','leaf','sprout','plant','葉子'].includes(currentStampVariant?.motifType || currentStampVariant?.motif)"
-                                    viewBox="0 0 100 100" class="w-[78%] mt-[8%] drop-shadow-sm overflow-visible">
-                                    <circle cx="40" cy="36" r="14" fill="#7fd36c" />
-                                    <circle cx="60" cy="36" r="14" fill="#66c95f" />
-                                    <circle cx="40" cy="56" r="14" fill="#66bf58" />
-                                    <circle cx="60" cy="56" r="14" fill="#86db73" />
-                                    <path d="M50 68 C50 74 47 79 43 84" stroke="#4a9a43" stroke-width="4" fill="none"
-                                        stroke-linecap="round" />
-                                </svg>
-                                <svg v-else-if="['berry-flare','berry','heart','love','愛心'].includes(currentStampVariant?.motifType || currentStampVariant?.motif)"
-                                    viewBox="0 0 100 100" class="w-[78%] mt-[8%] drop-shadow-sm overflow-visible">
-                                    <path
-                                        d="M50 84 C34 70 18 58 18 40 C18 29 27 20 38 20 C44 20 48 23 50 28 C52 23 56 20 62 20 C73 20 82 29 82 40 C82 58 66 70 50 84 Z"
-                                        fill="#ff8fb1" />
-                                    <path
-                                        d="M50 76 C38 64 26 54 26 40 C26 33 31 28 38 28 C44 28 48 31 50 35 C52 31 56 28 62 28 C69 28 74 33 74 40 C74 54 62 64 50 76 Z"
-                                        fill="#ffd4e3" opacity="0.85" />
-                                </svg>
-                                <svg v-else-if="['moon-glint','moon','crescent','night','月亮'].includes(currentStampVariant?.motifType || currentStampVariant?.motif)"
-                                    viewBox="0 0 100 100" class="w-[78%] mt-[8%] drop-shadow-sm overflow-visible">
-                                    <circle cx="55" cy="50" r="25" fill="#fde68a" />
-                                    <circle cx="65" cy="45" r="24" fill="#2f4361" />
-                                    <circle cx="38" cy="35" r="3" fill="#fff7d2" />
-                                    <circle cx="44" cy="64" r="2.5" fill="#fff7d2" />
-                                    <circle cx="30" cy="54" r="2" fill="#fff7d2" />
-                                </svg>
-                                <svg v-else viewBox="0 0 100 100"
-                                    class="w-[78%] mt-[8%] drop-shadow-sm overflow-visible">
-                                    <polygon points="30,20 50,35 15,40 20,25" fill="#f8b456" />
-                                    <polygon points="30,20 70,20 50,35" fill="#fae6e3" />
-                                    <polygon points="70,20 80,25 85,40 50,35" fill="#f47fae" />
-                                    <polygon points="15,40 50,35 50,65 10,50" fill="#69bbf2" />
-                                    <polygon points="85,40 50,35 50,65 90,50" fill="#e395d8" />
-                                    <polygon points="10,50 50,65 50,95" fill="#4166d1" />
-                                    <polygon points="90,50 50,65 50,95" fill="#9c6fd8" />
-                                </svg>
-
-                                <div class="absolute bottom-[3%] left-[4.5%] w-[86%] h-[32%] pointer-events-none">
-                                    <svg viewBox="0 0 260 100" class="w-full h-full overflow-visible"
-                                        xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                                        <text x="14" y="53" text-anchor="start" dominant-baseline="middle"
-                                            font-size="104" font-weight="900"
-                                            font-family="Arial Black, 'Noto Sans TC', sans-serif"
-                                            :fill="currentStampVariant?.priceColor || '#ffffff'"
-                                            stroke="rgba(0,0,0,0.5)" stroke-width="9.6" stroke-linejoin="round"
-                                            paint-order="stroke fill" style="font-variant-numeric: tabular-nums;">
-                                            {{ normalizedStampPrice }}
-                                        </text>
+                                    <svg v-if="['gem-heart','gem','diamond','crystal','寶石'].includes(currentStampVariant?.motifType || currentStampVariant?.motif)"
+                                        viewBox="0 0 100 100" class="w-[78%] mt-[8%] drop-shadow-sm overflow-visible">
+                                        <polygon points="30,20 50,35 15,40 20,25" fill="#f8b456" />
+                                        <polygon points="30,20 70,20 50,35" fill="#fae6e3" />
+                                        <polygon points="70,20 80,25 85,40 50,35" fill="#f47fae" />
+                                        <polygon points="15,40 50,35 50,65 10,50" fill="#69bbf2" />
+                                        <polygon points="85,40 50,35 50,65 90,50" fill="#e395d8" />
+                                        <polygon points="10,50 50,65 50,95" fill="#4166d1" />
+                                        <polygon points="90,50 50,65 50,95" fill="#9c6fd8" />
                                     </svg>
+                                    <svg v-else-if="['petal-wave','flower','blossom','sakura','花朵'].includes(currentStampVariant?.motifType || currentStampVariant?.motif)"
+                                        viewBox="0 0 100 100" class="w-[78%] mt-[8%] drop-shadow-sm overflow-visible">
+                                        <circle cx="50" cy="50" r="11" fill="#ffe7ad" />
+                                        <ellipse cx="50" cy="30" rx="12" ry="18" fill="#ffd0de" />
+                                        <ellipse cx="68" cy="44" rx="12" ry="18" fill="#ffc0d2" />
+                                        <ellipse cx="62" cy="66" rx="12" ry="18" fill="#ffb0c9" />
+                                        <ellipse cx="38" cy="66" rx="12" ry="18" fill="#ffc5d6" />
+                                        <ellipse cx="32" cy="44" rx="12" ry="18" fill="#ffd9e4" />
+                                    </svg>
+                                    <svg v-else-if="['citrus-star','star','sparkle','burst','星星'].includes(currentStampVariant?.motifType || currentStampVariant?.motif)"
+                                        viewBox="0 0 100 100" class="w-[78%] mt-[8%] drop-shadow-sm overflow-visible">
+                                        <polygon points="50,12 60,38 88,38 66,54 74,82 50,66 26,82 34,54 12,38 40,38"
+                                            fill="#ffe082" />
+                                        <circle cx="50" cy="50" r="9" fill="#fff6cc" />
+                                    </svg>
+                                    <svg v-else-if="['prism-dusk','prism','crystal-prism'].includes(currentStampVariant?.motifType || currentStampVariant?.motif)"
+                                        viewBox="0 0 100 100" class="w-[78%] mt-[8%] drop-shadow-sm overflow-visible">
+                                        <polygon points="50,10 84,36 72,86 28,86 16,36" fill="#d8b4fe" />
+                                        <polygon points="50,24 70,39 63,73 37,73 30,39" fill="#f3e8ff" opacity="0.85" />
+                                        <path d="M28 86 L50 58 L72 86 Z" fill="#a855f7" opacity="0.9" />
+                                    </svg>
+                                    <svg v-else-if="['ocean-comet','comet','wave-comet'].includes(currentStampVariant?.motifType || currentStampVariant?.motif)"
+                                        viewBox="0 0 100 100" class="w-[78%] mt-[8%] drop-shadow-sm overflow-visible">
+                                        <path d="M20 58 C42 58 58 45 72 28 L80 36 C66 52 48 68 22 68 Z"
+                                            fill="#7dd3fc" />
+                                        <circle cx="74" cy="29" r="11" fill="#38bdf8" />
+                                        <circle cx="76" cy="27" r="4" fill="#e0f2fe" />
+                                    </svg>
+                                    <svg v-else-if="['cloud-bloom','cloud','mist-bloom'].includes(currentStampVariant?.motifType || currentStampVariant?.motif)"
+                                        viewBox="0 0 100 100" class="w-[78%] mt-[8%] drop-shadow-sm overflow-visible">
+                                        <circle cx="36" cy="48" r="13" fill="#fbcfe8" />
+                                        <circle cx="50" cy="42" r="16" fill="#f9a8d4" />
+                                        <circle cx="64" cy="49" r="12" fill="#f472b6" />
+                                        <ellipse cx="50" cy="60" rx="24" ry="10" fill="#fdf2f8" opacity="0.85" />
+                                    </svg>
+                                    <svg v-else-if="['aurora-spark','aurora','spark'].includes(currentStampVariant?.motifType || currentStampVariant?.motif)"
+                                        viewBox="0 0 100 100" class="w-[78%] mt-[8%] drop-shadow-sm overflow-visible">
+                                        <path d="M18 58 C32 43 45 41 82 26 C69 43 56 55 22 73 Z" fill="#67e8f9" />
+                                        <path d="M20 52 C34 36 50 32 78 24 C67 38 53 49 24 66 Z" fill="#818cf8"
+                                            opacity="0.85" />
+                                        <circle cx="68" cy="28" r="6" fill="#e0f2fe" />
+                                    </svg>
+                                    <svg v-else-if="['leaf-crown','leaf','sprout','plant','葉子'].includes(currentStampVariant?.motifType || currentStampVariant?.motif)"
+                                        viewBox="0 0 100 100" class="w-[78%] mt-[8%] drop-shadow-sm overflow-visible">
+                                        <circle cx="40" cy="36" r="14" fill="#7fd36c" />
+                                        <circle cx="60" cy="36" r="14" fill="#66c95f" />
+                                        <circle cx="40" cy="56" r="14" fill="#66bf58" />
+                                        <circle cx="60" cy="56" r="14" fill="#86db73" />
+                                        <path d="M50 68 C50 74 47 79 43 84" stroke="#4a9a43" stroke-width="4"
+                                            fill="none" stroke-linecap="round" />
+                                    </svg>
+                                    <svg v-else-if="['berry-flare','berry','heart','love','愛心'].includes(currentStampVariant?.motifType || currentStampVariant?.motif)"
+                                        viewBox="0 0 100 100" class="w-[78%] mt-[8%] drop-shadow-sm overflow-visible">
+                                        <path
+                                            d="M50 84 C34 70 18 58 18 40 C18 29 27 20 38 20 C44 20 48 23 50 28 C52 23 56 20 62 20 C73 20 82 29 82 40 C82 58 66 70 50 84 Z"
+                                            fill="#ff8fb1" />
+                                        <path
+                                            d="M50 76 C38 64 26 54 26 40 C26 33 31 28 38 28 C44 28 48 31 50 35 C52 31 56 28 62 28 C69 28 74 33 74 40 C74 54 62 64 50 76 Z"
+                                            fill="#ffd4e3" opacity="0.85" />
+                                    </svg>
+                                    <svg v-else-if="['moon-glint','moon','crescent','night','月亮'].includes(currentStampVariant?.motifType || currentStampVariant?.motif)"
+                                        viewBox="0 0 100 100" class="w-[78%] mt-[8%] drop-shadow-sm overflow-visible">
+                                        <circle cx="55" cy="50" r="25" fill="#fde68a" />
+                                        <circle cx="65" cy="45" r="24" fill="#2f4361" />
+                                        <circle cx="38" cy="35" r="3" fill="#fff7d2" />
+                                        <circle cx="44" cy="64" r="2.5" fill="#fff7d2" />
+                                        <circle cx="30" cy="54" r="2" fill="#fff7d2" />
+                                    </svg>
+                                    <svg v-else viewBox="0 0 100 100"
+                                        class="w-[78%] mt-[8%] drop-shadow-sm overflow-visible">
+                                        <polygon points="30,20 50,35 15,40 20,25" fill="#f8b456" />
+                                        <polygon points="30,20 70,20 50,35" fill="#fae6e3" />
+                                        <polygon points="70,20 80,25 85,40 50,35" fill="#f47fae" />
+                                        <polygon points="15,40 50,35 50,65 10,50" fill="#69bbf2" />
+                                        <polygon points="85,40 50,35 50,65 90,50" fill="#e395d8" />
+                                        <polygon points="10,50 50,65 50,95" fill="#4166d1" />
+                                        <polygon points="90,50 50,65 50,95" fill="#9c6fd8" />
+                                    </svg>
+
+                                    <div class="absolute bottom-[3%] left-[4.5%] w-[86%] h-[32%] pointer-events-none">
+                                        <svg viewBox="0 0 260 100" class="w-full h-full overflow-visible"
+                                            xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                            <text x="14" y="53" text-anchor="start" dominant-baseline="middle"
+                                                font-size="104" font-weight="900"
+                                                font-family="Arial Black, 'Noto Sans TC', sans-serif"
+                                                :fill="currentStampVariant?.priceColor || '#ffffff'"
+                                                stroke="rgba(0,0,0,0.5)" stroke-width="9.6" stroke-linejoin="round"
+                                                paint-order="stroke fill" style="font-variant-numeric: tabular-nums;">
+                                                {{ normalizedStampPrice }}
+                                            </text>
+                                        </svg>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <script>
-        const { createApp, ref, computed, watch, onMounted, nextTick } = Vue;
+        <script>
+            const { createApp, ref, computed, watch, onMounted, nextTick } = Vue;
 
-        createApp({
-            setup() {
-                const photo = ref(null);
-                const title = ref('奴才,高級罐罐呢');
-                const location = ref('江陵里, 新店區');
-                const isLocating = ref(false);
-                const isDownloading = ref(false);
-                const isSharing = ref(false);
-                const postcardRef = ref(null);
-                const STAMP_VARIANTS = [
-                    {
-                        id: 'ruby-blossom',
-                        motif: 'gem-heart',
-                        frameFrom: '#fb7185',
-                        frameTo: '#e11d48',
-                        innerBg: 'rgba(255,255,255,0.10)',
-                        borderColor: 'rgba(255,255,255,0.85)',
-                        borderStyle: 'dashed',
-                        priceColor: '#ffffff',
-                        rotationDeg: 2
-                    },
-                    {
-                        id: 'mint-splash',
-                        motif: 'petal-wave',
-                        frameFrom: '#34d399',
-                        frameTo: '#0f766e',
-                        innerBg: 'rgba(240,255,250,0.12)',
-                        borderColor: 'rgba(220,252,231,0.92)',
-                        borderStyle: 'dotted',
-                        priceColor: '#ecfeff',
-                        rotationDeg: -3
-                    },
-                    {
-                        id: 'citrus-pop',
-                        motif: 'citrus-star',
-                        frameFrom: '#facc15',
-                        frameTo: '#f97316',
-                        innerBg: 'rgba(255,251,235,0.20)',
-                        borderColor: 'rgba(255,247,237,0.88)',
-                        borderStyle: 'solid',
-                        priceColor: '#7c2d12',
-                        rotationDeg: 4
-                    },
-                    {
-                        id: 'amethyst-dream',
-                        motif: 'prism-dusk',
-                        frameFrom: '#a855f7',
-                        frameTo: '#6d28d9',
-                        innerBg: 'rgba(243,232,255,0.16)',
-                        borderColor: 'rgba(250,245,255,0.9)',
-                        borderStyle: 'double',
-                        priceColor: '#f5f3ff',
-                        rotationDeg: -2
-                    },
-                    {
-                        id: 'cobalt-night',
-                        motif: 'ocean-comet',
-                        frameFrom: '#38bdf8',
-                        frameTo: '#1d4ed8',
-                        innerBg: 'rgba(219,234,254,0.12)',
-                        borderColor: 'rgba(239,246,255,0.92)',
-                        borderStyle: 'dashed',
-                        priceColor: '#f8fafc',
-                        rotationDeg: 3
-                    },
-                    {
-                        id: 'sakura-mist',
-                        motif: 'cloud-bloom',
-                        frameFrom: '#f9a8d4',
-                        frameTo: '#db2777',
-                        innerBg: 'rgba(253,242,248,0.16)',
-                        borderColor: 'rgba(255,255,255,0.9)',
-                        borderStyle: 'dotted',
-                        priceColor: '#fff1f2',
-                        rotationDeg: -4
-                    },
-                    {
-                        id: 'aurora-sky',
-                        motif: 'aurora-spark',
-                        frameFrom: '#22d3ee',
-                        frameTo: '#818cf8',
-                        innerBg: 'rgba(224,231,255,0.15)',
-                        borderColor: 'rgba(224,242,254,0.9)',
-                        borderStyle: 'solid',
-                        priceColor: '#ecfeff',
-                        rotationDeg: 1
-                    },
-                    {
-                        id: 'sunlit-leaf',
-                        motif: 'leaf-crown',
-                        frameFrom: '#84cc16',
-                        frameTo: '#4d7c0f',
-                        innerBg: 'rgba(247,254,231,0.15)',
-                        borderColor: 'rgba(236,253,245,0.9)',
-                        borderStyle: 'dashed',
-                        priceColor: '#f7fee7',
-                        rotationDeg: -1
-                    },
-                    {
-                        id: 'berry-garden',
-                        motif: 'berry-flare',
-                        frameFrom: '#f472b6',
-                        frameTo: '#9333ea',
-                        innerBg: 'rgba(250,245,255,0.14)',
-                        borderColor: 'rgba(252,231,243,0.9)',
-                        borderStyle: 'double',
-                        priceColor: '#fff7ed',
-                        rotationDeg: 5
-                    },
-                    {
-                        id: 'moonstone-frost',
-                        motif: 'moon-glint',
-                        frameFrom: '#cbd5e1',
-                        frameTo: '#64748b',
-                        innerBg: 'rgba(248,250,252,0.22)',
-                        borderColor: 'rgba(255,255,255,0.88)',
-                        borderStyle: 'solid',
-                        priceColor: '#f8fafc',
-                        rotationDeg: -5
-                    }
-                ];
+            createApp({
+                setup() {
+                    const photo = ref(null);
+                    const title = ref('奴才,高級罐罐呢');
+                    const location = ref('江陵里, 新店區');
+                    const isLocating = ref(false);
+                    const isDownloading = ref(false);
+                    const isSharing = ref(false);
+                    const postcardRef = ref(null);
+                    const STAMP_VARIANTS = [
+                        {
+                            id: 'ruby-blossom',
+                            motif: 'gem-heart',
+                            frameFrom: '#fb7185',
+                            frameTo: '#e11d48',
+                            innerBg: 'rgba(255,255,255,0.10)',
+                            borderColor: 'rgba(255,255,255,0.85)',
+                            borderStyle: 'dashed',
+                            priceColor: '#ffffff',
+                            rotationDeg: 2
+                        },
+                        {
+                            id: 'mint-splash',
+                            motif: 'petal-wave',
+                            frameFrom: '#34d399',
+                            frameTo: '#0f766e',
+                            innerBg: 'rgba(240,255,250,0.12)',
+                            borderColor: 'rgba(220,252,231,0.92)',
+                            borderStyle: 'dotted',
+                            priceColor: '#ecfeff',
+                            rotationDeg: -3
+                        },
+                        {
+                            id: 'citrus-pop',
+                            motif: 'citrus-star',
+                            frameFrom: '#facc15',
+                            frameTo: '#f97316',
+                            innerBg: 'rgba(255,251,235,0.20)',
+                            borderColor: 'rgba(255,247,237,0.88)',
+                            borderStyle: 'solid',
+                            priceColor: '#7c2d12',
+                            rotationDeg: 4
+                        },
+                        {
+                            id: 'amethyst-dream',
+                            motif: 'prism-dusk',
+                            frameFrom: '#a855f7',
+                            frameTo: '#6d28d9',
+                            innerBg: 'rgba(243,232,255,0.16)',
+                            borderColor: 'rgba(250,245,255,0.9)',
+                            borderStyle: 'double',
+                            priceColor: '#f5f3ff',
+                            rotationDeg: -2
+                        },
+                        {
+                            id: 'cobalt-night',
+                            motif: 'ocean-comet',
+                            frameFrom: '#38bdf8',
+                            frameTo: '#1d4ed8',
+                            innerBg: 'rgba(219,234,254,0.12)',
+                            borderColor: 'rgba(239,246,255,0.92)',
+                            borderStyle: 'dashed',
+                            priceColor: '#f8fafc',
+                            rotationDeg: 3
+                        },
+                        {
+                            id: 'sakura-mist',
+                            motif: 'cloud-bloom',
+                            frameFrom: '#f9a8d4',
+                            frameTo: '#db2777',
+                            innerBg: 'rgba(253,242,248,0.16)',
+                            borderColor: 'rgba(255,255,255,0.9)',
+                            borderStyle: 'dotted',
+                            priceColor: '#fff1f2',
+                            rotationDeg: -4
+                        },
+                        {
+                            id: 'aurora-sky',
+                            motif: 'aurora-spark',
+                            frameFrom: '#22d3ee',
+                            frameTo: '#818cf8',
+                            innerBg: 'rgba(224,231,255,0.15)',
+                            borderColor: 'rgba(224,242,254,0.9)',
+                            borderStyle: 'solid',
+                            priceColor: '#ecfeff',
+                            rotationDeg: 1
+                        },
+                        {
+                            id: 'sunlit-leaf',
+                            motif: 'leaf-crown',
+                            frameFrom: '#84cc16',
+                            frameTo: '#4d7c0f',
+                            innerBg: 'rgba(247,254,231,0.15)',
+                            borderColor: 'rgba(236,253,245,0.9)',
+                            borderStyle: 'dashed',
+                            priceColor: '#f7fee7',
+                            rotationDeg: -1
+                        },
+                        {
+                            id: 'berry-garden',
+                            motif: 'berry-flare',
+                            frameFrom: '#f472b6',
+                            frameTo: '#9333ea',
+                            innerBg: 'rgba(250,245,255,0.14)',
+                            borderColor: 'rgba(252,231,243,0.9)',
+                            borderStyle: 'double',
+                            priceColor: '#fff7ed',
+                            rotationDeg: 5
+                        },
+                        {
+                            id: 'moonstone-frost',
+                            motif: 'moon-glint',
+                            frameFrom: '#cbd5e1',
+                            frameTo: '#64748b',
+                            innerBg: 'rgba(248,250,252,0.22)',
+                            borderColor: 'rgba(255,255,255,0.88)',
+                            borderStyle: 'solid',
+                            priceColor: '#f8fafc',
+                            rotationDeg: -5
+                        }
+                    ];
 
-                const STAMP_MOTIF_PALETTES = {
-                    'gem-heart': ['#f8b456', '#fae6e3', '#f47fae', '#69bbf2', '#e395d8', '#4166d1', '#9c6fd8'],
-                    'petal-wave': ['#a7f3d0', '#34d399', '#2dd4bf', '#5eead4', '#14b8a6', '#0f766e', '#99f6e4'],
-                    'citrus-star': ['#fde68a', '#facc15', '#fb923c', '#f59e0b', '#f97316', '#fef3c7', '#ea580c'],
-                    'prism-dusk': ['#ddd6fe', '#c4b5fd', '#a78bfa', '#8b5cf6', '#7c3aed', '#6d28d9', '#ede9fe'],
-                    'ocean-comet': ['#bae6fd', '#7dd3fc', '#38bdf8', '#0ea5e9', '#2563eb', '#1d4ed8', '#dbeafe'],
-                    'cloud-bloom': ['#fbcfe8', '#f9a8d4', '#f472b6', '#ec4899', '#db2777', '#be185d', '#fdf2f8'],
-                    'aurora-spark': ['#cffafe', '#67e8f9', '#22d3ee', '#06b6d4', '#818cf8', '#6366f1', '#e0f2fe'],
-                    'leaf-crown': ['#d9f99d', '#a3e635', '#84cc16', '#65a30d', '#4d7c0f', '#bef264', '#ecfccb'],
-                    'berry-flare': ['#fbcfe8', '#f472b6', '#ec4899', '#d946ef', '#a855f7', '#9333ea', '#fae8ff'],
-                    'moon-glint': ['#e2e8f0', '#cbd5e1', '#94a3b8', '#64748b', '#475569', '#334155', '#f1f5f9']
-                };
-
-                const STAMP_PRICE_MIN = 30;
-                const STAMP_PRICE_MAX = 90;
-                const STAMP_PRICE_STEP = 5;
-                const STAMP_ALLOWED_PRICES = Array.from(
-                    { length: Math.floor((STAMP_PRICE_MAX - STAMP_PRICE_MIN) / STAMP_PRICE_STEP) + 1 },
-                    (_, index) => STAMP_PRICE_MIN + (index * STAMP_PRICE_STEP)
-                );
-                const normalizeStampPrice = (rawPrice) => {
-                    const parsedPrice = Number.parseInt(rawPrice, 10);
-                    if (Number.isNaN(parsedPrice)) return STAMP_PRICE_MIN;
-                    const clampedPrice = Math.min(STAMP_PRICE_MAX, Math.max(STAMP_PRICE_MIN, parsedPrice));
-                    const snappedPrice = Math.round(clampedPrice / STAMP_PRICE_STEP) * STAMP_PRICE_STEP;
-                    return Math.min(STAMP_PRICE_MAX, Math.max(STAMP_PRICE_MIN, snappedPrice));
-                };
-                const getRandomStampPrice = () => {
-                    if (!STAMP_ALLOWED_PRICES.length) return STAMP_PRICE_MIN;
-                    const randomIndex = Math.floor(Math.random() * STAMP_ALLOWED_PRICES.length);
-                    return STAMP_ALLOWED_PRICES[randomIndex] ?? STAMP_PRICE_MIN;
-                };
-
-                const stampPrice = ref(getRandomStampPrice());
-                const normalizedStampPrice = computed(() => normalizeStampPrice(stampPrice.value));
-                const currentStampVariant = ref(STAMP_VARIANTS[0]);
-                const getStampElements = () => {
-                    if (!(postcardRef.value instanceof HTMLElement)) {
-                        return null;
-                    }
-
-                    const stampContainer = postcardRef.value.querySelector('[data-stamp-container]');
-                    if (!(stampContainer instanceof HTMLElement)) {
-                        return null;
-                    }
-
-                    const motifSvgRaw = stampContainer.querySelector('svg[viewBox="0 0 100 100"]');
-
-                    return {
-                        stampContainer,
-                        motifSvg: motifSvgRaw instanceof SVGElement ? motifSvgRaw : null
-                    };
-                };
-                const applyStampVariantToDom = (variant) => {
-                    if (!variant) return;
-
-                    const stampElements = getStampElements();
-                    if (!stampElements) return;
-
-                    const { stampContainer, motifSvg } = stampElements;
-                    stampContainer.dataset.stampVariantId = variant.id;
-
-                    if (motifSvg) {
-                        motifSvg.dataset.motif = variant.motif;
-                        const palette = STAMP_MOTIF_PALETTES[variant.motif] || STAMP_MOTIF_PALETTES['gem-heart'];
-                        motifSvg.querySelectorAll('polygon').forEach((polygon, index) => {
-                            polygon.setAttribute('fill', palette[index % palette.length]);
-                        });
-                    }
-                };
-                const rollRandomStampVariant = () => {
-                    const randomIndex = Math.floor(Math.random() * STAMP_VARIANTS.length);
-                    const nextVariant = STAMP_VARIANTS[randomIndex];
-                    currentStampVariant.value = nextVariant;
-                    applyStampVariantToDom(nextVariant);
-                    return nextVariant;
-                };
-
-                rollRandomStampVariant();
-                onMounted(() => {
-                    applyStampVariantToDom(currentStampVariant.value);
-                });
-
-                const PIKMIN_BASE_OPTIONS = [
-                    { id: 'red', label: '紅色', color: 'bg-red-500', emoji: '🔴' },
-                    { id: 'blue', label: '藍色', color: 'bg-blue-500', emoji: '🔵' },
-                    { id: 'yellow', label: '黃色', color: 'bg-yellow-400', emoji: '🟡' },
-                    { id: 'purple', label: '紫色', color: 'bg-purple-600', emoji: '🟣' },
-                    { id: 'rock', label: '岩石', color: 'bg-neutral-700', emoji: '🪨' },
-                    { id: 'white', label: '白色', color: 'bg-gray-100', emoji: '⚪' },
-                    { id: 'winged', label: '羽翅', color: 'bg-pink-400', emoji: '🧚' },
-                ];
-                const MAX_PIKMIN_INSTANCES = 6;
-                const ALL_PIKMIN_IDS = PIKMIN_BASE_OPTIONS.map((option) => option.id);
-
-                const createPikminDataUrlGroup = (pikmins) => {
-                    const bgColors = {
-                        red: '#ef4444',
-                        blue: '#3b82f6',
-                        yellow: '#facc15',
-                        purple: '#9333ea',
-                        rock: '#525252',
-                        white: '#f5f5f5',
-                        winged: '#f472b6'
+                    const STAMP_MOTIF_PALETTES = {
+                        'gem-heart': ['#f8b456', '#fae6e3', '#f47fae', '#69bbf2', '#e395d8', '#4166d1', '#9c6fd8'],
+                        'petal-wave': ['#a7f3d0', '#34d399', '#2dd4bf', '#5eead4', '#14b8a6', '#0f766e', '#99f6e4'],
+                        'citrus-star': ['#fde68a', '#facc15', '#fb923c', '#f59e0b', '#f97316', '#fef3c7', '#ea580c'],
+                        'prism-dusk': ['#ddd6fe', '#c4b5fd', '#a78bfa', '#8b5cf6', '#7c3aed', '#6d28d9', '#ede9fe'],
+                        'ocean-comet': ['#bae6fd', '#7dd3fc', '#38bdf8', '#0ea5e9', '#2563eb', '#1d4ed8', '#dbeafe'],
+                        'cloud-bloom': ['#fbcfe8', '#f9a8d4', '#f472b6', '#ec4899', '#db2777', '#be185d', '#fdf2f8'],
+                        'aurora-spark': ['#cffafe', '#67e8f9', '#22d3ee', '#06b6d4', '#818cf8', '#6366f1', '#e0f2fe'],
+                        'leaf-crown': ['#d9f99d', '#a3e635', '#84cc16', '#65a30d', '#4d7c0f', '#bef264', '#ecfccb'],
+                        'berry-flare': ['#fbcfe8', '#f472b6', '#ec4899', '#d946ef', '#a855f7', '#9333ea', '#fae8ff'],
+                        'moon-glint': ['#e2e8f0', '#cbd5e1', '#94a3b8', '#64748b', '#475569', '#334155', '#f1f5f9']
                     };
 
-                    return pikmins.reduce((group, option) => {
-                        const textColor = option.id === 'white' ? '#1f2937' : '#ffffff';
-                        const borderColor = option.id === 'white' ? '#d1d5db' : '#ffffff55';
-                        const svg = `
+                    const STAMP_PRICE_MIN = 30;
+                    const STAMP_PRICE_MAX = 90;
+                    const STAMP_PRICE_STEP = 5;
+                    const STAMP_ALLOWED_PRICES = Array.from(
+                        { length: Math.floor((STAMP_PRICE_MAX - STAMP_PRICE_MIN) / STAMP_PRICE_STEP) + 1 },
+                        (_, index) => STAMP_PRICE_MIN + (index * STAMP_PRICE_STEP)
+                    );
+                    const normalizeStampPrice = (rawPrice) => {
+                        const parsedPrice = Number.parseInt(rawPrice, 10);
+                        if (Number.isNaN(parsedPrice)) return STAMP_PRICE_MIN;
+                        const clampedPrice = Math.min(STAMP_PRICE_MAX, Math.max(STAMP_PRICE_MIN, parsedPrice));
+                        const snappedPrice = Math.round(clampedPrice / STAMP_PRICE_STEP) * STAMP_PRICE_STEP;
+                        return Math.min(STAMP_PRICE_MAX, Math.max(STAMP_PRICE_MIN, snappedPrice));
+                    };
+                    const getRandomStampPrice = () => {
+                        if (!STAMP_ALLOWED_PRICES.length) return STAMP_PRICE_MIN;
+                        const randomIndex = Math.floor(Math.random() * STAMP_ALLOWED_PRICES.length);
+                        return STAMP_ALLOWED_PRICES[randomIndex] ?? STAMP_PRICE_MIN;
+                    };
+
+                    const stampPrice = ref(getRandomStampPrice());
+                    const normalizedStampPrice = computed(() => normalizeStampPrice(stampPrice.value));
+                    const currentStampVariant = ref(STAMP_VARIANTS[0]);
+                    const getStampElements = () => {
+                        if (!(postcardRef.value instanceof HTMLElement)) {
+                            return null;
+                        }
+
+                        const stampContainer = postcardRef.value.querySelector('[data-stamp-container]');
+                        if (!(stampContainer instanceof HTMLElement)) {
+                            return null;
+                        }
+
+                        const motifSvgRaw = stampContainer.querySelector('svg[viewBox="0 0 100 100"]');
+
+                        return {
+                            stampContainer,
+                            motifSvg: motifSvgRaw instanceof SVGElement ? motifSvgRaw : null
+                        };
+                    };
+                    const applyStampVariantToDom = (variant) => {
+                        if (!variant) return;
+
+                        const stampElements = getStampElements();
+                        if (!stampElements) return;
+
+                        const { stampContainer, motifSvg } = stampElements;
+                        stampContainer.dataset.stampVariantId = variant.id;
+
+                        if (motifSvg) {
+                            motifSvg.dataset.motif = variant.motif;
+                            const palette = STAMP_MOTIF_PALETTES[variant.motif] || STAMP_MOTIF_PALETTES['gem-heart'];
+                            motifSvg.querySelectorAll('polygon').forEach((polygon, index) => {
+                                polygon.setAttribute('fill', palette[index % palette.length]);
+                            });
+                        }
+                    };
+                    const rollRandomStampVariant = () => {
+                        const randomIndex = Math.floor(Math.random() * STAMP_VARIANTS.length);
+                        const nextVariant = STAMP_VARIANTS[randomIndex];
+                        currentStampVariant.value = nextVariant;
+                        applyStampVariantToDom(nextVariant);
+                        return nextVariant;
+                    };
+
+                    rollRandomStampVariant();
+                    onMounted(() => {
+                        applyStampVariantToDom(currentStampVariant.value);
+                    });
+
+                    const PIKMIN_BASE_OPTIONS = [
+                        { id: 'red', label: '紅色', color: 'bg-red-500', emoji: '🔴' },
+                        { id: 'blue', label: '藍色', color: 'bg-blue-500', emoji: '🔵' },
+                        { id: 'yellow', label: '黃色', color: 'bg-yellow-400', emoji: '🟡' },
+                        { id: 'purple', label: '紫色', color: 'bg-purple-600', emoji: '🟣' },
+                        { id: 'rock', label: '岩石', color: 'bg-neutral-700', emoji: '🪨' },
+                        { id: 'white', label: '白色', color: 'bg-gray-100', emoji: '⚪' },
+                        { id: 'winged', label: '羽翅', color: 'bg-pink-400', emoji: '🧚' },
+                    ];
+                    const MAX_PIKMIN_INSTANCES = 6;
+                    const ALL_PIKMIN_IDS = PIKMIN_BASE_OPTIONS.map((option) => option.id);
+
+                    const createPikminDataUrlGroup = (pikmins) => {
+                        const bgColors = {
+                            red: '#ef4444',
+                            blue: '#3b82f6',
+                            yellow: '#facc15',
+                            purple: '#9333ea',
+                            rock: '#525252',
+                            white: '#f5f5f5',
+                            winged: '#f472b6'
+                        };
+
+                        return pikmins.reduce((group, option) => {
+                            const textColor = option.id === 'white' ? '#1f2937' : '#ffffff';
+                            const borderColor = option.id === 'white' ? '#d1d5db' : '#ffffff55';
+                            const svg = `
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180">
                                 <rect width="180" height="180" rx="28" fill="${bgColors[option.id] || '#a1a1aa'}" stroke="${borderColor}" stroke-width="6" />
                                 <text x="50%" y="54%" text-anchor="middle" dominant-baseline="middle" font-size="96" fill="${textColor}">
@@ -735,991 +738,991 @@
                                 </text>
                             </svg>
                         `.trim();
-                        group[option.id] = `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
-                        return group;
-                    }, {});
-                };
+                            group[option.id] = `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+                            return group;
+                        }, {});
+                    };
 
-                const PIKMIN_SOURCE_STORAGE_KEY = 'pikmin-source-group-index';
-                const PIKMIN_SOURCE_JSON_URL = 'pikmin_sources.json';
-                const PIKMIN_CLASSIC_BASE_SOURCE_GROUP = Object.freeze({
-                    red: 'https://static.wikia.nocookie.net/pikmin/images/5/56/P4_Red_Pikmin.png/revision/latest?cb=20230818155739',
-                    blue: 'https://static.wikia.nocookie.net/pikmin/images/5/54/P4_Blue_Pikmin.png/revision/latest?cb=20230818163738',
-                    yellow: 'https://static.wikia.nocookie.net/pikmin/images/8/8d/P4_Yellow_Pikmin.png/revision/latest?cb=20230818163721',
-                    purple: 'https://static.wikia.nocookie.net/pikmin/images/e/e4/P4_Purple_Pikmin.png/revision/latest?cb=20230818164146',
-                    rock: 'https://static.wikia.nocookie.net/pikmin/images/a/a8/P4_Rock_Pikmin.png/revision/latest?cb=20230818164203',
-                    white: 'https://static.wikia.nocookie.net/pikmin/images/4/44/P4_White_Pikmin.png/revision/latest?cb=20230818164119',
-                    winged: 'https://static.wikia.nocookie.net/pikmin/images/9/9e/P4_Winged_Pikmin.png/revision/latest?cb=20230818164217'
-                });
-                const getNextSourceGroupIndex = (groupCount) => {
-                    if (groupCount <= 1) return 0;
-
-                    try {
-                        const lastIndexRaw = localStorage.getItem(PIKMIN_SOURCE_STORAGE_KEY);
-                        const lastIndex = Number.parseInt(lastIndexRaw ?? '', 10);
-                        const normalizedLast = Number.isNaN(lastIndex)
-                            ? -1
-                            : ((lastIndex % groupCount) + groupCount) % groupCount;
-                        const nextIndex = (normalizedLast + 1) % groupCount;
-                        localStorage.setItem(PIKMIN_SOURCE_STORAGE_KEY, String(nextIndex));
-                        return nextIndex;
-                    } catch (error) {
-                        console.warn('無法存取 localStorage，改用預設圖片來源群組。', error);
-                        return 0;
-                    }
-                };
-
-                const normalizePikminSourceGroup = (rawGroup) => {
-                    if (!rawGroup || typeof rawGroup !== 'object' || Array.isArray(rawGroup)) {
-                        return null;
-                    }
-
-                    const normalizedGroup = {};
-                    PIKMIN_BASE_OPTIONS.forEach((option) => {
-                        const source = rawGroup[option.id];
-                        if (typeof source === 'string' && source.trim()) {
-                            normalizedGroup[option.id] = source.trim();
-                        }
+                    const PIKMIN_SOURCE_STORAGE_KEY = 'pikmin-source-group-index';
+                    const PIKMIN_SOURCE_JSON_URL = 'pikmin_sources.json';
+                    const PIKMIN_CLASSIC_BASE_SOURCE_GROUP = Object.freeze({
+                        red: 'https://static.wikia.nocookie.net/pikmin/images/5/56/P4_Red_Pikmin.png/revision/latest?cb=20230818155739',
+                        blue: 'https://static.wikia.nocookie.net/pikmin/images/5/54/P4_Blue_Pikmin.png/revision/latest?cb=20230818163738',
+                        yellow: 'https://static.wikia.nocookie.net/pikmin/images/8/8d/P4_Yellow_Pikmin.png/revision/latest?cb=20230818163721',
+                        purple: 'https://static.wikia.nocookie.net/pikmin/images/e/e4/P4_Purple_Pikmin.png/revision/latest?cb=20230818164146',
+                        rock: 'https://static.wikia.nocookie.net/pikmin/images/a/a8/P4_Rock_Pikmin.png/revision/latest?cb=20230818164203',
+                        white: 'https://static.wikia.nocookie.net/pikmin/images/4/44/P4_White_Pikmin.png/revision/latest?cb=20230818164119',
+                        winged: 'https://static.wikia.nocookie.net/pikmin/images/9/9e/P4_Winged_Pikmin.png/revision/latest?cb=20230818164217'
                     });
+                    const getNextSourceGroupIndex = (groupCount) => {
+                        if (groupCount <= 1) return 0;
 
-                    return Object.keys(normalizedGroup).length ? normalizedGroup : null;
-                };
-
-                const normalizePikminSourceList = (rawSources) => {
-                    if (!Array.isArray(rawSources)) return [];
-                    return rawSources
-                        .map((source) => (typeof source === 'string' ? source.trim() : ''))
-                        .filter((source) => Boolean(source));
-                };
-
-                const createEmptyPikminColorSourceLists = () => PIKMIN_BASE_OPTIONS.reduce((groups, option) => {
-                    groups[option.id] = [];
-                    return groups;
-                }, {});
-
-                const createPikminFallbackSourceLists = (fallbackGroup) => {
-                    const fallbackLists = createEmptyPikminColorSourceLists();
-                    PIKMIN_BASE_OPTIONS.forEach((option) => {
-                        const fallbackSource = fallbackGroup[option.id];
-                        if (fallbackSource) {
-                            fallbackLists[option.id] = [fallbackSource];
+                        try {
+                            const lastIndexRaw = localStorage.getItem(PIKMIN_SOURCE_STORAGE_KEY);
+                            const lastIndex = Number.parseInt(lastIndexRaw ?? '', 10);
+                            const normalizedLast = Number.isNaN(lastIndex)
+                                ? -1
+                                : ((lastIndex % groupCount) + groupCount) % groupCount;
+                            const nextIndex = (normalizedLast + 1) % groupCount;
+                            localStorage.setItem(PIKMIN_SOURCE_STORAGE_KEY, String(nextIndex));
+                            return nextIndex;
+                        } catch (error) {
+                            console.warn('無法存取 localStorage，改用預設圖片來源群組。', error);
+                            return 0;
                         }
-                    });
-                    return fallbackLists;
-                };
+                    };
 
-                const normalizePikminColorSourceLists = (rawColorGroups) => {
-                    if (!rawColorGroups || typeof rawColorGroups !== 'object' || Array.isArray(rawColorGroups)) {
-                        return null;
-                    }
-
-                    const normalizedColorSourceLists = createEmptyPikminColorSourceLists();
-                    let hasAvailableSource = false;
-
-                    PIKMIN_BASE_OPTIONS.forEach((option) => {
-                        const sourceList = normalizePikminSourceList(rawColorGroups[option.id]);
-                        normalizedColorSourceLists[option.id] = sourceList;
-                        if (sourceList.length) {
-                            hasAvailableSource = true;
+                    const normalizePikminSourceGroup = (rawGroup) => {
+                        if (!rawGroup || typeof rawGroup !== 'object' || Array.isArray(rawGroup)) {
+                            return null;
                         }
-                    });
 
-                    return hasAvailableSource ? normalizedColorSourceLists : null;
-                };
-
-                const convertLegacySourceGroupsToColorLists = (rawSourceGroups) => {
-                    if (!Array.isArray(rawSourceGroups)) return null;
-
-                    const normalizedColorSourceLists = createEmptyPikminColorSourceLists();
-                    rawSourceGroups.forEach((group) => {
-                        const normalizedGroup = normalizePikminSourceGroup(group);
-                        if (!normalizedGroup) return;
-
+                        const normalizedGroup = {};
                         PIKMIN_BASE_OPTIONS.forEach((option) => {
-                            const source = normalizedGroup[option.id];
-                            if (source) {
-                                normalizedColorSourceLists[option.id].push(source);
+                            const source = rawGroup[option.id];
+                            if (typeof source === 'string' && source.trim()) {
+                                normalizedGroup[option.id] = source.trim();
                             }
                         });
-                    });
 
-                    const hasAvailableSource = PIKMIN_BASE_OPTIONS.some(
-                        (option) => normalizedColorSourceLists[option.id].length > 0
-                    );
-                    return hasAvailableSource ? normalizedColorSourceLists : null;
-                };
+                        return Object.keys(normalizedGroup).length ? normalizedGroup : null;
+                    };
 
-                const extractPikminColorSourceLists = (payload) => {
-                    if (payload && typeof payload === 'object' && !Array.isArray(payload)) {
-                        const colorSourceLists = normalizePikminColorSourceLists(payload.colorGroups);
-                        if (colorSourceLists) {
-                            return { colorSourceLists, fromLegacy: false };
+                    const normalizePikminSourceList = (rawSources) => {
+                        if (!Array.isArray(rawSources)) return [];
+                        return rawSources
+                            .map((source) => (typeof source === 'string' ? source.trim() : ''))
+                            .filter((source) => Boolean(source));
+                    };
+
+                    const createEmptyPikminColorSourceLists = () => PIKMIN_BASE_OPTIONS.reduce((groups, option) => {
+                        groups[option.id] = [];
+                        return groups;
+                    }, {});
+
+                    const createPikminFallbackSourceLists = (fallbackGroup) => {
+                        const fallbackLists = createEmptyPikminColorSourceLists();
+                        PIKMIN_BASE_OPTIONS.forEach((option) => {
+                            const fallbackSource = fallbackGroup[option.id];
+                            if (fallbackSource) {
+                                fallbackLists[option.id] = [fallbackSource];
+                            }
+                        });
+                        return fallbackLists;
+                    };
+
+                    const normalizePikminColorSourceLists = (rawColorGroups) => {
+                        if (!rawColorGroups || typeof rawColorGroups !== 'object' || Array.isArray(rawColorGroups)) {
+                            return null;
                         }
 
-                        const legacyGroups = Array.isArray(payload.sourceGroups)
-                            ? payload.sourceGroups
-                            : Array.isArray(payload.groups)
-                                ? payload.groups
-                                : null;
-                        if (legacyGroups) {
-                            const legacyColorSourceLists = convertLegacySourceGroupsToColorLists(legacyGroups);
+                        const normalizedColorSourceLists = createEmptyPikminColorSourceLists();
+                        let hasAvailableSource = false;
+
+                        PIKMIN_BASE_OPTIONS.forEach((option) => {
+                            const sourceList = normalizePikminSourceList(rawColorGroups[option.id]);
+                            normalizedColorSourceLists[option.id] = sourceList;
+                            if (sourceList.length) {
+                                hasAvailableSource = true;
+                            }
+                        });
+
+                        return hasAvailableSource ? normalizedColorSourceLists : null;
+                    };
+
+                    const convertLegacySourceGroupsToColorLists = (rawSourceGroups) => {
+                        if (!Array.isArray(rawSourceGroups)) return null;
+
+                        const normalizedColorSourceLists = createEmptyPikminColorSourceLists();
+                        rawSourceGroups.forEach((group) => {
+                            const normalizedGroup = normalizePikminSourceGroup(group);
+                            if (!normalizedGroup) return;
+
+                            PIKMIN_BASE_OPTIONS.forEach((option) => {
+                                const source = normalizedGroup[option.id];
+                                if (source) {
+                                    normalizedColorSourceLists[option.id].push(source);
+                                }
+                            });
+                        });
+
+                        const hasAvailableSource = PIKMIN_BASE_OPTIONS.some(
+                            (option) => normalizedColorSourceLists[option.id].length > 0
+                        );
+                        return hasAvailableSource ? normalizedColorSourceLists : null;
+                    };
+
+                    const extractPikminColorSourceLists = (payload) => {
+                        if (payload && typeof payload === 'object' && !Array.isArray(payload)) {
+                            const colorSourceLists = normalizePikminColorSourceLists(payload.colorGroups);
+                            if (colorSourceLists) {
+                                return { colorSourceLists, fromLegacy: false };
+                            }
+
+                            const legacyGroups = Array.isArray(payload.sourceGroups)
+                                ? payload.sourceGroups
+                                : Array.isArray(payload.groups)
+                                    ? payload.groups
+                                    : null;
+                            if (legacyGroups) {
+                                const legacyColorSourceLists = convertLegacySourceGroupsToColorLists(legacyGroups);
+                                if (legacyColorSourceLists) {
+                                    return { colorSourceLists: legacyColorSourceLists, fromLegacy: true };
+                                }
+                            }
+                        }
+
+                        if (Array.isArray(payload)) {
+                            const legacyColorSourceLists = convertLegacySourceGroupsToColorLists(payload);
                             if (legacyColorSourceLists) {
                                 return { colorSourceLists: legacyColorSourceLists, fromLegacy: true };
                             }
                         }
-                    }
 
-                    if (Array.isArray(payload)) {
-                        const legacyColorSourceLists = convertLegacySourceGroupsToColorLists(payload);
-                        if (legacyColorSourceLists) {
-                            return { colorSourceLists: legacyColorSourceLists, fromLegacy: true };
+                        return null;
+                    };
+
+                    const mergePikminColorSourceListsWithFallback = (colorSourceLists, fallbackGroup) => {
+                        const mergedSourceLists = createEmptyPikminColorSourceLists();
+
+                        PIKMIN_BASE_OPTIONS.forEach((option) => {
+                            const normalizedSources = normalizePikminSourceList(colorSourceLists?.[option.id]);
+                            const mergedSources = [];
+                            const appendedSourceSet = new Set();
+                            const appendSource = (source) => {
+                                if (typeof source !== 'string') return;
+                                const normalizedSource = source.trim();
+                                if (!normalizedSource || appendedSourceSet.has(normalizedSource)) return;
+                                appendedSourceSet.add(normalizedSource);
+                                mergedSources.push(normalizedSource);
+                            };
+                            normalizedSources.forEach(appendSource);
+                            appendSource(PIKMIN_CLASSIC_BASE_SOURCE_GROUP[option.id]);
+                            const fallbackSource = fallbackGroup[option.id];
+                            appendSource(fallbackSource);
+                            mergedSourceLists[option.id] = mergedSources;
+                        });
+
+                        return mergedSourceLists;
+                    };
+
+                    const getSourceListCycleLength = (colorSourceLists) => {
+                        const listLengths = PIKMIN_BASE_OPTIONS
+                            .map((option) => Array.isArray(colorSourceLists?.[option.id]) ? colorSourceLists[option.id].length : 0)
+                            .filter((length) => length > 0);
+                        return listLengths.length ? Math.max(...listLengths) : 1;
+                    };
+
+                    const normalizeSourceIndex = (sourceListLength, sourceIndex, fallbackIndex = 0) => {
+                        if (!Number.isInteger(sourceListLength) || sourceListLength <= 0) {
+                            return 0;
                         }
-                    }
+                        const normalizedFallback = Number.isInteger(fallbackIndex) ? fallbackIndex : 0;
+                        const rawIndex = Number.isInteger(sourceIndex) ? sourceIndex : normalizedFallback;
+                        return ((rawIndex % sourceListLength) + sourceListLength) % sourceListLength;
+                    };
 
-                    return null;
-                };
+                    const resolvePikminImageUrl = (colorSourceLists, optionId, sourceGroupIndex, fallbackGroup) => {
+                        const sourceList = Array.isArray(colorSourceLists?.[optionId]) ? colorSourceLists[optionId] : [];
+                        if (!sourceList.length) {
+                            return fallbackGroup[optionId];
+                        }
+                        const normalizedIndex = normalizeSourceIndex(sourceList.length, sourceGroupIndex);
+                        return sourceList[normalizedIndex] || fallbackGroup[optionId];
+                    };
 
-                const mergePikminColorSourceListsWithFallback = (colorSourceLists, fallbackGroup) => {
-                    const mergedSourceLists = createEmptyPikminColorSourceLists();
-
-                    PIKMIN_BASE_OPTIONS.forEach((option) => {
-                        const normalizedSources = normalizePikminSourceList(colorSourceLists?.[option.id]);
-                        const mergedSources = [];
-                        const appendedSourceSet = new Set();
-                        const appendSource = (source) => {
-                            if (typeof source !== 'string') return;
-                            const normalizedSource = source.trim();
-                            if (!normalizedSource || appendedSourceSet.has(normalizedSource)) return;
-                            appendedSourceSet.add(normalizedSource);
-                            mergedSources.push(normalizedSource);
-                        };
-                        normalizedSources.forEach(appendSource);
-                        appendSource(PIKMIN_CLASSIC_BASE_SOURCE_GROUP[option.id]);
-                        const fallbackSource = fallbackGroup[option.id];
-                        appendSource(fallbackSource);
-                        mergedSourceLists[option.id] = mergedSources;
-                    });
-
-                    return mergedSourceLists;
-                };
-
-                const getSourceListCycleLength = (colorSourceLists) => {
-                    const listLengths = PIKMIN_BASE_OPTIONS
-                        .map((option) => Array.isArray(colorSourceLists?.[option.id]) ? colorSourceLists[option.id].length : 0)
-                        .filter((length) => length > 0);
-                    return listLengths.length ? Math.max(...listLengths) : 1;
-                };
-
-                const normalizeSourceIndex = (sourceListLength, sourceIndex, fallbackIndex = 0) => {
-                    if (!Number.isInteger(sourceListLength) || sourceListLength <= 0) {
-                        return 0;
-                    }
-                    const normalizedFallback = Number.isInteger(fallbackIndex) ? fallbackIndex : 0;
-                    const rawIndex = Number.isInteger(sourceIndex) ? sourceIndex : normalizedFallback;
-                    return ((rawIndex % sourceListLength) + sourceListLength) % sourceListLength;
-                };
-
-                const resolvePikminImageUrl = (colorSourceLists, optionId, sourceGroupIndex, fallbackGroup) => {
-                    const sourceList = Array.isArray(colorSourceLists?.[optionId]) ? colorSourceLists[optionId] : [];
-                    if (!sourceList.length) {
-                        return fallbackGroup[optionId];
-                    }
-                    const normalizedIndex = normalizeSourceIndex(sourceList.length, sourceGroupIndex);
-                    return sourceList[normalizedIndex] || fallbackGroup[optionId];
-                };
-
-                const pikminDataUrlFallbackGroup = createPikminDataUrlGroup(PIKMIN_BASE_OPTIONS);
-                const pikminFallbackSourceLists = createPikminFallbackSourceLists(pikminDataUrlFallbackGroup);
-                const pikminColorSourceLists = ref(
-                    mergePikminColorSourceListsWithFallback(
-                        pikminFallbackSourceLists,
-                        pikminDataUrlFallbackGroup
-                    )
-                );
-                const primarySourceGroupIndex = ref(0);
-                const buildPikminOptions = (colorSourceLists, sourceGroupIndex) => (
-                    PIKMIN_BASE_OPTIONS.map((option) => ({
-                        ...option,
-                        imgUrl: resolvePikminImageUrl(
-                            colorSourceLists,
-                            option.id,
-                            sourceGroupIndex,
+                    const pikminDataUrlFallbackGroup = createPikminDataUrlGroup(PIKMIN_BASE_OPTIONS);
+                    const pikminFallbackSourceLists = createPikminFallbackSourceLists(pikminDataUrlFallbackGroup);
+                    const pikminColorSourceLists = ref(
+                        mergePikminColorSourceListsWithFallback(
+                            pikminFallbackSourceLists,
                             pikminDataUrlFallbackGroup
                         )
-                    }))
-                );
-                const PIKMIN_OPTIONS = ref(buildPikminOptions(pikminColorSourceLists.value, primarySourceGroupIndex.value));
-                const applyPikminColorSourceLists = (normalizedColorSourceLists, rotateByStorage = false) => {
-                    pikminColorSourceLists.value = mergePikminColorSourceListsWithFallback(
-                        normalizedColorSourceLists,
-                        pikminDataUrlFallbackGroup
                     );
-                    primarySourceGroupIndex.value = rotateByStorage
-                        ? getNextSourceGroupIndex(getSourceListCycleLength(pikminColorSourceLists.value))
-                        : 0;
-                    PIKMIN_OPTIONS.value = buildPikminOptions(
-                        pikminColorSourceLists.value,
-                        primarySourceGroupIndex.value
+                    const primarySourceGroupIndex = ref(0);
+                    const buildPikminOptions = (colorSourceLists, sourceGroupIndex) => (
+                        PIKMIN_BASE_OPTIONS.map((option) => ({
+                            ...option,
+                            imgUrl: resolvePikminImageUrl(
+                                colorSourceLists,
+                                option.id,
+                                sourceGroupIndex,
+                                pikminDataUrlFallbackGroup
+                            )
+                        }))
                     );
-                };
-
-                const loadPikminColorSourceLists = async () => {
-                    let response;
-                    try {
-                        response = await fetch(PIKMIN_SOURCE_JSON_URL, { cache: 'no-store' });
-                    } catch (error) {
-                        console.warn('無法載入 pikmin_sources.json，改用內建圖示來源。', error);
-                        return;
-                    }
-
-                    if (!response.ok) {
-                        console.warn(`載入 pikmin_sources.json 失敗（${response.status}），改用內建圖示來源。`);
-                        return;
-                    }
-
-                    let sourcePayload;
-                    try {
-                        sourcePayload = await response.json();
-                    } catch (error) {
-                        console.warn('pikmin_sources.json 解析失敗，改用內建圖示來源。', error);
-                        return;
-                    }
-
-                    const extractedSourceLists = extractPikminColorSourceLists(sourcePayload);
-                    if (!extractedSourceLists) {
-                        console.warn('pikmin_sources.json 格式不正確（缺少有效的 colorGroups），改用內建圖示來源。');
-                        return;
-                    }
-
-                    if (extractedSourceLists.fromLegacy) {
-                        console.warn('pikmin_sources.json 使用舊版 sourceGroups，已自動轉換為 colorGroups。');
-                    }
-
-                    applyPikminColorSourceLists(extractedSourceLists.colorSourceLists, true);
-                };
-                loadPikminColorSourceLists();
-
-                const getRandomIntInclusive = (min, max) => (
-                    Math.floor(Math.random() * (max - min + 1)) + min
-                );
-
-                const getCyclicIndexDistance = (fromIndex, toIndex, listLength) => {
-                    if (!Number.isInteger(listLength) || listLength <= 1) return 0;
-                    const forwardDistance = (toIndex - fromIndex + listLength) % listLength;
-                    const backwardDistance = (fromIndex - toIndex + listLength) % listLength;
-                    return Math.min(forwardDistance, backwardDistance);
-                };
-
-                const assignPikminSourceIndices = (instanceColors, colorSourceLists, preferredSourceIndex) => {
-                    if (!Array.isArray(instanceColors) || !instanceColors.length) return [];
-
-                    const globalUsageByIndex = new Map();
-                    const perColorUsageByIndex = new Map();
-
-                    return instanceColors.map((optionId) => {
-                        const sourceList = Array.isArray(colorSourceLists?.[optionId])
-                            ? colorSourceLists[optionId]
-                            : [];
-                        const listLength = sourceList.length;
-                        if (!listLength) return 0;
-
-                        const normalizedPreferredIndex = normalizeSourceIndex(
-                            listLength,
-                            preferredSourceIndex,
-                            0
+                    const PIKMIN_OPTIONS = ref(buildPikminOptions(pikminColorSourceLists.value, primarySourceGroupIndex.value));
+                    const applyPikminColorSourceLists = (normalizedColorSourceLists, rotateByStorage = false) => {
+                        pikminColorSourceLists.value = mergePikminColorSourceListsWithFallback(
+                            normalizedColorSourceLists,
+                            pikminDataUrlFallbackGroup
                         );
-                        const allIndices = Array.from({ length: listLength }, (_, index) => index);
-                        let colorUsageMap = perColorUsageByIndex.get(optionId);
-                        if (!colorUsageMap) {
-                            colorUsageMap = new Map();
-                            perColorUsageByIndex.set(optionId, colorUsageMap);
-                        }
-
-                        const sameColorUnusedIndices = allIndices.filter(
-                            (index) => (colorUsageMap.get(index) || 0) === 0
+                        primarySourceGroupIndex.value = rotateByStorage
+                            ? getNextSourceGroupIndex(getSourceListCycleLength(pikminColorSourceLists.value))
+                            : 0;
+                        PIKMIN_OPTIONS.value = buildPikminOptions(
+                            pikminColorSourceLists.value,
+                            primarySourceGroupIndex.value
                         );
-                        const candidateIndices = sameColorUnusedIndices.length
-                            ? sameColorUnusedIndices
-                            : allIndices;
-
-                        let selectedIndex = candidateIndices[0];
-                        let selectedGlobalUsage = Number.POSITIVE_INFINITY;
-                        let selectedColorUsage = Number.POSITIVE_INFINITY;
-                        let selectedDistance = Number.POSITIVE_INFINITY;
-
-                        candidateIndices.forEach((index) => {
-                            const globalUsage = globalUsageByIndex.get(index) || 0;
-                            const colorUsage = colorUsageMap.get(index) || 0;
-                            const distance = getCyclicIndexDistance(
-                                normalizedPreferredIndex,
-                                index,
-                                listLength
-                            );
-
-                            const isBetterCandidate = (
-                                globalUsage < selectedGlobalUsage
-                                || (globalUsage === selectedGlobalUsage && colorUsage < selectedColorUsage)
-                                || (
-                                    globalUsage === selectedGlobalUsage
-                                    && colorUsage === selectedColorUsage
-                                    && distance < selectedDistance
-                                )
-                                || (
-                                    globalUsage === selectedGlobalUsage
-                                    && colorUsage === selectedColorUsage
-                                    && distance === selectedDistance
-                                    && Math.random() < 0.5
-                                )
-                            );
-
-                            if (isBetterCandidate) {
-                                selectedIndex = index;
-                                selectedGlobalUsage = globalUsage;
-                                selectedColorUsage = colorUsage;
-                                selectedDistance = distance;
-                            }
-                        });
-
-                        colorUsageMap.set(selectedIndex, (colorUsageMap.get(selectedIndex) || 0) + 1);
-                        globalUsageByIndex.set(selectedIndex, (globalUsageByIndex.get(selectedIndex) || 0) + 1);
-                        return selectedIndex;
-                    });
-                };
-
-                const buildRandomPikminInstanceColors = (candidatePool) => {
-                    if (!candidatePool.length) return [];
-
-                    const randomCount = getRandomIntInclusive(1, MAX_PIKMIN_INSTANCES);
-                    return Array.from({ length: randomCount }, () => (
-                        candidatePool[Math.floor(Math.random() * candidatePool.length)]
-                    ));
-                };
-
-                const selectedPikmins = ref([...ALL_PIKMIN_IDS]);
-                const pikminInstances = ref([]);
-                const pikminLayoutMap = ref({});
-                const rerollSeed = ref(0);
-                const pikminRenderStateMap = ref({});
-
-                const createPikminRenderState = (imgUrl) => ({
-                    currentSrc: typeof imgUrl === 'string' ? imgUrl : '',
-                    attemptedSourceIndices: [],
-                    isLoaded: false,
-                    showFallback: false
-                });
-                const setPikminRenderState = (instanceId, nextState) => {
-                    pikminRenderStateMap.value = {
-                        ...pikminRenderStateMap.value,
-                        [instanceId]: nextState
-                    };
-                };
-
-                const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
-                const randomBetween = (min, max) => min + (Math.random() * (max - min));
-
-                const PIKMIN_OVERLAP_LIMIT = 0.3;
-                const PIKMIN_LAYOUT_ATTEMPTS = 60;
-                const PIKMIN_BOUNDS_HEIGHT_RATIO = 1.45;
-                const PIKMIN_MAX_RENDERED_SIZE = 40;
-                const PIKMIN_MIN_VISIBLE_RATIO = 0.42;
-                const PIKMIN_ZONE_SEQUENCE = ['left', 'right', 'bottom'];
-                const PIKMIN_PLACEMENT_ZONES = Object.freeze({
-                    left: {
-                        edgeOffsetRange: [-6, 0],
-                        topRange: [56, 92],
-                        rotationRange: [-18, 20]
-                    },
-                    right: {
-                        edgeOffsetRange: [0, 6],
-                        topRange: [56, 92],
-                        rotationRange: [-20, 18]
-                    },
-                    bottom: {
-                        leftRange: [18, 82],
-                        edgeOffsetRange: [0, 8],
-                        rotationRange: [-14, 14]
-                    }
-                });
-                const clampPikminSizeForScale = (size, scale) => {
-                    const normalizedScale = Number.isFinite(scale) && scale > 0 ? scale : 1;
-                    const maxSize = PIKMIN_MAX_RENDERED_SIZE / normalizedScale;
-                    return clamp(size, 0, maxSize);
-                };
-
-                const getCandidatePikminPool = () => {
-                    const validSelected = selectedPikmins.value.filter((id, index, arr) => (
-                        ALL_PIKMIN_IDS.includes(id) && arr.indexOf(id) === index
-                    ));
-                    return validSelected.length ? validSelected : [...ALL_PIKMIN_IDS];
-                };
-
-                const getPikminSizeRange = (instanceCount) => {
-                    const normalizedCount = clamp(instanceCount, 1, MAX_PIKMIN_INSTANCES);
-                    if (normalizedCount === 1) {
-                        return { min: 56, max: 80 };
-                    }
-
-                    const countRatio = (normalizedCount - 2) / Math.max(MAX_PIKMIN_INSTANCES - 2, 1);
-                    const min = 30 - (countRatio * 14);
-                    const max = 52 - (countRatio * 24);
-                    return {
-                        min: clamp(min, 14, 80),
-                        max: clamp(max, 24, 80)
-                    };
-                };
-
-                const getPlacementZoneKey = (instanceIndex, instanceCount) => {
-                    const preferredZone = instanceCount === 1
-                        ? 'bottom'
-                        : PIKMIN_ZONE_SEQUENCE[instanceIndex % PIKMIN_ZONE_SEQUENCE.length];
-                    if (Math.random() < 0.7) return preferredZone;
-                    return PIKMIN_ZONE_SEQUENCE[Math.floor(Math.random() * PIKMIN_ZONE_SEQUENCE.length)];
-                };
-
-                const buildLayoutBounds = (layout) => {
-                    const scale = Number.isFinite(layout.scale) && layout.scale > 0 ? layout.scale : 1;
-                    const size = clampPikminSizeForScale(layout.size, scale);
-                    const width = size * scale;
-                    const height = width * PIKMIN_BOUNDS_HEIGHT_RATIO;
-                    const halfWidth = width / 2;
-                    const halfHeight = height / 2;
-                    return {
-                        left: layout.left - halfWidth,
-                        right: layout.left + halfWidth,
-                        top: layout.top - halfHeight,
-                        bottom: layout.top + halfHeight,
-                        area: width * height
-                    };
-                };
-
-                const getOverlapRatio = (boundsA, boundsB) => {
-                    const overlapWidth = Math.max(
-                        0,
-                        Math.min(boundsA.right, boundsB.right) - Math.max(boundsA.left, boundsB.left)
-                    );
-                    const overlapHeight = Math.max(
-                        0,
-                        Math.min(boundsA.bottom, boundsB.bottom) - Math.max(boundsA.top, boundsB.top)
-                    );
-                    const overlapArea = overlapWidth * overlapHeight;
-                    const baseArea = Math.max(1, Math.min(boundsA.area, boundsB.area));
-                    return overlapArea / baseArea;
-                };
-
-                const getVisibleRatio = (bounds) => {
-                    const visibleWidth = Math.max(0, Math.min(bounds.right, 100) - Math.max(bounds.left, 0));
-                    const visibleHeight = Math.max(0, Math.min(bounds.bottom, 100) - Math.max(bounds.top, 0));
-                    const visibleArea = visibleWidth * visibleHeight;
-                    return bounds.area > 0 ? (visibleArea / bounds.area) : 0;
-                };
-
-                const evaluatePlacementCandidate = (candidateBounds, placedBounds) => {
-                    let maxOverlap = 0;
-                    let overlapSum = 0;
-                    placedBounds.forEach((placed) => {
-                        const overlap = getOverlapRatio(candidateBounds, placed);
-                        maxOverlap = Math.max(maxOverlap, overlap);
-                        overlapSum += overlap;
-                    });
-
-                    const visibleRatio = getVisibleRatio(candidateBounds);
-                    const visibilityPenalty = Math.max(0, PIKMIN_MIN_VISIBLE_RATIO - visibleRatio) * 2;
-                    const score = (maxOverlap * 4) + overlapSum + visibilityPenalty;
-                    return { maxOverlap, score, visibleRatio };
-                };
-
-                const createPlacementCandidate = (instanceIndex, instanceCount, sizeRange) => {
-                    const zoneKey = getPlacementZoneKey(instanceIndex, instanceCount);
-                    const zone = PIKMIN_PLACEMENT_ZONES[zoneKey];
-                    const rawSize = randomBetween(sizeRange.min, sizeRange.max);
-                    const scaleMin = instanceCount === 1 ? 0.95 : 0.88;
-                    const scaleMax = instanceCount === 1 ? 1.08 : 1.04;
-                    const scale = randomBetween(scaleMin, scaleMax);
-                    const size = clampPikminSizeForScale(rawSize, scale);
-                    const width = size * scale;
-                    const halfWidth = width / 2;
-                    const halfHeight = (width * PIKMIN_BOUNDS_HEIGHT_RATIO) / 2;
-                    let left;
-                    let top;
-
-                    if (zoneKey === 'left') {
-                        left = halfWidth + randomBetween(zone.edgeOffsetRange[0], zone.edgeOffsetRange[1]);
-                        top = randomBetween(zone.topRange[0], zone.topRange[1]);
-                    } else if (zoneKey === 'right') {
-                        left = (100 - halfWidth) + randomBetween(zone.edgeOffsetRange[0], zone.edgeOffsetRange[1]);
-                        top = randomBetween(zone.topRange[0], zone.topRange[1]);
-                    } else {
-                        left = randomBetween(zone.leftRange[0], zone.leftRange[1]);
-                        top = (100 - halfHeight) + randomBetween(zone.edgeOffsetRange[0], zone.edgeOffsetRange[1]);
-                    }
-
-                    const layout = {
-                        left,
-                        top,
-                        rotation: randomBetween(zone.rotationRange[0], zone.rotationRange[1]),
-                        scale,
-                        size
                     };
 
-                    return {
-                        layout,
-                        bounds: buildLayoutBounds(layout)
-                    };
-                };
-
-                const getBestPikminPlacement = (instanceIndex, instanceCount, sizeRange, placedBounds) => {
-                    let bestCandidate = null;
-
-                    for (let attempt = 0; attempt < PIKMIN_LAYOUT_ATTEMPTS; attempt += 1) {
-                        const candidate = createPlacementCandidate(instanceIndex, instanceCount, sizeRange);
-                        const evaluation = evaluatePlacementCandidate(candidate.bounds, placedBounds);
-                        const candidateWithScore = {
-                            ...candidate,
-                            evaluation
-                        };
-
-                        if (!bestCandidate || candidateWithScore.evaluation.score < bestCandidate.evaluation.score) {
-                            bestCandidate = candidateWithScore;
-                        }
-
-                        if (
-                            evaluation.maxOverlap <= PIKMIN_OVERLAP_LIMIT
-                            && evaluation.visibleRatio >= PIKMIN_MIN_VISIBLE_RATIO
-                        ) {
-                            return candidateWithScore;
-                        }
-                    }
-
-                    return bestCandidate;
-                };
-
-                const randomizePikminLayout = () => {
-                    const candidatePool = getCandidatePikminPool();
-                    const instanceColors = buildRandomPikminInstanceColors(candidatePool);
-                    if (!instanceColors.length) {
-                        pikminInstances.value = [];
-                        pikminLayoutMap.value = {};
-                        return;
-                    }
-
-                    const sizeRange = getPikminSizeRange(instanceColors.length);
-                    const nextLayoutMap = {};
-                    const nextInstances = [];
-                    const placedBounds = [];
-                    rerollSeed.value += 1;
-                    const nextSourceIndices = assignPikminSourceIndices(
-                        instanceColors,
-                        pikminColorSourceLists.value,
-                        primarySourceGroupIndex.value
-                    );
-
-                    instanceColors.forEach((id, index) => {
-                        const placement = getBestPikminPlacement(
-                            index,
-                            instanceColors.length,
-                            sizeRange,
-                            placedBounds
-                        );
-                        const layout = placement?.layout ?? {
-                            left: 50,
-                            top: 90,
-                            rotation: 0,
-                            scale: 1,
-                            size: clampPikminSizeForScale(sizeRange.min, 1)
-                        };
-                        const instanceId = `pikmin-${rerollSeed.value}-${index}`;
-                        nextInstances.push({
-                            instanceId,
-                            optionId: id,
-                            sourceIndex: nextSourceIndices[index] ?? 0
-                        });
-                        nextLayoutMap[instanceId] = {
-                            ...layout,
-                            zIndex: 20 + Math.round(layout.top) + index
-                        };
-                        placedBounds.push(buildLayoutBounds(layout));
-                    });
-
-                    pikminInstances.value = nextInstances;
-                    pikminLayoutMap.value = nextLayoutMap;
-                };
-
-                const selectedPikminItems = computed(() => {
-                    const optionMap = new Map(
-                        PIKMIN_OPTIONS.value.map((option) => [option.id, option])
-                    );
-                    return pikminInstances.value
-                        .map((instance) => {
-                            const option = optionMap.get(instance.optionId);
-                            if (!option) return null;
-                            const sourceList = Array.isArray(pikminColorSourceLists.value?.[instance.optionId])
-                                ? pikminColorSourceLists.value[instance.optionId]
-                                : [];
-                            const resolvedSourceIndex = sourceList.length
-                                ? normalizeSourceIndex(
-                                    sourceList.length,
-                                    instance.sourceIndex,
-                                    primarySourceGroupIndex.value
-                                )
-                                : 0;
-                            const imgUrl = sourceList.length
-                                ? (sourceList[resolvedSourceIndex] || pikminDataUrlFallbackGroup[instance.optionId])
-                                : pikminDataUrlFallbackGroup[instance.optionId];
-                            return {
-                                ...option,
-                                instanceId: instance.instanceId,
-                                sourceIndex: resolvedSourceIndex,
-                                imgUrl
-                            };
-                        })
-                        .filter((option) => Boolean(option));
-                });
-                watch(selectedPikminItems, (items) => {
-                    const previousStates = pikminRenderStateMap.value;
-                    const nextStates = {};
-
-                    items.forEach((item) => {
-                        const previousState = previousStates[item.instanceId];
-                        if (previousState && previousState.currentSrc === item.imgUrl) {
-                            nextStates[item.instanceId] = previousState;
+                    const loadPikminColorSourceLists = async () => {
+                        let response;
+                        try {
+                            response = await fetch(PIKMIN_SOURCE_JSON_URL, { cache: 'no-store' });
+                        } catch (error) {
+                            console.warn('無法載入 pikmin_sources.json，改用內建圖示來源。', error);
                             return;
                         }
 
-                        nextStates[item.instanceId] = createPikminRenderState(item.imgUrl);
-                    });
-
-                    pikminRenderStateMap.value = nextStates;
-                }, { immediate: true });
-
-                const getPikminImageSrc = (instance) => {
-                    const state = pikminRenderStateMap.value[instance.instanceId];
-                    return state?.currentSrc || instance.imgUrl;
-                };
-                const isPikminImageVisible = (instanceId) => Boolean(
-                    pikminRenderStateMap.value[instanceId]?.isLoaded
-                );
-                const shouldShowPikminFallback = (instanceId) => Boolean(
-                    pikminRenderStateMap.value[instanceId]?.showFallback
-                );
-
-                const getPikminOverlayStyle = (optionId) => {
-                    const layout = pikminLayoutMap.value[optionId];
-                    if (!layout) return {};
-                    const scale = Number.isFinite(layout.scale) && layout.scale > 0 ? layout.scale : 1;
-                    const size = clampPikminSizeForScale(layout.size, scale);
-
-                    return {
-                        left: `${layout.left}%`,
-                        top: `${layout.top}%`,
-                        width: `${size}%`,
-                        transform: `translate(-50%, -50%) rotate(${layout.rotation}deg) scale(${scale})`,
-                        zIndex: layout.zIndex
-                    };
-                };
-
-                const togglePikmin = (id) => {
-                    if (selectedPikmins.value.includes(id)) {
-                        selectedPikmins.value = selectedPikmins.value.filter(p => p !== id);
-                    } else {
-                        selectedPikmins.value = [...selectedPikmins.value, id];
-                    }
-                };
-
-                watch(selectedPikmins, randomizePikminLayout);
-                watch([pikminColorSourceLists, primarySourceGroupIndex], () => {
-                    if (!pikminInstances.value.length) return;
-                    const instanceColors = pikminInstances.value.map((instance) => instance.optionId);
-                    const nextSourceIndices = assignPikminSourceIndices(
-                        instanceColors,
-                        pikminColorSourceLists.value,
-                        primarySourceGroupIndex.value
-                    );
-                    pikminInstances.value = pikminInstances.value.map((instance, index) => ({
-                        ...instance,
-                        sourceIndex: nextSourceIndices[index] ?? 0
-                    }));
-                });
-                randomizePikminLayout();
-
-                const generateRandomTitle = () => {
-                    const randomTitles = [
-                        '奴才,高級罐罐呢',
-                        '發現巨大水果！',
-                        '今天的散步路線不錯',
-                        '路邊的野花不要採',
-                        '本汪/喵今天也很可愛',
-                        '快看！是皮克敏！',
-                        '這天氣適合睡午覺',
-                        '世界第一可愛！',
-                        '正在執行機密任務...',
-                        '帶我回家吧！'
-                    ];
-                    const randomIndex = Math.floor(Math.random() * randomTitles.length);
-                    title.value = randomTitles[randomIndex];
-                };
-
-                const handlePhotoUpload = (e) => {
-                    const file = e.target.files[0];
-                    if (file) {
-                        const reader = new FileReader();
-                        reader.onload = (event) => {
-                            photo.value = event.target.result;
-                        };
-                        reader.readAsDataURL(file);
-                    }
-                };
-
-                const handleGetLocation = () => {
-                    if (!navigator.geolocation) {
-                        alert('您的瀏覽器不支援地理定位功能');
-                        return;
-                    }
-
-                    isLocating.value = true;
-                    navigator.geolocation.getCurrentPosition(
-                        async (position) => {
-                            const { latitude, longitude } = position.coords;
-                            try {
-                                const response = await fetch(
-                                    `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18&accept-language=zh-TW`
-                                );
-                                const data = await response.json();
-
-                                if (data && data.address) {
-                                    const addr = data.address;
-                                    const village = addr.village || addr.suburb || addr.neighbourhood || '';
-                                    const district = addr.town || addr.city_district || addr.county || addr.city || '';
-
-                                    let finalLocation = '';
-                                    if (village && district) finalLocation = `${village}, ${district}`;
-                                    else if (village) finalLocation = village;
-                                    else if (district) finalLocation = district;
-                                    else finalLocation = '未知地點';
-
-                                    location.value = finalLocation;
-                                } else {
-                                    location.value = '無法解析詳細地址';
-                                }
-                            } catch (error) {
-                                console.error("Geocoding error:", error);
-                                location.value = '定位解析失敗';
-                            } finally {
-                                isLocating.value = false;
-                            }
-                        },
-                        (error) => {
-                            console.error("Geolocation error:", error);
-                            alert('無法獲取位置，請確認是否已授權定位權限。');
-                            isLocating.value = false;
-                        },
-                        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-                    );
-                };
-
-                const waitForPostcardRenderStability = async () => {
-                    await nextTick();
-                    if (document.fonts?.ready) {
-                        await document.fonts.ready;
-                    }
-
-                    if (postcardRef.value instanceof HTMLElement) {
-                        const postcardImages = Array.from(postcardRef.value.querySelectorAll('img'));
-                        await Promise.allSettled(postcardImages.map((img) => {
-                            if (!(img instanceof HTMLImageElement)) return Promise.resolve();
-                            if (typeof img.decode === 'function') {
-                                return img.decode().catch(() => undefined);
-                            }
-                            if (img.complete) return Promise.resolve();
-                            return new Promise((resolve) => {
-                                const done = () => resolve();
-                                img.addEventListener('load', done, { once: true });
-                                img.addEventListener('error', done, { once: true });
-                            });
-                        }));
-                    }
-
-                    if (typeof requestAnimationFrame === 'function') {
-                        await new Promise((resolve) => {
-                            requestAnimationFrame(() => requestAnimationFrame(resolve));
-                        });
-                    }
-                };
-
-                const capturePostcardCanvas = async () => {
-                    if (!window.html2canvas) throw new Error('html2canvas not loaded');
-                    if (!postcardRef.value) throw new Error('postcard element not found');
-                    await waitForPostcardRenderStability();
-                    const el = postcardRef.value;
-                    const rect = el.getBoundingClientRect();
-                    return window.html2canvas(el, {
-                        scale: 2,
-                        useCORS: true,
-                        backgroundColor: null,
-                        width: Math.round(rect.width),
-                        height: Math.round(rect.height)
-                    });
-                };
-
-                const downloadCanvas = (canvas) => {
-                    const link = document.createElement('a');
-                    link.download = `pikmin-postcard-${Date.now()}.png`;
-                    link.href = canvas.toDataURL('image/png');
-                    link.click();
-                };
-
-                const handleDownload = async () => {
-                    if (!photo.value || isDownloading.value || isSharing.value) return;
-                    isDownloading.value = true;
-                    try {
-                        const canvas = await capturePostcardCanvas();
-                        downloadCanvas(canvas);
-                    } catch (err) {
-                        console.error("Canvas export failed", err);
-                        alert("輸出圖片失敗");
-                    } finally {
-                        isDownloading.value = false;
-                    }
-                };
-
-                const handleShare = async () => {
-                    if (!photo.value || isSharing.value || isDownloading.value) return;
-                    isSharing.value = true;
-                    try {
-                        const canvas = await capturePostcardCanvas();
-                        const filename = `pikmin-postcard-${Date.now()}.png`;
-
-                        const blob = await new Promise((resolve, reject) =>
-                            canvas.toBlob(b => b ? resolve(b) : reject(new Error('toBlob returned null')), 'image/png')
-                        );
-                        const file = new File([blob], filename, { type: 'image/png' });
-
-                        if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-                            await navigator.share({
-                                files: [file],
-                                title: '皮克敏風格明信片'
-                            });
-                        } else {
-                            downloadCanvas(canvas);
+                        if (!response.ok) {
+                            console.warn(`載入 pikmin_sources.json 失敗（${response.status}），改用內建圖示來源。`);
+                            return;
                         }
-                    } catch (err) {
-                        if (err.name === 'AbortError') return;
-                        console.error("Share failed", err);
+
+                        let sourcePayload;
+                        try {
+                            sourcePayload = await response.json();
+                        } catch (error) {
+                            console.warn('pikmin_sources.json 解析失敗，改用內建圖示來源。', error);
+                            return;
+                        }
+
+                        const extractedSourceLists = extractPikminColorSourceLists(sourcePayload);
+                        if (!extractedSourceLists) {
+                            console.warn('pikmin_sources.json 格式不正確（缺少有效的 colorGroups），改用內建圖示來源。');
+                            return;
+                        }
+
+                        if (extractedSourceLists.fromLegacy) {
+                            console.warn('pikmin_sources.json 使用舊版 sourceGroups，已自動轉換為 colorGroups。');
+                        }
+
+                        applyPikminColorSourceLists(extractedSourceLists.colorSourceLists, true);
+                    };
+                    loadPikminColorSourceLists();
+
+                    const getRandomIntInclusive = (min, max) => (
+                        Math.floor(Math.random() * (max - min + 1)) + min
+                    );
+
+                    const getCyclicIndexDistance = (fromIndex, toIndex, listLength) => {
+                        if (!Number.isInteger(listLength) || listLength <= 1) return 0;
+                        const forwardDistance = (toIndex - fromIndex + listLength) % listLength;
+                        const backwardDistance = (fromIndex - toIndex + listLength) % listLength;
+                        return Math.min(forwardDistance, backwardDistance);
+                    };
+
+                    const assignPikminSourceIndices = (instanceColors, colorSourceLists, preferredSourceIndex) => {
+                        if (!Array.isArray(instanceColors) || !instanceColors.length) return [];
+
+                        const globalUsageByIndex = new Map();
+                        const perColorUsageByIndex = new Map();
+
+                        return instanceColors.map((optionId) => {
+                            const sourceList = Array.isArray(colorSourceLists?.[optionId])
+                                ? colorSourceLists[optionId]
+                                : [];
+                            const listLength = sourceList.length;
+                            if (!listLength) return 0;
+
+                            const normalizedPreferredIndex = normalizeSourceIndex(
+                                listLength,
+                                preferredSourceIndex,
+                                0
+                            );
+                            const allIndices = Array.from({ length: listLength }, (_, index) => index);
+                            let colorUsageMap = perColorUsageByIndex.get(optionId);
+                            if (!colorUsageMap) {
+                                colorUsageMap = new Map();
+                                perColorUsageByIndex.set(optionId, colorUsageMap);
+                            }
+
+                            const sameColorUnusedIndices = allIndices.filter(
+                                (index) => (colorUsageMap.get(index) || 0) === 0
+                            );
+                            const candidateIndices = sameColorUnusedIndices.length
+                                ? sameColorUnusedIndices
+                                : allIndices;
+
+                            let selectedIndex = candidateIndices[0];
+                            let selectedGlobalUsage = Number.POSITIVE_INFINITY;
+                            let selectedColorUsage = Number.POSITIVE_INFINITY;
+                            let selectedDistance = Number.POSITIVE_INFINITY;
+
+                            candidateIndices.forEach((index) => {
+                                const globalUsage = globalUsageByIndex.get(index) || 0;
+                                const colorUsage = colorUsageMap.get(index) || 0;
+                                const distance = getCyclicIndexDistance(
+                                    normalizedPreferredIndex,
+                                    index,
+                                    listLength
+                                );
+
+                                const isBetterCandidate = (
+                                    globalUsage < selectedGlobalUsage
+                                    || (globalUsage === selectedGlobalUsage && colorUsage < selectedColorUsage)
+                                    || (
+                                        globalUsage === selectedGlobalUsage
+                                        && colorUsage === selectedColorUsage
+                                        && distance < selectedDistance
+                                    )
+                                    || (
+                                        globalUsage === selectedGlobalUsage
+                                        && colorUsage === selectedColorUsage
+                                        && distance === selectedDistance
+                                        && Math.random() < 0.5
+                                    )
+                                );
+
+                                if (isBetterCandidate) {
+                                    selectedIndex = index;
+                                    selectedGlobalUsage = globalUsage;
+                                    selectedColorUsage = colorUsage;
+                                    selectedDistance = distance;
+                                }
+                            });
+
+                            colorUsageMap.set(selectedIndex, (colorUsageMap.get(selectedIndex) || 0) + 1);
+                            globalUsageByIndex.set(selectedIndex, (globalUsageByIndex.get(selectedIndex) || 0) + 1);
+                            return selectedIndex;
+                        });
+                    };
+
+                    const buildRandomPikminInstanceColors = (candidatePool) => {
+                        if (!candidatePool.length) return [];
+
+                        const randomCount = getRandomIntInclusive(1, MAX_PIKMIN_INSTANCES);
+                        return Array.from({ length: randomCount }, () => (
+                            candidatePool[Math.floor(Math.random() * candidatePool.length)]
+                        ));
+                    };
+
+                    const selectedPikmins = ref([...ALL_PIKMIN_IDS]);
+                    const pikminInstances = ref([]);
+                    const pikminLayoutMap = ref({});
+                    const rerollSeed = ref(0);
+                    const pikminRenderStateMap = ref({});
+
+                    const createPikminRenderState = (imgUrl) => ({
+                        currentSrc: typeof imgUrl === 'string' ? imgUrl : '',
+                        attemptedSourceIndices: [],
+                        isLoaded: false,
+                        showFallback: false
+                    });
+                    const setPikminRenderState = (instanceId, nextState) => {
+                        pikminRenderStateMap.value = {
+                            ...pikminRenderStateMap.value,
+                            [instanceId]: nextState
+                        };
+                    };
+
+                    const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+                    const randomBetween = (min, max) => min + (Math.random() * (max - min));
+
+                    const PIKMIN_OVERLAP_LIMIT = 0.3;
+                    const PIKMIN_LAYOUT_ATTEMPTS = 60;
+                    const PIKMIN_BOUNDS_HEIGHT_RATIO = 1.45;
+                    const PIKMIN_MAX_RENDERED_SIZE = 40;
+                    const PIKMIN_MIN_VISIBLE_RATIO = 0.42;
+                    const PIKMIN_ZONE_SEQUENCE = ['left', 'right', 'bottom'];
+                    const PIKMIN_PLACEMENT_ZONES = Object.freeze({
+                        left: {
+                            edgeOffsetRange: [-6, 0],
+                            topRange: [56, 92],
+                            rotationRange: [-18, 20]
+                        },
+                        right: {
+                            edgeOffsetRange: [0, 6],
+                            topRange: [56, 92],
+                            rotationRange: [-20, 18]
+                        },
+                        bottom: {
+                            leftRange: [18, 82],
+                            edgeOffsetRange: [0, 8],
+                            rotationRange: [-14, 14]
+                        }
+                    });
+                    const clampPikminSizeForScale = (size, scale) => {
+                        const normalizedScale = Number.isFinite(scale) && scale > 0 ? scale : 1;
+                        const maxSize = PIKMIN_MAX_RENDERED_SIZE / normalizedScale;
+                        return clamp(size, 0, maxSize);
+                    };
+
+                    const getCandidatePikminPool = () => {
+                        const validSelected = selectedPikmins.value.filter((id, index, arr) => (
+                            ALL_PIKMIN_IDS.includes(id) && arr.indexOf(id) === index
+                        ));
+                        return validSelected.length ? validSelected : [...ALL_PIKMIN_IDS];
+                    };
+
+                    const getPikminSizeRange = (instanceCount) => {
+                        const normalizedCount = clamp(instanceCount, 1, MAX_PIKMIN_INSTANCES);
+                        if (normalizedCount === 1) {
+                            return { min: 56, max: 80 };
+                        }
+
+                        const countRatio = (normalizedCount - 2) / Math.max(MAX_PIKMIN_INSTANCES - 2, 1);
+                        const min = 30 - (countRatio * 14);
+                        const max = 52 - (countRatio * 24);
+                        return {
+                            min: clamp(min, 14, 80),
+                            max: clamp(max, 24, 80)
+                        };
+                    };
+
+                    const getPlacementZoneKey = (instanceIndex, instanceCount) => {
+                        const preferredZone = instanceCount === 1
+                            ? 'bottom'
+                            : PIKMIN_ZONE_SEQUENCE[instanceIndex % PIKMIN_ZONE_SEQUENCE.length];
+                        if (Math.random() < 0.7) return preferredZone;
+                        return PIKMIN_ZONE_SEQUENCE[Math.floor(Math.random() * PIKMIN_ZONE_SEQUENCE.length)];
+                    };
+
+                    const buildLayoutBounds = (layout) => {
+                        const scale = Number.isFinite(layout.scale) && layout.scale > 0 ? layout.scale : 1;
+                        const size = clampPikminSizeForScale(layout.size, scale);
+                        const width = size * scale;
+                        const height = width * PIKMIN_BOUNDS_HEIGHT_RATIO;
+                        const halfWidth = width / 2;
+                        const halfHeight = height / 2;
+                        return {
+                            left: layout.left - halfWidth,
+                            right: layout.left + halfWidth,
+                            top: layout.top - halfHeight,
+                            bottom: layout.top + halfHeight,
+                            area: width * height
+                        };
+                    };
+
+                    const getOverlapRatio = (boundsA, boundsB) => {
+                        const overlapWidth = Math.max(
+                            0,
+                            Math.min(boundsA.right, boundsB.right) - Math.max(boundsA.left, boundsB.left)
+                        );
+                        const overlapHeight = Math.max(
+                            0,
+                            Math.min(boundsA.bottom, boundsB.bottom) - Math.max(boundsA.top, boundsB.top)
+                        );
+                        const overlapArea = overlapWidth * overlapHeight;
+                        const baseArea = Math.max(1, Math.min(boundsA.area, boundsB.area));
+                        return overlapArea / baseArea;
+                    };
+
+                    const getVisibleRatio = (bounds) => {
+                        const visibleWidth = Math.max(0, Math.min(bounds.right, 100) - Math.max(bounds.left, 0));
+                        const visibleHeight = Math.max(0, Math.min(bounds.bottom, 100) - Math.max(bounds.top, 0));
+                        const visibleArea = visibleWidth * visibleHeight;
+                        return bounds.area > 0 ? (visibleArea / bounds.area) : 0;
+                    };
+
+                    const evaluatePlacementCandidate = (candidateBounds, placedBounds) => {
+                        let maxOverlap = 0;
+                        let overlapSum = 0;
+                        placedBounds.forEach((placed) => {
+                            const overlap = getOverlapRatio(candidateBounds, placed);
+                            maxOverlap = Math.max(maxOverlap, overlap);
+                            overlapSum += overlap;
+                        });
+
+                        const visibleRatio = getVisibleRatio(candidateBounds);
+                        const visibilityPenalty = Math.max(0, PIKMIN_MIN_VISIBLE_RATIO - visibleRatio) * 2;
+                        const score = (maxOverlap * 4) + overlapSum + visibilityPenalty;
+                        return { maxOverlap, score, visibleRatio };
+                    };
+
+                    const createPlacementCandidate = (instanceIndex, instanceCount, sizeRange) => {
+                        const zoneKey = getPlacementZoneKey(instanceIndex, instanceCount);
+                        const zone = PIKMIN_PLACEMENT_ZONES[zoneKey];
+                        const rawSize = randomBetween(sizeRange.min, sizeRange.max);
+                        const scaleMin = instanceCount === 1 ? 0.95 : 0.88;
+                        const scaleMax = instanceCount === 1 ? 1.08 : 1.04;
+                        const scale = randomBetween(scaleMin, scaleMax);
+                        const size = clampPikminSizeForScale(rawSize, scale);
+                        const width = size * scale;
+                        const halfWidth = width / 2;
+                        const halfHeight = (width * PIKMIN_BOUNDS_HEIGHT_RATIO) / 2;
+                        let left;
+                        let top;
+
+                        if (zoneKey === 'left') {
+                            left = halfWidth + randomBetween(zone.edgeOffsetRange[0], zone.edgeOffsetRange[1]);
+                            top = randomBetween(zone.topRange[0], zone.topRange[1]);
+                        } else if (zoneKey === 'right') {
+                            left = (100 - halfWidth) + randomBetween(zone.edgeOffsetRange[0], zone.edgeOffsetRange[1]);
+                            top = randomBetween(zone.topRange[0], zone.topRange[1]);
+                        } else {
+                            left = randomBetween(zone.leftRange[0], zone.leftRange[1]);
+                            top = (100 - halfHeight) + randomBetween(zone.edgeOffsetRange[0], zone.edgeOffsetRange[1]);
+                        }
+
+                        const layout = {
+                            left,
+                            top,
+                            rotation: randomBetween(zone.rotationRange[0], zone.rotationRange[1]),
+                            scale,
+                            size
+                        };
+
+                        return {
+                            layout,
+                            bounds: buildLayoutBounds(layout)
+                        };
+                    };
+
+                    const getBestPikminPlacement = (instanceIndex, instanceCount, sizeRange, placedBounds) => {
+                        let bestCandidate = null;
+
+                        for (let attempt = 0; attempt < PIKMIN_LAYOUT_ATTEMPTS; attempt += 1) {
+                            const candidate = createPlacementCandidate(instanceIndex, instanceCount, sizeRange);
+                            const evaluation = evaluatePlacementCandidate(candidate.bounds, placedBounds);
+                            const candidateWithScore = {
+                                ...candidate,
+                                evaluation
+                            };
+
+                            if (!bestCandidate || candidateWithScore.evaluation.score < bestCandidate.evaluation.score) {
+                                bestCandidate = candidateWithScore;
+                            }
+
+                            if (
+                                evaluation.maxOverlap <= PIKMIN_OVERLAP_LIMIT
+                                && evaluation.visibleRatio >= PIKMIN_MIN_VISIBLE_RATIO
+                            ) {
+                                return candidateWithScore;
+                            }
+                        }
+
+                        return bestCandidate;
+                    };
+
+                    const randomizePikminLayout = () => {
+                        const candidatePool = getCandidatePikminPool();
+                        const instanceColors = buildRandomPikminInstanceColors(candidatePool);
+                        if (!instanceColors.length) {
+                            pikminInstances.value = [];
+                            pikminLayoutMap.value = {};
+                            return;
+                        }
+
+                        const sizeRange = getPikminSizeRange(instanceColors.length);
+                        const nextLayoutMap = {};
+                        const nextInstances = [];
+                        const placedBounds = [];
+                        rerollSeed.value += 1;
+                        const nextSourceIndices = assignPikminSourceIndices(
+                            instanceColors,
+                            pikminColorSourceLists.value,
+                            primarySourceGroupIndex.value
+                        );
+
+                        instanceColors.forEach((id, index) => {
+                            const placement = getBestPikminPlacement(
+                                index,
+                                instanceColors.length,
+                                sizeRange,
+                                placedBounds
+                            );
+                            const layout = placement?.layout ?? {
+                                left: 50,
+                                top: 90,
+                                rotation: 0,
+                                scale: 1,
+                                size: clampPikminSizeForScale(sizeRange.min, 1)
+                            };
+                            const instanceId = `pikmin-${rerollSeed.value}-${index}`;
+                            nextInstances.push({
+                                instanceId,
+                                optionId: id,
+                                sourceIndex: nextSourceIndices[index] ?? 0
+                            });
+                            nextLayoutMap[instanceId] = {
+                                ...layout,
+                                zIndex: 20 + Math.round(layout.top) + index
+                            };
+                            placedBounds.push(buildLayoutBounds(layout));
+                        });
+
+                        pikminInstances.value = nextInstances;
+                        pikminLayoutMap.value = nextLayoutMap;
+                    };
+
+                    const selectedPikminItems = computed(() => {
+                        const optionMap = new Map(
+                            PIKMIN_OPTIONS.value.map((option) => [option.id, option])
+                        );
+                        return pikminInstances.value
+                            .map((instance) => {
+                                const option = optionMap.get(instance.optionId);
+                                if (!option) return null;
+                                const sourceList = Array.isArray(pikminColorSourceLists.value?.[instance.optionId])
+                                    ? pikminColorSourceLists.value[instance.optionId]
+                                    : [];
+                                const resolvedSourceIndex = sourceList.length
+                                    ? normalizeSourceIndex(
+                                        sourceList.length,
+                                        instance.sourceIndex,
+                                        primarySourceGroupIndex.value
+                                    )
+                                    : 0;
+                                const imgUrl = sourceList.length
+                                    ? (sourceList[resolvedSourceIndex] || pikminDataUrlFallbackGroup[instance.optionId])
+                                    : pikminDataUrlFallbackGroup[instance.optionId];
+                                return {
+                                    ...option,
+                                    instanceId: instance.instanceId,
+                                    sourceIndex: resolvedSourceIndex,
+                                    imgUrl
+                                };
+                            })
+                            .filter((option) => Boolean(option));
+                    });
+                    watch(selectedPikminItems, (items) => {
+                        const previousStates = pikminRenderStateMap.value;
+                        const nextStates = {};
+
+                        items.forEach((item) => {
+                            const previousState = previousStates[item.instanceId];
+                            if (previousState && previousState.currentSrc === item.imgUrl) {
+                                nextStates[item.instanceId] = previousState;
+                                return;
+                            }
+
+                            nextStates[item.instanceId] = createPikminRenderState(item.imgUrl);
+                        });
+
+                        pikminRenderStateMap.value = nextStates;
+                    }, { immediate: true });
+
+                    const getPikminImageSrc = (instance) => {
+                        const state = pikminRenderStateMap.value[instance.instanceId];
+                        return state?.currentSrc || instance.imgUrl;
+                    };
+                    const isPikminImageVisible = (instanceId) => Boolean(
+                        pikminRenderStateMap.value[instanceId]?.isLoaded
+                    );
+                    const shouldShowPikminFallback = (instanceId) => Boolean(
+                        pikminRenderStateMap.value[instanceId]?.showFallback
+                    );
+
+                    const getPikminOverlayStyle = (optionId) => {
+                        const layout = pikminLayoutMap.value[optionId];
+                        if (!layout) return {};
+                        const scale = Number.isFinite(layout.scale) && layout.scale > 0 ? layout.scale : 1;
+                        const size = clampPikminSizeForScale(layout.size, scale);
+
+                        return {
+                            left: `${layout.left}%`,
+                            top: `${layout.top}%`,
+                            width: `${size}%`,
+                            transform: `translate(-50%, -50%) rotate(${layout.rotation}deg) scale(${scale})`,
+                            zIndex: layout.zIndex
+                        };
+                    };
+
+                    const togglePikmin = (id) => {
+                        if (selectedPikmins.value.includes(id)) {
+                            selectedPikmins.value = selectedPikmins.value.filter(p => p !== id);
+                        } else {
+                            selectedPikmins.value = [...selectedPikmins.value, id];
+                        }
+                    };
+
+                    watch(selectedPikmins, randomizePikminLayout);
+                    watch([pikminColorSourceLists, primarySourceGroupIndex], () => {
+                        if (!pikminInstances.value.length) return;
+                        const instanceColors = pikminInstances.value.map((instance) => instance.optionId);
+                        const nextSourceIndices = assignPikminSourceIndices(
+                            instanceColors,
+                            pikminColorSourceLists.value,
+                            primarySourceGroupIndex.value
+                        );
+                        pikminInstances.value = pikminInstances.value.map((instance, index) => ({
+                            ...instance,
+                            sourceIndex: nextSourceIndices[index] ?? 0
+                        }));
+                    });
+                    randomizePikminLayout();
+
+                    const generateRandomTitle = () => {
+                        const randomTitles = [
+                            '奴才,高級罐罐呢',
+                            '發現巨大水果！',
+                            '今天的散步路線不錯',
+                            '路邊的野花不要採',
+                            '本汪/喵今天也很可愛',
+                            '快看！是皮克敏！',
+                            '這天氣適合睡午覺',
+                            '世界第一可愛！',
+                            '正在執行機密任務...',
+                            '帶我回家吧！'
+                        ];
+                        const randomIndex = Math.floor(Math.random() * randomTitles.length);
+                        title.value = randomTitles[randomIndex];
+                    };
+
+                    const handlePhotoUpload = (e) => {
+                        const file = e.target.files[0];
+                        if (file) {
+                            const reader = new FileReader();
+                            reader.onload = (event) => {
+                                photo.value = event.target.result;
+                            };
+                            reader.readAsDataURL(file);
+                        }
+                    };
+
+                    const handleGetLocation = () => {
+                        if (!navigator.geolocation) {
+                            alert('您的瀏覽器不支援地理定位功能');
+                            return;
+                        }
+
+                        isLocating.value = true;
+                        navigator.geolocation.getCurrentPosition(
+                            async (position) => {
+                                const { latitude, longitude } = position.coords;
+                                try {
+                                    const response = await fetch(
+                                        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18&accept-language=zh-TW`
+                                    );
+                                    const data = await response.json();
+
+                                    if (data && data.address) {
+                                        const addr = data.address;
+                                        const village = addr.village || addr.suburb || addr.neighbourhood || '';
+                                        const district = addr.town || addr.city_district || addr.county || addr.city || '';
+
+                                        let finalLocation = '';
+                                        if (village && district) finalLocation = `${village}, ${district}`;
+                                        else if (village) finalLocation = village;
+                                        else if (district) finalLocation = district;
+                                        else finalLocation = '未知地點';
+
+                                        location.value = finalLocation;
+                                    } else {
+                                        location.value = '無法解析詳細地址';
+                                    }
+                                } catch (error) {
+                                    console.error("Geocoding error:", error);
+                                    location.value = '定位解析失敗';
+                                } finally {
+                                    isLocating.value = false;
+                                }
+                            },
+                            (error) => {
+                                console.error("Geolocation error:", error);
+                                alert('無法獲取位置，請確認是否已授權定位權限。');
+                                isLocating.value = false;
+                            },
+                            { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+                        );
+                    };
+
+                    const waitForPostcardRenderStability = async () => {
+                        await nextTick();
+                        if (document.fonts?.ready) {
+                            await document.fonts.ready;
+                        }
+
+                        if (postcardRef.value instanceof HTMLElement) {
+                            const postcardImages = Array.from(postcardRef.value.querySelectorAll('img'));
+                            await Promise.allSettled(postcardImages.map((img) => {
+                                if (!(img instanceof HTMLImageElement)) return Promise.resolve();
+                                if (typeof img.decode === 'function') {
+                                    return img.decode().catch(() => undefined);
+                                }
+                                if (img.complete) return Promise.resolve();
+                                return new Promise((resolve) => {
+                                    const done = () => resolve();
+                                    img.addEventListener('load', done, { once: true });
+                                    img.addEventListener('error', done, { once: true });
+                                });
+                            }));
+                        }
+
+                        if (typeof requestAnimationFrame === 'function') {
+                            await new Promise((resolve) => {
+                                requestAnimationFrame(() => requestAnimationFrame(resolve));
+                            });
+                        }
+                    };
+
+                    const capturePostcardCanvas = async () => {
+                        if (!window.html2canvas) throw new Error('html2canvas not loaded');
+                        if (!postcardRef.value) throw new Error('postcard element not found');
+                        await waitForPostcardRenderStability();
+                        const el = postcardRef.value;
+                        const rect = el.getBoundingClientRect();
+                        return window.html2canvas(el, {
+                            scale: 2,
+                            useCORS: true,
+                            backgroundColor: null,
+                            width: Math.round(rect.width),
+                            height: Math.round(rect.height)
+                        });
+                    };
+
+                    const downloadCanvas = (canvas) => {
+                        const link = document.createElement('a');
+                        link.download = `pikmin-postcard-${Date.now()}.png`;
+                        link.href = canvas.toDataURL('image/png');
+                        link.click();
+                    };
+
+                    const handleDownload = async () => {
+                        if (!photo.value || isDownloading.value || isSharing.value) return;
+                        isDownloading.value = true;
                         try {
                             const canvas = await capturePostcardCanvas();
                             downloadCanvas(canvas);
-                        } catch (fallbackErr) {
-                            console.error("Fallback download failed", fallbackErr);
-                            alert("分享失敗");
+                        } catch (err) {
+                            console.error("Canvas export failed", err);
+                            alert("輸出圖片失敗");
+                        } finally {
+                            isDownloading.value = false;
                         }
-                    } finally {
-                        isSharing.value = false;
-                    }
-                };
+                    };
 
-                const handleImgLoad = (instanceId) => {
-                    const currentState = pikminRenderStateMap.value[instanceId];
-                    if (!currentState) return;
+                    const handleShare = async () => {
+                        if (!photo.value || isSharing.value || isDownloading.value) return;
+                        isSharing.value = true;
+                        try {
+                            const canvas = await capturePostcardCanvas();
+                            const filename = `pikmin-postcard-${Date.now()}.png`;
 
-                    setPikminRenderState(instanceId, {
-                        ...currentState,
-                        isLoaded: true,
-                        showFallback: false
-                    });
-                };
+                            const blob = await new Promise((resolve, reject) =>
+                                canvas.toBlob(b => b ? resolve(b) : reject(new Error('toBlob returned null')), 'image/png')
+                            );
+                            const file = new File([blob], filename, { type: 'image/png' });
 
-                const handleImgError = (instanceId, optionId, preferredSourceIndex) => {
-                    const sourceList = Array.isArray(pikminColorSourceLists.value?.[optionId])
-                        ? pikminColorSourceLists.value[optionId]
-                        : [];
-                    const currentState = pikminRenderStateMap.value[instanceId]
-                        || createPikminRenderState(sourceList[0] || '');
-                    const attemptedIndices = Array.isArray(currentState.attemptedSourceIndices)
-                        ? currentState.attemptedSourceIndices
-                            .map(v => Number.parseInt(v, 10))
-                            .filter(v => Number.isInteger(v) && v >= 0)
-                        : [];
+                            if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+                                await navigator.share({
+                                    files: [file],
+                                    title: '皮克敏風格明信片'
+                                });
+                            } else {
+                                downloadCanvas(canvas);
+                            }
+                        } catch (err) {
+                            if (err.name === 'AbortError') return;
+                            console.error("Share failed", err);
+                            try {
+                                const canvas = await capturePostcardCanvas();
+                                downloadCanvas(canvas);
+                            } catch (fallbackErr) {
+                                console.error("Fallback download failed", fallbackErr);
+                                alert("分享失敗");
+                            }
+                        } finally {
+                            isSharing.value = false;
+                        }
+                    };
 
-                    if (!sourceList.length) {
+                    const handleImgLoad = (instanceId) => {
+                        const currentState = pikminRenderStateMap.value[instanceId];
+                        if (!currentState) return;
+
+                        setPikminRenderState(instanceId, {
+                            ...currentState,
+                            isLoaded: true,
+                            showFallback: false
+                        });
+                    };
+
+                    const handleImgError = (instanceId, optionId, preferredSourceIndex) => {
+                        const sourceList = Array.isArray(pikminColorSourceLists.value?.[optionId])
+                            ? pikminColorSourceLists.value[optionId]
+                            : [];
+                        const currentState = pikminRenderStateMap.value[instanceId]
+                            || createPikminRenderState(sourceList[0] || '');
+                        const attemptedIndices = Array.isArray(currentState.attemptedSourceIndices)
+                            ? currentState.attemptedSourceIndices
+                                .map(v => Number.parseInt(v, 10))
+                                .filter(v => Number.isInteger(v) && v >= 0)
+                            : [];
+
+                        if (!sourceList.length) {
+                            setPikminRenderState(instanceId, {
+                                ...currentState,
+                                attemptedSourceIndices: attemptedIndices,
+                                isLoaded: false,
+                                showFallback: true
+                            });
+                            return;
+                        }
+
+                        const normalizedPrimaryIndex = normalizeSourceIndex(
+                            sourceList.length,
+                            Number.isInteger(preferredSourceIndex)
+                                ? preferredSourceIndex
+                                : primarySourceGroupIndex.value,
+                            primarySourceGroupIndex.value
+                        );
+
+                        if (!attemptedIndices.includes(normalizedPrimaryIndex)) {
+                            attemptedIndices.push(normalizedPrimaryIndex);
+                        }
+
+                        for (let offset = 1; offset < sourceList.length; offset += 1) {
+                            const nextIndex = (normalizedPrimaryIndex + offset) % sourceList.length;
+                            if (attemptedIndices.includes(nextIndex)) continue;
+
+                            const nextUrl = sourceList[nextIndex];
+                            if (typeof nextUrl === 'string' && nextUrl.trim()) {
+                                attemptedIndices.push(nextIndex);
+                                setPikminRenderState(instanceId, {
+                                    ...currentState,
+                                    currentSrc: nextUrl,
+                                    attemptedSourceIndices: attemptedIndices,
+                                    isLoaded: false,
+                                    showFallback: false
+                                });
+                                return;
+                            }
+                        }
+
                         setPikminRenderState(instanceId, {
                             ...currentState,
                             attemptedSourceIndices: attemptedIndices,
                             isLoaded: false,
                             showFallback: true
                         });
-                        return;
-                    }
+                    };
 
-                    const normalizedPrimaryIndex = normalizeSourceIndex(
-                        sourceList.length,
-                        Number.isInteger(preferredSourceIndex)
-                            ? preferredSourceIndex
-                            : primarySourceGroupIndex.value,
-                        primarySourceGroupIndex.value
-                    );
-
-                    if (!attemptedIndices.includes(normalizedPrimaryIndex)) {
-                        attemptedIndices.push(normalizedPrimaryIndex);
-                    }
-
-                    for (let offset = 1; offset < sourceList.length; offset += 1) {
-                        const nextIndex = (normalizedPrimaryIndex + offset) % sourceList.length;
-                        if (attemptedIndices.includes(nextIndex)) continue;
-
-                        const nextUrl = sourceList[nextIndex];
-                        if (typeof nextUrl === 'string' && nextUrl.trim()) {
-                            attemptedIndices.push(nextIndex);
-                            setPikminRenderState(instanceId, {
-                                ...currentState,
-                                currentSrc: nextUrl,
-                                attemptedSourceIndices: attemptedIndices,
-                                isLoaded: false,
-                                showFallback: false
-                            });
-                            return;
-                        }
-                    }
-
-                    setPikminRenderState(instanceId, {
-                        ...currentState,
-                        attemptedSourceIndices: attemptedIndices,
-                        isLoaded: false,
-                        showFallback: true
-                    });
-                };
-
-                return {
-                    photo,
-                    title,
-                    location,
-                    isLocating,
-                    isDownloading,
-                    isSharing,
-                    postcardRef,
-                    currentStampVariant,
-                    STAMP_PRICE_MIN,
-                    stampPrice,
-                    normalizedStampPrice,
-                    PIKMIN_OPTIONS,
-                    selectedPikmins,
-                    selectedPikminItems,
-                    togglePikmin,
-                    randomizePikminLayout,
-                    getPikminOverlayStyle,
-                    getPikminImageSrc,
-                    isPikminImageVisible,
-                    shouldShowPikminFallback,
-                    generateRandomTitle,
-                    rollRandomStampVariant,
-                    handlePhotoUpload,
-                    handleGetLocation,
-                    handleDownload,
-                    handleShare,
-                    handleImgLoad,
-                    handleImgError
-                };
-            }
-        }).mount('#app');
-    </script>
+                    return {
+                        photo,
+                        title,
+                        location,
+                        isLocating,
+                        isDownloading,
+                        isSharing,
+                        postcardRef,
+                        currentStampVariant,
+                        STAMP_PRICE_MIN,
+                        stampPrice,
+                        normalizedStampPrice,
+                        PIKMIN_OPTIONS,
+                        selectedPikmins,
+                        selectedPikminItems,
+                        togglePikmin,
+                        randomizePikminLayout,
+                        getPikminOverlayStyle,
+                        getPikminImageSrc,
+                        isPikminImageVisible,
+                        shouldShowPikminFallback,
+                        generateRandomTitle,
+                        rollRandomStampVariant,
+                        handlePhotoUpload,
+                        handleGetLocation,
+                        handleDownload,
+                        handleShare,
+                        handleImgLoad,
+                        handleImgError
+                    };
+                }
+            }).mount('#app');
+        </script>
 </body>
 
 </html>
