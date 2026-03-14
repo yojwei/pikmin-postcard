@@ -36,6 +36,8 @@
 
 - 自訂標題，或點擊✨按鈕從預設繁體中文詞彙庫中隨機產生
 - 手動輸入地點，或透過瀏覽器定位 + OpenStreetMap 反向地理編碼（Nominatim）自動填入
+- 開啟頁面時會自動嘗試定位；成功解析後會更新地點欄位
+- 已解析的地點會儲存在 `localStorage`，下次開啟頁面時優先重用
 - 定位中顯示 spinner 並以 `aria-busy` 標記，完成後自動填入地點欄位
 
 ### 皮克敏
@@ -124,6 +126,7 @@
 - **下載/分享停用條件**：`!photo || isDownloading || isSharing`，三個條件任一為真時按鈕不可點擊
 - **空白預覽佔位符**：`v-if="!photo"` 時左側照片區顯示提示框，引導使用者上傳照片
 - **照片渲染方式**：以 CSS `background-image` + `background-size: cover` 的 `<div>` 呈現（而非 `<img>`），使 html2canvas 匯出時保有正確裁切比例
+- **地點初始化**：頁面載入時會自動嘗試定位；若先前已有已解析地點，會先從 `localStorage` 帶入並重用
 - **定位備援鏈**：village → suburb → neighbourhood → town → city_district → county → city（取 Nominatim 回應中第一個有值的欄位）
 - **圖片載入追蹤**：每個皮克敏實例追蹤 `attemptedSourceIndices` 以避免重試失敗的 URL
 - **載入控管可見性**：皮克敏圖片在 `load` 事件成功前保持隱藏；重試期間再次隱藏，直到載入成功；所有來源均失敗後才顯示 emoji 備援

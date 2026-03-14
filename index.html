@@ -501,9 +501,24 @@
 
             createApp({
                 setup() {
+                    const LOCATION_STORAGE_KEY = 'postcard-location';
+                    const DEFAULT_LOCATION = '江陵里, 新店區';
+                    const getInitialLocation = () => {
+                        try {
+                            const cachedLocation = localStorage.getItem(LOCATION_STORAGE_KEY);
+                            if (cachedLocation !== null) {
+                                return cachedLocation;
+                            }
+                        } catch (error) {
+                            console.warn('無法讀取儲存的地點資訊，改用預設地點。', error);
+                        }
+
+                        return DEFAULT_LOCATION;
+                    };
+
                     const photo = ref(null);
                     const title = ref('奴才,高級罐罐呢');
-                    const location = ref('江陵里, 新店區');
+                    const location = ref(getInitialLocation());
                     const isLocating = ref(false);
                     const isDownloading = ref(false);
                     const isSharing = ref(false);
@@ -702,6 +717,7 @@
                     rollRandomStampVariant();
                     onMounted(() => {
                         applyStampVariantToDom(currentStampVariant.value);
+                        handleGetLocation({ suppressErrorAlert: true });
                     });
 
                     const PIKMIN_BASE_OPTIONS = [
@@ -1442,6 +1458,13 @@
                             sourceIndex: nextSourceIndices[index] ?? 0
                         }));
                     });
+                    watch(location, (nextLocation) => {
+                        try {
+                            localStorage.setItem(LOCATION_STORAGE_KEY, String(nextLocation ?? ''));
+                        } catch (error) {
+                            console.warn('無法儲存地點資訊到 localStorage。', error);
+                        }
+                    });
                     randomizePikminLayout();
 
                     const generateRandomTitle = () => {
@@ -1472,9 +1495,19 @@
                         }
                     };
 
-                    const handleGetLocation = () => {
+                    const handleGetLocation = (options = {}) => {
+                        const suppressErrorAlert = options?.suppressErrorAlert === true;
+
                         if (!navigator.geolocation) {
-                            alert('您的瀏覽器不支援地理定位功能');
+                            if (!suppressErrorAlert) {
+                                alert('您的瀏覽器不支援地理定位功能');
+                            } else {
+                                console.warn('您的瀏覽器不支援地理定位功能，已略過自動定位。');
+                            }
+                            return;
+                        }
+
+                        if (isLocating.value) {
                             return;
                         }
 
@@ -1486,6 +1519,9 @@
                                     const response = await fetch(
                                         `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18&accept-language=zh-TW`
                                     );
+                                    if (!response.ok) {
+                                        throw new Error(`Reverse geocoding request failed with status ${response.status}`);
+                                    }
                                     const data = await response.json();
 
                                     if (data && data.address) {
@@ -1501,18 +1537,22 @@
 
                                         location.value = finalLocation;
                                     } else {
-                                        location.value = '無法解析詳細地址';
+                                        throw new Error('No address returned from reverse geocoding response');
                                     }
                                 } catch (error) {
                                     console.error("Geocoding error:", error);
-                                    location.value = '定位解析失敗';
+                                    if (!suppressErrorAlert) {
+                                        alert('定位解析失敗，請稍後再試。');
+                                    }
                                 } finally {
                                     isLocating.value = false;
                                 }
                             },
                             (error) => {
                                 console.error("Geolocation error:", error);
-                                alert('無法獲取位置，請確認是否已授權定位權限。');
+                                if (!suppressErrorAlert) {
+                                    alert('無法獲取位置，請確認是否已授權定位權限。');
+                                }
                                 isLocating.value = false;
                             },
                             { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
