@@ -104,50 +104,22 @@
                     </div>
                 </div>
 
-                <!-- 皮克敏夥伴選擇區塊 -->
+                <!-- 皮克敏夥伴隨機區塊 -->
                 <div class="rounded-2xl border border-neutral-200 bg-neutral-50/80 p-3 sm:p-4 space-y-4">
                     <div class="flex flex-wrap justify-between items-center gap-2 mb-1">
                         <div class="flex items-center gap-2">
                             <span
                                 class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-pink-500 text-white text-sm font-extrabold shadow-sm ring-2 ring-pink-200">2</span>
-                            <h2 class="text-base font-semibold text-neutral-800">選擇皮克敏夥伴</h2>
+                            <h2 class="text-base font-semibold text-neutral-800">隨機皮克敏夥伴</h2>
                         </div>
-                        <div class="flex items-center gap-2">
-                            <button @click="randomizePikminLayout"
-                                class="px-3 py-2 min-h-[48px] rounded-xl text-xs font-semibold bg-indigo-100 text-indigo-700 hover:bg-indigo-200 transition-colors active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-300">
-                                隨機位置
-                            </button>
-                            <span class="text-xs text-neutral-500 font-medium">候選顏色 {{ selectedPikmins.length }}/{{
-                                PIKMIN_OPTIONS.length }}（未選時自動套用全部）</span>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5">
-                        <button v-for="option in PIKMIN_OPTIONS" :key="option.id" @click="togglePikmin(option.id)"
-                            :aria-pressed="selectedPikmins.includes(option.id) ? 'true' : 'false'" :class="[
-                                'flex w-full items-center justify-between gap-2 px-3 py-2.5 min-h-[48px] rounded-xl text-sm font-semibold transition-all border-2 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-300',
-                                selectedPikmins.includes(option.id)
-                                    ? ({
-                                        red: 'bg-red-600 text-white border-red-600 shadow-sm',
-                                        blue: 'bg-blue-600 text-white border-blue-600 shadow-sm',
-                                        yellow: 'bg-yellow-300 text-neutral-900 border-yellow-400 shadow-sm',
-                                        purple: 'bg-purple-700 text-white border-purple-700 shadow-sm',
-                                        rock: 'bg-neutral-800 text-white border-neutral-900 shadow-sm',
-                                        white: 'bg-neutral-900 text-white border-neutral-900 shadow-sm',
-                                        winged: 'bg-pink-500 text-white border-pink-500 shadow-sm'
-                                    }[option.id] || (option.color + ' text-white border-transparent shadow-sm'))
-                                    : 'bg-white text-neutral-700 border-neutral-300 hover:bg-neutral-50 hover:border-neutral-400',
-                                PIKMIN_OPTIONS.length % 2 === 1 && option.id === PIKMIN_OPTIONS[PIKMIN_OPTIONS.length - 1].id
-                                    ? 'col-span-2 sm:col-span-1 w-full sm:w-auto max-w-[280px] justify-self-center sm:justify-self-auto'
-                                    : ''
-                            ]">
-                            <span class="inline-flex items-center gap-1.5">
-                                <span class="text-base leading-none">{{ option.emoji }}</span>
-                                <span>{{ option.label }}</span>
-                            </span>
-                            <span v-if="selectedPikmins.includes(option.id)"
-                                class="text-[11px] font-bold tracking-wide opacity-90">已選</span>
+                        <button @click="randomizePikminLayout"
+                            class="px-3 py-2 min-h-[48px] rounded-xl text-xs font-semibold bg-indigo-100 text-indigo-700 hover:bg-indigo-200 transition-colors active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-300">
+                            重新隨機位置
                         </button>
                     </div>
+                    <p class="text-xs text-neutral-500 leading-relaxed">
+                        皮克敏會從全部顏色中隨機出現，並自動分配在照片邊緣位置。
+                    </p>
                 </div>
 
                 <!-- 照片控制 -->
@@ -158,21 +130,10 @@
                         <h2 class="text-base font-semibold text-neutral-800">選擇照片或拍照</h2>
                     </div>
 
-                    <div class="flex items-center gap-2">
-                        <label for="captureMode" class="text-xs font-semibold text-neutral-500 whitespace-nowrap">拍攝模式</label>
-                        <select id="captureMode" :value="preferredCaptureMode"
-                            @change="setPreferredCaptureMode($event.target.value)"
-                            class="flex-1 px-3 py-2 rounded-xl border border-neutral-200 bg-white text-sm text-neutral-700 outline-none focus:border-pink-300 focus:ring-2 focus:ring-pink-100">
-                            <option value="auto">自動（建議）</option>
-                            <option value="pseudo-ar">Pseudo AR 相機</option>
-                            <option value="file">檔案上傳</option>
-                        </select>
-                    </div>
-
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                         <div class="flex">
-                            <input ref="cameraInputRef" type="file" accept="image/*" capture="environment" id="cameraInput"
-                                class="hidden" aria-label="上傳相機照片" @change="handlePhotoUpload" />
+                            <input ref="cameraInputRef" type="file" accept="image/*" capture="environment"
+                                id="cameraInput" class="hidden" aria-label="上傳相機照片" @change="handlePhotoUpload" />
 
                             <button @click="handleOpenCamera"
                                 :disabled="resolvedCaptureMode === 'pseudo-ar' && isPseudoCameraStarting"
@@ -186,7 +147,8 @@
                                     </path>
                                     <circle cx="12" cy="13" r="3"></circle>
                                 </svg>
-                                <span>{{ resolvedCaptureMode === 'pseudo-ar' && isPseudoCameraStarting ? '啟動中...' : '開啟相機' }}</span>
+                                <span>{{ resolvedCaptureMode === 'pseudo-ar' && isPseudoCameraStarting ? '啟動中...' :
+                                    '開啟相機' }}</span>
                             </button>
                         </div>
 
@@ -211,8 +173,6 @@
                     </div>
 
                     <canvas ref="pseudoCameraCanvasRef" class="hidden"></canvas>
-                    <p class="text-xs text-neutral-500">目前模式：<span class="font-semibold text-neutral-700">{{
-                            resolvedCaptureModeLabel }}</span></p>
 
                     <p v-if="pseudoCameraError"
                         class="text-xs text-rose-600 bg-rose-50 border border-rose-100 rounded-lg px-3 py-2">
@@ -311,11 +271,11 @@
                                     <polyline points="21 15 16 10 5 21"></polyline>
                                 </svg>
                                 <span class="text-sm font-semibold tracking-wide text-pink-700">{{
-                                        resolvedCaptureMode === 'pseudo-ar' ? '請點擊上方「開啟相機」' : '點此上傳照片'
-                                }}</span>
+                                    resolvedCaptureMode === 'pseudo-ar' ? '請點擊上方「開啟相機」' : '點此上傳照片'
+                                    }}</span>
                                 <span class="text-xs font-medium text-pink-700/80">{{
-                                        resolvedCaptureMode === 'pseudo-ar' ? '點「開啟相機」啟動全螢幕相機模式' : '可用上方「開啟相機」或「開啟相簿」'
-                                }}</span>
+                                    resolvedCaptureMode === 'pseudo-ar' ? '點「開啟相機」啟動全螢幕相機模式' : '可用上方「開啟相機」或「開啟相簿」'
+                                    }}</span>
                             </div>
 
                             <!-- 左上角文字疊加 -->
@@ -519,10 +479,8 @@
             </div>
 
             <!-- 全螢幕相機 Overlay -->
-            <div v-if="isCameraOverlayOpen"
-                class="fixed inset-0 z-[9999] bg-black overflow-hidden flex flex-col"
-                @touchstart.passive="handlePinchStart"
-                @touchmove.passive="handlePinchMove"
+            <div v-if="isCameraOverlayOpen" class="fixed inset-0 z-[9999] bg-black overflow-hidden flex flex-col"
+                @touchstart.passive="handlePinchStart" @touchmove.passive="handlePinchMove"
                 @touchend.passive="handlePinchEnd">
 
                 <!-- Live video feed -->
@@ -566,12 +524,13 @@
                         <template v-for="instance in selectedPikminItems" :key="'ar-pikmin-'+instance.instanceId">
                             <div class="absolute drop-shadow-[0_8px_10px_rgba(0,0,0,0.6)] transition-transform duration-300"
                                 :style="getPikminOverlayStyle(instance.instanceId)">
-                                <img :src="getPikminImageSrc(instance)" :alt="instance.label"
-                                    crossorigin="anonymous" class="w-full h-auto object-contain select-none"
+                                <img :src="getPikminImageSrc(instance)" :alt="instance.label" crossorigin="anonymous"
+                                    class="w-full h-auto object-contain select-none"
                                     :style="{ visibility: isPikminImageVisible(instance.instanceId) ? 'visible' : 'hidden' }"
                                     @load="handleImgLoad(instance.instanceId)"
                                     @error="handleImgError(instance.instanceId, instance.id, instance.sourceIndex)" />
-                                <div :class="[shouldShowPikminFallback(instance.instanceId) ? 'flex' : 'hidden', 'absolute inset-0 items-center justify-center text-[clamp(20px,4vw,40px)] drop-shadow-lg']">
+                                <div
+                                    :class="[shouldShowPikminFallback(instance.instanceId) ? 'flex' : 'hidden', 'absolute inset-0 items-center justify-center text-[clamp(20px,4vw,40px)] drop-shadow-lg']">
                                     {{ instance.emoji }}
                                 </div>
                             </div>
@@ -580,15 +539,13 @@
                 </template>
 
                 <!-- AR toggle button (top right, next to close) -->
-                <button @click="toggleArPreview"
-                    :aria-label="isArPreviewEnabled ? '關閉 AR 預覽' : '開啟 AR 預覽'"
+                <button @click="toggleArPreview" :aria-label="isArPreviewEnabled ? '關閉 AR 預覽' : '開啟 AR 預覽'"
                     :class="['absolute top-4 right-16 z-10 w-11 h-11 rounded-full flex items-center justify-center text-sm font-bold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white', isArPreviewEnabled ? 'bg-white/30 text-white ring-2 ring-white' : 'bg-black/60 text-white/50']">
                     👁
                 </button>
 
                 <!-- Close button (top right) -->
-                <button @click="closeCameraOverlay"
-                    aria-label="關閉相機"
+                <button @click="closeCameraOverlay" aria-label="關閉相機"
                     class="absolute top-4 right-4 z-10 w-11 h-11 rounded-full bg-black/60 text-white flex items-center justify-center text-lg font-bold hover:bg-black/80 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white transition-colors">
                     ✕
                 </button>
@@ -600,13 +557,15 @@
                 </p>
 
                 <!-- Bottom controls -->
-                <div class="absolute bottom-0 left-0 right-0 z-10 bg-gradient-to-t from-black/80 to-transparent px-6 py-8 flex flex-col items-center gap-5">
+                <div
+                    class="absolute bottom-0 left-0 right-0 z-10 bg-gradient-to-t from-black/80 to-transparent px-6 py-8 flex flex-col items-center gap-5">
 
                     <!-- Zoom controls (live, no pending) -->
                     <div v-if="!pendingCapturePhoto" class="flex items-center gap-4">
                         <button @click="zoomOut" :disabled="cameraZoom <= cameraZoomMin" aria-label="縮小"
                             class="w-10 h-10 rounded-full bg-white/20 text-white text-xl font-bold flex items-center justify-center hover:bg-white/30 active:scale-95 disabled:opacity-40 transition-colors">−</button>
-                        <button @click="resetZoom" class="text-white text-sm font-medium min-w-[48px] text-center hover:text-white/80 active:scale-95">
+                        <button @click="resetZoom"
+                            class="text-white text-sm font-medium min-w-[48px] text-center hover:text-white/80 active:scale-95">
                             {{ cameraZoom.toFixed(1) }}×
                         </button>
                         <button @click="zoomIn" :disabled="cameraZoom >= cameraZoomMax" aria-label="放大"
@@ -615,8 +574,7 @@
 
                     <!-- Shutter button (live, no pending) -->
                     <button v-if="!pendingCapturePhoto" @click="capturePhotoFromPseudoCamera"
-                        :disabled="!isPseudoCameraLive"
-                        aria-label="拍照"
+                        :disabled="!isPseudoCameraLive" aria-label="拍照"
                         class="w-[72px] h-[72px] rounded-full bg-white border-4 border-white/50 shadow-xl hover:bg-neutral-100 disabled:opacity-50 active:scale-90 transition-transform">
                     </button>
 
@@ -667,7 +625,6 @@
                     const pseudoCameraVideoRef = ref(null);
                     const pseudoCameraCanvasRef = ref(null);
                     const pseudoCameraStream = ref(null);
-                    const preferredCaptureMode = ref('auto');
                     const isPseudoCameraStarting = ref(false);
                     const isPseudoCameraLive = ref(false);
                     const pseudoCameraError = ref('');
@@ -696,12 +653,6 @@
                         && typeof navigator.xr.isSessionSupported === 'function'
                     );
                     const resolvedCaptureMode = computed(() => {
-                        if (preferredCaptureMode.value === 'file') {
-                            return 'file';
-                        }
-                        if (preferredCaptureMode.value === 'pseudo-ar') {
-                            return supportsUserMedia() ? 'pseudo-ar' : 'file';
-                        }
                         if (supportsWebXRAR()) {
                             return 'webxr';
                         }
@@ -1336,7 +1287,6 @@
                         ));
                     };
 
-                    const selectedPikmins = ref([...ALL_PIKMIN_IDS]);
                     const pikminInstances = ref([]);
                     const pikminLayoutMap = ref({});
                     const rerollSeed = ref(0);
@@ -1385,13 +1335,6 @@
                         const normalizedScale = Number.isFinite(scale) && scale > 0 ? scale : 1;
                         const maxSize = PIKMIN_MAX_RENDERED_SIZE / normalizedScale;
                         return clamp(size, 0, maxSize);
-                    };
-
-                    const getCandidatePikminPool = () => {
-                        const validSelected = selectedPikmins.value.filter((id, index, arr) => (
-                            ALL_PIKMIN_IDS.includes(id) && arr.indexOf(id) === index
-                        ));
-                        return validSelected.length ? validSelected : [...ALL_PIKMIN_IDS];
                     };
 
                     const getPikminSizeRange = (instanceCount) => {
@@ -1535,7 +1478,7 @@
                     };
 
                     const randomizePikminLayout = () => {
-                        const candidatePool = getCandidatePikminPool();
+                        const candidatePool = ALL_PIKMIN_IDS;
                         const instanceColors = buildRandomPikminInstanceColors(candidatePool);
                         if (!instanceColors.length) {
                             pikminInstances.value = [];
@@ -1658,15 +1601,6 @@
                         };
                     };
 
-                    const togglePikmin = (id) => {
-                        if (selectedPikmins.value.includes(id)) {
-                            selectedPikmins.value = selectedPikmins.value.filter(p => p !== id);
-                        } else {
-                            selectedPikmins.value = [...selectedPikmins.value, id];
-                        }
-                    };
-
-                    watch(selectedPikmins, randomizePikminLayout);
                     watch([pikminColorSourceLists, primarySourceGroupIndex], () => {
                         if (!pikminInstances.value.length) return;
                         const instanceColors = pikminInstances.value.map((instance) => instance.optionId);
@@ -1711,14 +1645,6 @@
                         title.value = randomTitles[randomIndex];
                     };
 
-                    const setPreferredCaptureMode = (nextMode) => {
-                        const allowedModes = ['auto', 'pseudo-ar', 'file'];
-                        preferredCaptureMode.value = allowedModes.includes(nextMode) ? nextMode : 'auto';
-                        pseudoCameraError.value = '';
-                        if (resolvedCaptureMode.value !== 'pseudo-ar') {
-                            stopPseudoCamera();
-                        }
-                    };
                     const openFilePicker = () => {
                         stopPseudoCamera();
                         pseudoCameraError.value = '';
@@ -1730,8 +1656,7 @@
                     const startPseudoCamera = async () => {
                         pseudoCameraError.value = '';
                         if (resolvedCaptureMode.value !== 'pseudo-ar' || !supportsUserMedia()) {
-                            pseudoCameraError.value = '目前裝置不支援 pseudo AR，相機已改用檔案上傳。';
-                            setPreferredCaptureMode('file');
+                            openFilePicker();
                             return;
                         }
                         if (isPseudoCameraStarting.value) return;
@@ -2147,7 +2072,6 @@
                         cameraInputRef,
                         pseudoCameraVideoRef,
                         pseudoCameraCanvasRef,
-                        preferredCaptureMode,
                         resolvedCaptureMode,
                         resolvedCaptureModeLabel,
                         isPseudoCameraStarting,
@@ -2157,10 +2081,7 @@
                         STAMP_PRICE_MIN,
                         stampPrice,
                         normalizedStampPrice,
-                        PIKMIN_OPTIONS,
-                        selectedPikmins,
                         selectedPikminItems,
-                        togglePikmin,
                         randomizePikminLayout,
                         getPikminOverlayStyle,
                         getPikminImageSrc,
@@ -2168,7 +2089,6 @@
                         shouldShowPikminFallback,
                         generateRandomTitle,
                         rollRandomStampVariant,
-                        setPreferredCaptureMode,
                         openFilePicker,
                         startPseudoCamera,
                         stopPseudoCamera,
