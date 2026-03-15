@@ -128,10 +128,10 @@
                             <input ref="cameraInputRef" type="file" accept="image/*" capture="environment" id="cameraInput"
                                 class="hidden" aria-label="上傳相機照片" @change="handlePhotoUpload" />
 
-                            <label for="cameraInput" role="button" tabindex="0" aria-label="開啟相機拍照上傳"
-                                @keydown.enter.prevent="$event.currentTarget.click()"
-                                @keydown.space.prevent="$event.currentTarget.click()"
-                                class="flex-1 flex items-center justify-center gap-2 bg-pink-100 hover:bg-pink-200 text-pink-700 px-4 py-3 min-h-[48px] rounded-xl cursor-pointer transition-colors font-medium active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-pink-400">
+                            <button @click="handleOpenCamera"
+                                :disabled="resolvedCaptureMode === 'pseudo-ar' && isPseudoCameraStarting"
+                                aria-label="開啟相機拍照"
+                                class="flex-1 flex items-center justify-center gap-2 bg-pink-100 hover:bg-pink-200 text-pink-700 px-4 py-3 min-h-[48px] rounded-xl cursor-pointer transition-colors font-medium active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-pink-400 disabled:opacity-50">
                                 <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2"
                                     fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
                                     focusable="false">
@@ -140,8 +140,8 @@
                                     </path>
                                     <circle cx="12" cy="13" r="3"></circle>
                                 </svg>
-                                <span>開啟相機</span>
-                            </label>
+                                <span>{{ resolvedCaptureMode === 'pseudo-ar' && isPseudoCameraStarting ? '啟動中...' : '開啟相機' }}</span>
+                            </button>
                         </div>
 
                         <div class="flex">
@@ -167,25 +167,6 @@
                     <canvas ref="pseudoCameraCanvasRef" class="hidden"></canvas>
                     <p class="text-xs text-neutral-500">目前模式：<span class="font-semibold text-neutral-700">{{
                             resolvedCaptureModeLabel }}</span></p>
-
-                    <div v-if="resolvedCaptureMode === 'pseudo-ar'" class="grid grid-cols-2 gap-2">
-                        <button @click="startPseudoCamera" :disabled="isPseudoCameraLive || isPseudoCameraStarting"
-                            class="flex items-center justify-center gap-2 bg-pink-100 hover:bg-pink-200 text-pink-700 px-3 py-2 rounded-xl transition-colors font-medium disabled:opacity-50 active:scale-95">
-                            <span>{{ isPseudoCameraStarting ? '啟動中...' : '開始相機' }}</span>
-                        </button>
-                        <button @click="capturePhotoFromPseudoCamera" :disabled="!isPseudoCameraLive"
-                            class="flex items-center justify-center gap-2 bg-emerald-100 hover:bg-emerald-200 text-emerald-700 px-3 py-2 rounded-xl transition-colors font-medium disabled:opacity-50 active:scale-95">
-                            <span>拍照匯入</span>
-                        </button>
-                        <button @click="stopPseudoCamera" :disabled="!isPseudoCameraLive"
-                            class="flex items-center justify-center gap-2 bg-neutral-200 hover:bg-neutral-300 text-neutral-700 px-3 py-2 rounded-xl transition-colors font-medium disabled:opacity-50 active:scale-95">
-                            <span>停止相機</span>
-                        </button>
-                        <button @click="setPreferredCaptureMode('file'); openFilePicker()"
-                            class="flex items-center justify-center gap-2 bg-amber-100 hover:bg-amber-200 text-amber-700 px-3 py-2 rounded-xl transition-colors font-medium active:scale-95">
-                            <span>改用檔案上傳</span>
-                        </button>
-                    </div>
 
                     <p v-if="pseudoCameraError"
                         class="text-xs text-rose-600 bg-rose-50 border border-rose-100 rounded-lg px-3 py-2">
@@ -304,21 +285,18 @@
                         style="box-sizing: border-box;">
                         <!-- 左側：照片區 -->
                         <div class="relative w-[65%] h-full flex flex-col justify-center items-center overflow-hidden"
-                            :class="photo || isPseudoCameraLive
+                            :class="photo
                             ? 'bg-black'
                             : 'bg-gradient-to-br from-[#f8ecea] via-[#fdf6f8] to-[#f1eaf8] border border-dashed border-pink-200'">
-
-                            <video v-if="isPseudoCameraLive" ref="pseudoCameraVideoRef" playsinline muted autoplay
-                                class="absolute inset-0 w-full h-full object-cover"></video>
 
                             <!-- Background-image cover div: html2canvas renders background-size:cover
                              correctly, whereas object-fit:cover on an img element can produce
                               squashed output in the exported canvas. -->
-                            <div v-else-if="photo" class="absolute inset-0 w-full h-full"
+                            <div v-if="photo" class="absolute inset-0 w-full h-full"
                                 :style="{ backgroundImage: 'url(' + photo + ')', backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }">
                             </div>
 
-                            <div v-if="photo || isPseudoCameraLive" class="absolute inset-0 pointer-events-none z-[6]"
+                            <div v-if="photo" class="absolute inset-0 pointer-events-none z-[6]"
                                 style="background: linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.3) 28%, rgba(0,0,0,0.12) 56%, rgba(0,0,0,0) 78%);">
                             </div>
 
@@ -333,10 +311,10 @@
                                     <polyline points="21 15 16 10 5 21"></polyline>
                                 </svg>
                                 <span class="text-sm font-semibold tracking-wide text-pink-700">{{
-                                        resolvedCaptureMode === 'pseudo-ar' ? '尚未開啟相機，請先點擊「開始相機」' : '點此上傳照片'
+                                        resolvedCaptureMode === 'pseudo-ar' ? '請點擊上方「開啟相機」' : '點此上傳照片'
                                 }}</span>
                                 <span class="text-xs font-medium text-pink-700/80">{{
-                                        resolvedCaptureMode === 'pseudo-ar' ? '可用上方「改用檔案上傳」切換回相簿流程' : '可用上方「開啟相機」或「開啟相簿」'
+                                        resolvedCaptureMode === 'pseudo-ar' ? '點「開啟相機」啟動全螢幕相機模式' : '可用上方「開啟相機」或「開啟相簿」'
                                 }}</span>
                             </div>
 
@@ -535,9 +513,125 @@
                                     </div>
                                 </div>
                             </div>
-
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <!-- 全螢幕相機 Overlay -->
+            <div v-if="isCameraOverlayOpen"
+                class="fixed inset-0 z-[9999] bg-black overflow-hidden flex flex-col"
+                @touchstart.passive="handlePinchStart"
+                @touchmove.passive="handlePinchMove"
+                @touchend.passive="handlePinchEnd">
+
+                <!-- Live video feed -->
+                <video ref="pseudoCameraVideoRef" playsinline muted autoplay
+                    v-show="isPseudoCameraLive && !pendingCapturePhoto"
+                    class="absolute inset-0 w-full h-full object-cover"
+                    :style="cameraUseCapabilityZoom ? {} : { transform: `scale(${cameraZoom})`, transformOrigin: 'center center' }">
+                </video>
+
+                <!-- Pending capture preview -->
+                <img v-if="pendingCapturePhoto" :src="pendingCapturePhoto" alt="拍照預覽"
+                    class="absolute inset-0 w-full h-full object-cover" />
+
+                <!-- Postcard guide frame (always visible as composition aid) -->
+                <div v-if="isPseudoCameraLive"
+                    class="absolute inset-0 z-[2] flex items-center justify-center pointer-events-none">
+                    <div class="border-2 border-white/50 rounded-sm"
+                        style="width: min(90vw, calc(85vh * 1.45)); aspect-ratio: 1.45/1;"></div>
+                </div>
+
+                <!-- AR layers (hidden when toggle is off) -->
+                <template v-if="isPseudoCameraLive && isArPreviewEnabled">
+                    <!-- Gradient overlay -->
+                    <div class="absolute inset-0 z-[4] pointer-events-none"
+                        style="background: linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.3) 28%, rgba(0,0,0,0.12) 56%, rgba(0,0,0,0) 78%); opacity: 0.6;">
+                    </div>
+
+                    <!-- Title / location text preview -->
+                    <div class="absolute top-[5%] left-[5%] text-white z-[6] pointer-events-none"
+                        style="text-shadow: 0 2px 6px rgba(0,0,0,0.82), 0 0 12px rgba(0,0,0,0.55);">
+                        <h2 class="font-bold tracking-wide text-lg sm:text-2xl md:text-3xl lg:text-4xl">
+                            {{ title || ' ' }}
+                        </h2>
+                        <p class="font-medium mt-1 text-xs sm:text-sm md:text-base tracking-wider text-gray-100">
+                            {{ location || ' ' }}
+                        </p>
+                    </div>
+
+                    <!-- Pikmin overlay -->
+                    <div class="absolute inset-0 pointer-events-none z-[8]">
+                        <template v-for="instance in selectedPikminItems" :key="'ar-pikmin-'+instance.instanceId">
+                            <div class="absolute drop-shadow-[0_8px_10px_rgba(0,0,0,0.6)] transition-transform duration-300"
+                                :style="getPikminOverlayStyle(instance.instanceId)">
+                                <img :src="getPikminImageSrc(instance)" :alt="instance.label"
+                                    crossorigin="anonymous" class="w-full h-auto object-contain select-none"
+                                    :style="{ visibility: isPikminImageVisible(instance.instanceId) ? 'visible' : 'hidden' }"
+                                    @load="handleImgLoad(instance.instanceId)"
+                                    @error="handleImgError(instance.instanceId, instance.id, instance.sourceIndex)" />
+                                <div :class="[shouldShowPikminFallback(instance.instanceId) ? 'flex' : 'hidden', 'absolute inset-0 items-center justify-center text-[clamp(20px,4vw,40px)] drop-shadow-lg']">
+                                    {{ instance.emoji }}
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </template>
+
+                <!-- AR toggle button (top right, next to close) -->
+                <button @click="toggleArPreview"
+                    :aria-label="isArPreviewEnabled ? '關閉 AR 預覽' : '開啟 AR 預覽'"
+                    :class="['absolute top-4 right-16 z-10 w-11 h-11 rounded-full flex items-center justify-center text-sm font-bold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white', isArPreviewEnabled ? 'bg-white/30 text-white ring-2 ring-white' : 'bg-black/60 text-white/50']">
+                    👁
+                </button>
+
+                <!-- Close button (top right) -->
+                <button @click="closeCameraOverlay"
+                    aria-label="關閉相機"
+                    class="absolute top-4 right-4 z-10 w-11 h-11 rounded-full bg-black/60 text-white flex items-center justify-center text-lg font-bold hover:bg-black/80 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white transition-colors">
+                    ✕
+                </button>
+
+                <!-- Error message in overlay -->
+                <p v-if="pseudoCameraError"
+                    class="absolute top-16 left-4 right-4 z-10 text-xs text-rose-100 bg-rose-900/80 border border-rose-800 rounded-lg px-3 py-2 text-center">
+                    {{ pseudoCameraError }}
+                </p>
+
+                <!-- Bottom controls -->
+                <div class="absolute bottom-0 left-0 right-0 z-10 bg-gradient-to-t from-black/80 to-transparent px-6 py-8 flex flex-col items-center gap-5">
+
+                    <!-- Zoom controls (live, no pending) -->
+                    <div v-if="!pendingCapturePhoto" class="flex items-center gap-4">
+                        <button @click="zoomOut" :disabled="cameraZoom <= cameraZoomMin" aria-label="縮小"
+                            class="w-10 h-10 rounded-full bg-white/20 text-white text-xl font-bold flex items-center justify-center hover:bg-white/30 active:scale-95 disabled:opacity-40 transition-colors">−</button>
+                        <button @click="resetZoom" class="text-white text-sm font-medium min-w-[48px] text-center hover:text-white/80 active:scale-95">
+                            {{ cameraZoom.toFixed(1) }}×
+                        </button>
+                        <button @click="zoomIn" :disabled="cameraZoom >= cameraZoomMax" aria-label="放大"
+                            class="w-10 h-10 rounded-full bg-white/20 text-white text-xl font-bold flex items-center justify-center hover:bg-white/30 active:scale-95 disabled:opacity-40 transition-colors">＋</button>
+                    </div>
+
+                    <!-- Shutter button (live, no pending) -->
+                    <button v-if="!pendingCapturePhoto" @click="capturePhotoFromPseudoCamera"
+                        :disabled="!isPseudoCameraLive"
+                        aria-label="拍照"
+                        class="w-[72px] h-[72px] rounded-full bg-white border-4 border-white/50 shadow-xl hover:bg-neutral-100 disabled:opacity-50 active:scale-90 transition-transform">
+                    </button>
+
+                    <!-- Retake / Confirm (pending) -->
+                    <div v-if="pendingCapturePhoto" class="flex gap-4">
+                        <button @click="retakeCapture"
+                            class="px-7 py-3 rounded-full bg-white/20 text-white font-semibold hover:bg-white/30 active:scale-95 transition-all">
+                            重拍
+                        </button>
+                        <button @click="confirmCapture"
+                            class="px-7 py-3 rounded-full bg-pink-500 text-white font-semibold hover:bg-pink-600 active:scale-95 shadow-lg transition-all">
+                            確認使用
+                        </button>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -562,6 +656,18 @@
                     const isPseudoCameraStarting = ref(false);
                     const isPseudoCameraLive = ref(false);
                     const pseudoCameraError = ref('');
+                    const CAMERA_ZOOM_MIN_DEFAULT = 1;
+                    const CAMERA_ZOOM_MAX_DEFAULT = 5;
+                    const CAMERA_ZOOM_STEP = 0.5;
+                    const isCameraOverlayOpen = ref(false);
+                    const isArPreviewEnabled = ref(true);
+                    const pendingCapturePhoto = ref(null);
+                    const cameraZoom = ref(CAMERA_ZOOM_MIN_DEFAULT);
+                    const cameraZoomMin = ref(CAMERA_ZOOM_MIN_DEFAULT);
+                    const cameraZoomMax = ref(CAMERA_ZOOM_MAX_DEFAULT);
+                    const cameraUseCapabilityZoom = ref(false);
+                    const pinchInitialDistance = ref(null);
+                    const pinchInitialZoom = ref(null);
                     const WEBXR_FEATURE_ENABLED = false;
                     const supportsUserMedia = () => (
                         typeof navigator !== 'undefined'
@@ -595,6 +701,14 @@
                         return modeLabelMap[resolvedCaptureMode.value] || modeLabelMap.file;
                     });
                     const stopPseudoCamera = () => {
+                        try {
+                            if (screen.orientation && typeof screen.orientation.unlock === 'function') {
+                                screen.orientation.unlock();
+                            }
+                        } catch (e) {
+                            // not supported - ignore
+                        }
+
                         const stream = pseudoCameraStream.value;
                         if (stream && typeof stream.getTracks === 'function') {
                             stream.getTracks().forEach((track) => track.stop());
@@ -602,6 +716,10 @@
                         pseudoCameraStream.value = null;
                         isPseudoCameraLive.value = false;
                         isPseudoCameraStarting.value = false;
+                        isCameraOverlayOpen.value = false;
+                        cameraZoom.value = CAMERA_ZOOM_MIN_DEFAULT;
+                        cameraUseCapabilityZoom.value = false;
+                        pendingCapturePhoto.value = null;
 
                         const videoEl = pseudoCameraVideoRef.value;
                         if (videoEl instanceof HTMLVideoElement) {
@@ -1608,7 +1726,26 @@
                                 audio: false
                             });
                             pseudoCameraStream.value = stream;
+
+                            const track = stream.getVideoTracks()[0];
+                            if (track) {
+                                track.addEventListener('ended', () => stopPseudoCamera(), { once: true });
+                                const capabilities = typeof track.getCapabilities === 'function' ? track.getCapabilities() : null;
+                                if (capabilities?.zoom) {
+                                    cameraZoomMin.value = capabilities.zoom.min ?? CAMERA_ZOOM_MIN_DEFAULT;
+                                    cameraZoomMax.value = capabilities.zoom.max ?? CAMERA_ZOOM_MAX_DEFAULT;
+                                    cameraUseCapabilityZoom.value = true;
+                                } else {
+                                    cameraZoomMin.value = CAMERA_ZOOM_MIN_DEFAULT;
+                                    cameraZoomMax.value = CAMERA_ZOOM_MAX_DEFAULT;
+                                    cameraUseCapabilityZoom.value = false;
+                                }
+                            }
+                            cameraZoom.value = CAMERA_ZOOM_MIN_DEFAULT;
+
                             isPseudoCameraLive.value = true;
+                            isCameraOverlayOpen.value = true;
+                            isArPreviewEnabled.value = true;
                             await nextTick();
                             const videoEl = pseudoCameraVideoRef.value;
                             if (!(videoEl instanceof HTMLVideoElement)) {
@@ -1616,6 +1753,12 @@
                             }
                             videoEl.srcObject = stream;
                             await videoEl.play();
+
+                            try {
+                                await screen.orientation.lock('landscape');
+                            } catch (e) {
+                                // iOS / not supported - silently ignore
+                            }
                         } catch (error) {
                             console.error('Pseudo camera start failed:', error);
                             pseudoCameraError.value = '無法啟動相機，請確認相機權限或改用檔案上傳。';
@@ -1645,10 +1788,77 @@
                         }
                         captureCanvas.width = width;
                         captureCanvas.height = height;
-                        ctx.drawImage(videoEl, 0, 0, width, height);
-                        photo.value = captureCanvas.toDataURL('image/png');
+                        if (!cameraUseCapabilityZoom.value && cameraZoom.value > 1) {
+                            const zoom = cameraZoom.value;
+                            const sw = width / zoom;
+                            const sh = height / zoom;
+                            const sx = (width - sw) / 2;
+                            const sy = (height - sh) / 2;
+                            ctx.drawImage(videoEl, sx, sy, sw, sh, 0, 0, width, height);
+                        } else {
+                            ctx.drawImage(videoEl, 0, 0, width, height);
+                        }
+                        pendingCapturePhoto.value = captureCanvas.toDataURL('image/png');
                         pseudoCameraError.value = '';
+                    };
+                    const confirmCapture = () => {
+                        if (!pendingCapturePhoto.value) return;
+                        photo.value = pendingCapturePhoto.value;
+                        pendingCapturePhoto.value = null;
                         stopPseudoCamera();
+                    };
+                    const retakeCapture = () => {
+                        pendingCapturePhoto.value = null;
+                    };
+                    const closeCameraOverlay = () => {
+                        stopPseudoCamera();
+                    };
+                    const applyZoom = async (newZoom) => {
+                        const clampedZoom = Math.min(cameraZoomMax.value, Math.max(cameraZoomMin.value, newZoom));
+                        cameraZoom.value = clampedZoom;
+                        if (cameraUseCapabilityZoom.value && pseudoCameraStream.value) {
+                            const track = pseudoCameraStream.value.getVideoTracks()[0];
+                            if (track) {
+                                try {
+                                    await track.applyConstraints({ advanced: [{ zoom: clampedZoom }] });
+                                } catch (e) {
+                                    cameraUseCapabilityZoom.value = false;
+                                }
+                            }
+                        }
+                    };
+                    const zoomIn = () => applyZoom(cameraZoom.value + CAMERA_ZOOM_STEP);
+                    const zoomOut = () => applyZoom(cameraZoom.value - CAMERA_ZOOM_STEP);
+                    const resetZoom = () => applyZoom(CAMERA_ZOOM_MIN_DEFAULT);
+                    const getPinchDistance = (touches) => {
+                        const dx = touches[0].clientX - touches[1].clientX;
+                        const dy = touches[0].clientY - touches[1].clientY;
+                        return Math.sqrt(dx * dx + dy * dy);
+                    };
+                    const handlePinchStart = (e) => {
+                        if (e.touches.length !== 2) return;
+                        pinchInitialDistance.value = getPinchDistance(e.touches);
+                        pinchInitialZoom.value = cameraZoom.value;
+                    };
+                    const handlePinchMove = (e) => {
+                        if (e.touches.length !== 2 || pinchInitialDistance.value === null) return;
+                        const distance = getPinchDistance(e.touches);
+                        const scale = distance / pinchInitialDistance.value;
+                        applyZoom((pinchInitialZoom.value ?? 1) * scale);
+                    };
+                    const handlePinchEnd = () => {
+                        pinchInitialDistance.value = null;
+                        pinchInitialZoom.value = null;
+                    };
+                    const toggleArPreview = () => {
+                        isArPreviewEnabled.value = !isArPreviewEnabled.value;
+                    };
+                    const handleOpenCamera = () => {
+                        if (resolvedCaptureMode.value === 'pseudo-ar') {
+                            startPseudoCamera();
+                        } else {
+                            openFilePicker();
+                        }
                     };
 
                     const handlePhotoUpload = (e) => {
@@ -1928,7 +2138,25 @@
                         handleDownload,
                         handleShare,
                         handleImgLoad,
-                        handleImgError
+                        handleImgError,
+                        isCameraOverlayOpen,
+                        isArPreviewEnabled,
+                        toggleArPreview,
+                        pendingCapturePhoto,
+                        cameraZoom,
+                        cameraZoomMin,
+                        cameraZoomMax,
+                        cameraUseCapabilityZoom,
+                        confirmCapture,
+                        retakeCapture,
+                        closeCameraOverlay,
+                        zoomIn,
+                        zoomOut,
+                        resetZoom,
+                        handlePinchStart,
+                        handlePinchMove,
+                        handlePinchEnd,
+                        handleOpenCamera
                     };
                 }
             }).mount('#app');
