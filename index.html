@@ -218,49 +218,56 @@
                         <h2 class="text-xl font-bold text-neutral-800">預覽結果</h2>
                         <p v-if="!photo" class="text-xs font-medium text-pink-700">點此上傳照片（請先使用上方步驟 3）</p>
                     </div>
-                    <div class="w-full sm:w-auto flex flex-wrap sm:flex-nowrap gap-2">
-                        <!-- Download Button -->
-                        <button @click="handleDownload" :disabled="!photo || isDownloading || isSharing"
-                            :aria-label="isDownloading ? '下載明信片處理中' : '下載明信片'"
-                            class="bg-pink-500 hover:bg-pink-600 text-white px-5 py-2.5 min-h-[44px] rounded-full flex flex-1 sm:flex-none justify-center items-center gap-2 shadow-md shadow-pink-200 transition-all hover:-translate-y-0.5 active:translate-y-0 active:scale-95 disabled:opacity-70 disabled:hover:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-pink-400">
-                            <!-- Loader Icon -->
-                            <svg v-if="isDownloading" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor"
-                                stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
-                                class="animate-spin" aria-hidden="true" focusable="false">
-                                <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
-                            </svg>
-                            <!-- Download Icon -->
-                            <svg v-else viewBox="0 0 24 24" width="20" height="20" stroke="currentColor"
-                                stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
-                                aria-hidden="true" focusable="false">
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                <polyline points="7 10 12 15 17 10"></polyline>
-                                <line x1="12" y1="15" x2="12" y2="3"></line>
-                            </svg>
-                            <span class="font-semibold">{{ isDownloading ? '處理中...' : '下載明信片' }}</span>
-                        </button>
-                        <!-- Share Button -->
-                        <button @click="handleShare" :disabled="!photo || isSharing || isDownloading"
-                            :aria-label="isSharing ? '分享明信片處理中' : '分享明信片'"
-                            class="bg-white hover:bg-blue-50 text-blue-700 px-5 py-2.5 min-h-[44px] rounded-full border border-blue-200 flex flex-1 sm:flex-none justify-center items-center gap-2 shadow-sm transition-all hover:-translate-y-0.5 active:translate-y-0 active:scale-95 disabled:opacity-70 disabled:hover:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-300">
-                            <!-- Loader Icon -->
-                            <svg v-if="isSharing" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor"
-                                stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
-                                class="animate-spin" aria-hidden="true" focusable="false">
-                                <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
-                            </svg>
-                            <!-- Share Icon -->
-                            <svg v-else viewBox="0 0 24 24" width="20" height="20" stroke="currentColor"
-                                stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
-                                aria-hidden="true" focusable="false">
-                                <circle cx="18" cy="5" r="3"></circle>
-                                <circle cx="6" cy="12" r="3"></circle>
-                                <circle cx="18" cy="19" r="3"></circle>
-                                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
-                                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
-                            </svg>
-                            <span class="font-semibold">{{ isSharing ? '處理中...' : '分享明信片' }}</span>
-                        </button>
+                    <div class="w-full sm:w-auto flex flex-col gap-2">
+                        <div class="w-full sm:w-auto flex flex-wrap sm:flex-nowrap gap-2">
+                            <!-- Download Button -->
+                            <button @click="handleDownload" :disabled="!photo || isDownloading || isSharing"
+                                :aria-label="isDownloading ? '下載明信片處理中' : '下載明信片'"
+                                class="bg-pink-500 hover:bg-pink-600 text-white px-5 py-2.5 min-h-[44px] rounded-full flex flex-1 sm:flex-none justify-center items-center gap-2 shadow-md shadow-pink-200 transition-all hover:-translate-y-0.5 active:translate-y-0 active:scale-95 disabled:opacity-70 disabled:hover:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-pink-400">
+                                <!-- Loader Icon -->
+                                <svg v-if="isDownloading" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor"
+                                    stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+                                    class="animate-spin" aria-hidden="true" focusable="false">
+                                    <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
+                                </svg>
+                                <!-- Download Icon -->
+                                <svg v-else viewBox="0 0 24 24" width="20" height="20" stroke="currentColor"
+                                    stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+                                    aria-hidden="true" focusable="false">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="7 10 12 15 17 10"></polyline>
+                                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                                </svg>
+                                <span class="font-semibold">{{ isDownloading ? '處理中...' : '下載明信片' }}</span>
+                            </button>
+                            <!-- Share Button -->
+                            <button @click="handleShare" :disabled="!photo || isSharing || isDownloading"
+                                :aria-label="isSharing ? '分享明信片處理中' : '分享明信片'"
+                                class="bg-white hover:bg-blue-50 text-blue-700 px-5 py-2.5 min-h-[44px] rounded-full border border-blue-200 flex flex-1 sm:flex-none justify-center items-center gap-2 shadow-sm transition-all hover:-translate-y-0.5 active:translate-y-0 active:scale-95 disabled:opacity-70 disabled:hover:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-300">
+                                <!-- Loader Icon -->
+                                <svg v-if="isSharing" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor"
+                                    stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+                                    class="animate-spin" aria-hidden="true" focusable="false">
+                                    <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
+                                </svg>
+                                <!-- Share Icon -->
+                                <svg v-else viewBox="0 0 24 24" width="20" height="20" stroke="currentColor"
+                                    stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+                                    aria-hidden="true" focusable="false">
+                                    <circle cx="18" cy="5" r="3"></circle>
+                                    <circle cx="6" cy="12" r="3"></circle>
+                                    <circle cx="18" cy="19" r="3"></circle>
+                                    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                                    <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                                </svg>
+                                <span class="font-semibold">{{ isSharing ? '處理中...' : '分享明信片' }}</span>
+                            </button>
+                        </div>
+                        <p v-if="downloadSuccessMessage"
+                            class="text-xs font-medium text-emerald-700 bg-emerald-50 border border-emerald-100 rounded-lg px-3 py-2"
+                            role="status" aria-live="polite">
+                            {{ downloadSuccessMessage }}
+                        </p>
                     </div>
                 </div>
 
@@ -695,6 +702,9 @@
                     const isLocating = ref(false);
                     const isDownloading = ref(false);
                     const isSharing = ref(false);
+                    const downloadSuccessMessage = ref('');
+                    const DOWNLOAD_SUCCESS_FEEDBACK_MS = 2500;
+                    let downloadSuccessFeedbackTimeoutId = null;
                     const expandedSteps = ref({
                         step1: true,
                         step2: true,
@@ -974,6 +984,10 @@
                         handleGetLocation({ suppressErrorAlert: true });
                     });
                     onBeforeUnmount(() => {
+                        if (downloadSuccessFeedbackTimeoutId !== null) {
+                            clearTimeout(downloadSuccessFeedbackTimeoutId);
+                            downloadSuccessFeedbackTimeoutId = null;
+                        }
                         stopPseudoCamera();
                     });
 
@@ -2009,7 +2023,22 @@
                         const link = document.createElement('a');
                         link.download = `pikmin-postcard-${Date.now()}.png`;
                         link.href = canvas.toDataURL('image/png');
-                        link.click();
+                        document.body.appendChild(link);
+                        try {
+                            link.click();
+                        } finally {
+                            link.remove();
+                        }
+                    };
+                    const showDownloadSuccessFeedback = () => {
+                        downloadSuccessMessage.value = '明信片已下載完成';
+                        if (downloadSuccessFeedbackTimeoutId !== null) {
+                            clearTimeout(downloadSuccessFeedbackTimeoutId);
+                        }
+                        downloadSuccessFeedbackTimeoutId = window.setTimeout(() => {
+                            downloadSuccessMessage.value = '';
+                            downloadSuccessFeedbackTimeoutId = null;
+                        }, DOWNLOAD_SUCCESS_FEEDBACK_MS);
                     };
 
                     const handleDownload = async () => {
@@ -2018,6 +2047,7 @@
                         try {
                             const canvas = await capturePostcardCanvas();
                             downloadCanvas(canvas);
+                            showDownloadSuccessFeedback();
                         } catch (err) {
                             console.error("Canvas export failed", err);
                             alert("輸出圖片失敗");
@@ -2139,6 +2169,7 @@
                         isLocating,
                         isDownloading,
                         isSharing,
+                        downloadSuccessMessage,
                         expandedSteps,
                         postcardRef,
                         cameraInputRef,
